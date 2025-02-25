@@ -18,6 +18,15 @@ return new class extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
+            $table->text('descricao')->nullable();
+            $table->string('foto_url')->nullable();
+            $table->string('cep', 8)->nullable();
+            $table->string('logradouro', 150)->nullable();
+            $table->string('numero', 150)->nullable();
+            $table->string('complemento', 150)->nullable();
+            $table->string('bairro', 150)->nullable();
+            $table->string('cidade', 150)->nullable();
+            $table->string('uf', 2)->nullable();
             $table->timestamps();
         });
 
