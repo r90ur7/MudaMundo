@@ -15,15 +15,18 @@ return new class extends Migration
             $table->id();
 
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->bigInteger('Donated_to')->nullable();
             $table->foreignId('tipos_id')->constrained()->onDelete('cascade');
-            $table->foreignId('muda_status_id')->constrained()->onDelete('cascade');
+            $table->foreignId('muda_status_id')
+                ->constrained('muda_status')
+                ->onDelete('cascade');
             $table->foreignId('especie_id')->constrained()->onDelete('cascade');
+
+            $table->bigInteger('Donated_to')->nullable();
 
             $table->string('nome');
             $table->text('descricao')->nullable();
             $table->string('foto_url')->nullable();
-            $table->integer('quantidade')->default(1);
+            $table->integer('quantidade')->nullable();
             $table->string('cep', 8);
             $table->string('logradouro', 150);
             $table->string('numero', 150);
@@ -32,12 +35,9 @@ return new class extends Migration
             $table->string('cidade', 150);
             $table->string('uf', 2);
             $table->timestamps();
-            $table->timestamps(
-                'donated_at'
-            );
-            $table->timestamps(
-                'disabled_at'
-            );
+            $table->timestamp('donated_at')->nullable();
+            $table->timestamp('disabled_at')->nullable();
+
         });
     }
 

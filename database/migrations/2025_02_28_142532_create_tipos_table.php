@@ -12,6 +12,7 @@ return new class extends Migration
             $table->id();
             $table->string('nome', 255);
             $table->string('nome_cientifico', 255)->nullable();
+            $table->text('descricao', 255)->nullable();
             $table->timestamps();
             $table->softDeletes();
         });
