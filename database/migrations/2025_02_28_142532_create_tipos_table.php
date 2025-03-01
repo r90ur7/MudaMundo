@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('tipos', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('nome', 255);
             $table->string('nome_cientifico', 255)->nullable();
             $table->timestamps();

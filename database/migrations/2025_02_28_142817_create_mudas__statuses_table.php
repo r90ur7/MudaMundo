@@ -9,7 +9,7 @@ return new class extends Migration
     public function up()
     {
         Schema::create('muda_status', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->id();
             $table->string('nome', 255);
             $table->timestamps();
             $table->softDeletes();
