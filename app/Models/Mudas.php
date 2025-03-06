@@ -4,6 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\User;
+use App\Models\Especie;
+use App\Models\Tipo;
+use App\Models\MudaStatus;
 
 class Mudas extends Model
 {
@@ -27,6 +31,33 @@ class Mudas extends Model
         'disabled_at'
     ];
 
+    /**
+     * Relacionamento com o usuário.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Relacionamento com a espécie.
+     */
+    public function especie()
+    {
+        return $this->belongsTo(Especie::class);
+    }
+
+    /**
+     * Relacionamento com o tipo.
+     */
+    public function tipo()
+    {
+        return $this->belongsTo(Tipo::class, 'tipos_id');
+    }
+
+    /**
+     * Relacionamento com o status.
+     */
     public function status()
     {
         return $this->belongsTo(MudaStatus::class, 'muda_status_id')

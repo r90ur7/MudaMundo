@@ -37,6 +37,7 @@ return new class extends Migration
             $table->timestamps();
             $table->timestamp('donated_at')->nullable();
             $table->timestamp('disabled_at')->nullable();
+            $table->softDeletes();
 
         });
     }
