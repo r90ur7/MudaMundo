@@ -143,15 +143,43 @@
         </div>
 
 
-        <div class="mt-10 text-center">
-            <a href="{{ route('mudas.index') }}" class="btn btn-outline gap-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                    viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zM3.75 12h.007v.008H3.75V12zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm-.375 5.25h.007v.008H3.75v-.008zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
-                </svg>
-                Ver todas as mudas
-            </a>
+        <div class="mt-16">
+            <div class="relative">
+                <div class="absolute inset-0 flex items-center" aria-hidden="true">
+                    <div class="w-full border-t border-gray-400 dark:border-gray-700"></div>
+                </div>
+                <!-- Botão centralizado sobre o divisor -->
+                <div class="relative flex justify-center">
+                    <a href="{{ route('mudas.index') }}"
+                    class="group inline-flex items-center gap-x-4 rounded-full bg-white dark:bg-slate-900 p-4 shadow-sm shadow-emerald-500/30 hover:shadow-emerald-500/50 transition duration-300 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-500">
+                        <span class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 dark:text-gray-700 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="1.5"
+                                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                            </svg>
+                            Explorar Catálogo Completo
+                        </span>
+                        <span class="inline-flex items-center justify-center size-7 rounded-full bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 group-hover:bg-emerald-100 dark:group-hover:bg-emerald-900/50 transition duration-300">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4 transition-transform duration-300 group-hover:translate-x-0.5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M9 5l7 7-7 7" />
+                            </svg>
+                        </span>
+                    </a>
+                </div>
+            </div>
         </div>
     </section>
 </x-app-layout>
