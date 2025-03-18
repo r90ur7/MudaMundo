@@ -13,26 +13,41 @@
     <section class="relative overflow-hidden">
         <div class="container mx-auto py-10 sm:py-24 px-4">
             <div class="text-center">
-                <h1 class="text-4xl sm:text-6xl font-bold text-gray-800 dark:text-emerald-400">
+                <h1 class="text-4xl sm:text-6xl font-bold text-gray-400 dark:text-emerald-400">
                     Muda Mundo
                 </h1>
                 <p class="mt-3 text-xl text-gray-600 dark:text-gray-400">
                     Conectando pessoas através do compartilhamento de mudas
                 </p>
-                <div class="mt-8 flex justify-center gap-3">
-                    <a href="{{ route('mudas.create') }}" class="btn btn-primary gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M12 4.5v15m7.5-7.5h-15" />
+                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+                    <!-- Botão Doar uma muda -->
+                    <a href="{{ route('mudas.create') }}"
+                        class="py-3 px-6 inline-flex items-center gap-x-3 text-sm font-semibold rounded-lg border border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white disabled:opacity-50 disabled:pointer-events-none dark:border-emerald-400 dark:text-emerald-400 dark:hover:text-white dark:hover:bg-emerald-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                            <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                         Doar uma muda
                     </a>
-                    <a href="{{ route('mudas.index') }}" class="btn btn-secondary gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+
+                    <!-- Botão Encontrar mudas -->
+                    <a href="{{ route('mudas.index') }}"
+                        class="py-3 px-6 inline-flex items-center gap-x-3 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-emerald-500 hover:text-emerald-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:hover:text-emerald-400 dark:hover:border-emerald-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 transition duration-300">
+                        <svg xmlns="http://www.w3.org/2000/svg"
+                                class="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                            <path stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                         </svg>
                         Encontrar mudas
                     </a>
@@ -44,7 +59,7 @@
     <!-- Mudas Recentes -->
     <section class="container mx-auto py-10 px-4">
         <div class="text-center mb-10">
-            <h2 class="text-2xl font-bold text-gray-800 dark:text-gray-200">
+            <h2 class="text-2xl font-bold text-gray-400 dark:text-emerald-400">
                 Mudas Disponíveis
             </h2>
         </div>
