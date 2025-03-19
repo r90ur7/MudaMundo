@@ -1,5 +1,5 @@
 import './bootstrap';
-import HSThemeAppearance from './theme';
+import HSThemeAppearance from './theme.js';
 
 import Alpine from 'alpinejs';
 

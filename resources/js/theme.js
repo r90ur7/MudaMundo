@@ -1,37 +1,35 @@
 const HSThemeAppearance = {
     init() {
         const defaultTheme = 'dark';
-        const theme = localStorage.getItem('hs_theme') || defaultTheme;
-        this.setAppearance(theme);
+        let theme = localStorage.getItem('hs_theme') || defaultTheme;
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const buttons = document.querySelectorAll('[data-hs-theme-click-value]');
-            buttons.forEach(button => {
-                button.addEventListener('click', () => {
-                    const theme = button.getAttribute('data-hs-theme-click-value');
-                    this.setAppearance(theme);
-                });
-            });
+        if (document.querySelector('html').classList.contains('dark')) {
+            this.setAppearance('dark');
+        } else {
+            this.setAppearance(theme);
+        }
+
+        // Adicionar listeners para os botões de tema
+        document.addEventListener('click', (e) => {
+            const element = e.target.closest('[data-hs-theme-click-value]');
+            if (!element) return;
+
+            const theme = element.getAttribute('data-hs-theme-click-value');
+            this.setAppearance(theme);
         });
     },
 
-    setAppearance(theme) {
-        localStorage.setItem('hs_theme', theme);
+    setAppearance(theme, saveInStore = true) {
+        if (saveInStore) {
+            localStorage.setItem('hs_theme', theme);
+        }
 
-        if (theme === 'auto') {
-            if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                document.documentElement.classList.add('dark');
-            } else {
-                document.documentElement.classList.remove('dark');
-            }
-        } else if (theme === 'dark') {
+        if (theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
             document.documentElement.classList.remove('dark');
         }
-
-        window.dispatchEvent(new CustomEvent('on-hs-appearance-change', { detail: theme }));
-    }
+    },
 };
 
 export default HSThemeAppearance;
