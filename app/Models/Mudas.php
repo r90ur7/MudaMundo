@@ -63,4 +63,13 @@ class Mudas extends Model
         return $this->belongsTo(MudaStatus::class, 'muda_status_id')
             ->where('table', 'muda_status');
     }
+
+    /**
+     * Retorna os usuários que favoritaram esta muda
+     */
+    public function favoritedBy()
+    {
+        return $this->belongsToMany(User::class, 'favoritos', 'muda_id', 'user_id')
+                    ->withTimestamps();
+    }
 }

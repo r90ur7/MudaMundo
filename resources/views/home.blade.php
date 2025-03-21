@@ -63,49 +63,6 @@
                 Mudas Disponíveis
             </h2>
         </div>
-
-        {{-- <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            @foreach ($mudas_recentes as $muda)
-            <div class="card group h-full bg-white border border-gray-200 rounded-xl shadow-sm dark:bg-slate-900 dark:border-gray-700 dark:shadow-slate-700/[.7] hover:shadow-lg transition-shadow duration-300">
-                <div class="card-img relative">
-                    <img class="w-full h-52 object-cover rounded-t-xl"
-                        src="{{ $muda->foto_url ?? "https://images.unsplash.com/photo-1491147334573-44cbb4602074?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" }}"
-                        alt="{{ $muda->nome }}">
-                    <span class="badge badge-info absolute top-2 right-2">
-                        {{ $muda->tipo->nome ?? 'Desconhecido' }}
-                    </span>
-                </div>
-                <div class="card-body p-4 md:p-6">
-                    <div class="flex justify-between items-center">
-                        <h3 class="card-title text-xl font-semibold text-gray-800 dark:text-gray-300">
-                            {{ $muda->nome }}
-                        </h3>
-                        <span class="badge {{ $muda->status?->nome === 'Disponível' ? 'badge-success' : 'badge-warning' }}">
-                            {{ $muda->status->nome ?? 'Indisponível' }}
-                        </span>
-                    </div>
-                    <p class="mt-3 text-gray-500">
-                        {{ Str::limit($muda->descricao, 100) }}
-                    </p>
-                    <div class="mt-4 flex items-center gap-2 text-sm text-gray-500">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                        </svg>
-                        {{ $muda->cidade }}/{{ $muda->uf }}
-                    </div>
-                </div>
-                <div class="card-footer border-t border-gray-200 dark:border-gray-700">
-                    <a href="{{ route('mudas.show', $muda) }}" class="btn btn-outline w-full">
-                        Ver detalhes
-                    </a>
-                </div>
-            </div>
-            @endforeach
-        </div> --}}
         <div class="max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
                 @foreach ($mudas_recentes as $index => $muda)

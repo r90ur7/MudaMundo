@@ -16,6 +16,7 @@
     <link rel="stylesheet" href="https://preline.co/assets/css/main.min.css">
 
     <!-- Theme Script -->
+
     <script src="{{ asset('js/theme.js') }}"></script>
 </head>
 
@@ -130,5 +131,6 @@
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/preline/dist/index.js"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </body>
 </html>
