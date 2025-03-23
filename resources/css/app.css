@@ -3,3 +3,4 @@
 @tailwind components;
 @tailwind utilities;
 @import "./theme.css";
+@import "./dashboard.css"

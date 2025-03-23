@@ -1,4 +1,14 @@
 <x-app-layout>
+        @php
+    $unsplashImages = [
+        'https://images.unsplash.com/photo-1491147334573-44cbb4602074?auto=format&fit=crop&w=800&q=80',
+        'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=700&q=80',
+        'https://images.unsplash.com/photo-1520412099551-62b6bafeb5bb?auto=format&fit=crop&w=600&q=80',
+        'https://images.unsplash.com/photo-1509223197845-458d87318791?auto=format&fit=crop&w=750&q=80',
+        'https://images.unsplash.com/photo-1530968464165-7a1861cbaf9f?auto=format&fit=crop&w=900&q=80',
+        'https://images.unsplash.com/photo-1459156212016-c812468e2115?auto=format&fit=crop&w=650&q=80',
+        ];
+    @endphp
     <div class="py-6 bg-neutral-800/40 dark:bg-neutral-200/40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
             <!-- Seção de Favoritos -->
@@ -125,34 +135,26 @@
                     </form>
 
                     <!-- Grid de Mudas com Skeleton -->
-                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 1300)">
-                        <template x-if="loading">
-                            @for ($i = 0; $i < 6; $i++)
-                                <div class="animate-pulse bg-neutral-600/50 dark:bg-neutral-200/50 rounded-xl overflow-hidden">
-                                    <div class="h-52 bg-neutral-500/50 dark:bg-neutral-400/50"></div>
-                                    <div class="p-6 space-y-4">
-                                        <div class="flex justify-between">
-                                            <div class="space-y-2">
-                                                <div class="h-5 bg-neutral-500/50 dark:bg-neutral-400/50 rounded w-3/4"></div>
-                                                <div class="h-4 bg-neutral-500/50 dark:bg-neutral-400/50 rounded w-1/2"></div>
-                                            </div>
-                                            <div class="h-6 bg-neutral-500/50 dark:bg-neutral-400/50 rounded-full w-20"></div>
-                                        </div>
-                                        <div class="h-4 bg-neutral-500/50 dark:bg-neutral-400/50 rounded w-full"></div>
-                                        <div class="h-4 bg-neutral-500/50 dark:bg-neutral-400/50 rounded w-3/4"></div>
-                                        <div class="h-10 bg-neutral-500/50 dark:bg-neutral-400/50 rounded"></div>
-                                    </div>
-                                </div>
-                            @endfor
-                        </template>
-
-                        <template x-if="!loading">
-                            @forelse($mudas ?? [] as $muda)
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        @if($mudas->isEmpty())
+                            <div class="col-span-full text-center py-8">
+                                <p class="text-gray-400 dark:text-neutral-600">Nenhuma muda encontrada</p>
+                            </div>
+                        @else
+                            @foreach($mudas as $muda)
                                 <div class="group relative bg-neutral-700 dark:bg-neutral-300 border border-neutral-600 dark:border-neutral-400 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
-                                    <div class="aspect-w-3 aspect-h-2">
+                                    <!-- Imagem e Botão Favorito -->
+                                    <div class="relative">
                                         <img class="w-full h-52 object-cover rounded-t-xl"
-                                            src="{{ $muda->foto_url ?? "https://images.unsplash.com/photo-1491147334573-44cbb4602074?q=80&w=2574&auto=format&fit=crop" }}"
+                                            src="{{ $unsplashImages[array_rand($unsplashImages)] }}"
                                             alt="{{ $muda->nome }}">
+
+                                        <!-- Botão Favorito -->
+                                        <button class="absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-800 transition-colors">
+                                            <svg class="w-5 h-5 text-red-500 hover:text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                            </svg>
+                                        </button>
                                     </div>
 
                                     <div class="p-4 md:p-6">
@@ -188,7 +190,7 @@
 
                                     <div class="p-4 border-t border-neutral-600 dark:border-neutral-400">
                                         <a href="{{ route('mudas.show', $muda) }}"
-                                            class="w-full inline-flex justify-center items-center gap-2 rounded-lg border border-transparent font-semibold text-emerald-500 hover:text-emerald-700 hover:bg-emerald-100/50 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all text-sm py-3 px-4 dark:hover:bg-emerald-800/30 dark:hover:text-emerald-400 dark:focus:ring-offset-gray-800">
+                                            class="w-full inline-flex justify-center items-center gap-2 rounded-lg border border-emerald-500/50 font-semibold text-emerald-500 hover:text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all text-sm py-3 px-4 dark:border-emerald-400/50 dark:hover:bg-emerald-500 dark:hover:text-white dark:focus:ring-offset-gray-800">
                                             Ver detalhes
                                             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
@@ -196,12 +198,22 @@
                                         </a>
                                     </div>
                                 </div>
-                            @empty
-                                <div class="col-span-full text-center py-8">
-                                    <p class="text-gray-400 dark:text-neutral-600">Nenhuma muda encontrada</p>
+                            @endforeach
+
+                            <!-- Paginação -->
+                            <div class="col-span-full mt-6">
+                                <div class="flex justify-center">
+                                    {{ $mudas->links('vendor.pagination.MudaMundo')->with([
+                                        'class' =>
+                                        'relative z-0 inline-flex shadow-sm rounded-md',
+                                        'active' => 'bg-emerald-500 text-white',
+                                        'disabled' => 'opacity-50 cursor-not-allowed',
+                                        'link' => 'px-4 py-2 text-sm font-medium text-emerald-500 hover:bg-emerald-50 dark:hover:bg-emerald-800/30',
+                                        'separator' => 'px-4 py-2 text-sm font-medium text-gray-400',
+                                    ]) }}
                                 </div>
-                            @endforelse
-                        </template>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </section>
@@ -252,6 +264,16 @@
                         }, 1300);
                     }
                 });
+            });
+        });
+        document.querySelectorAll('.favorite-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const svg = this.querySelector('svg');
+            if (svg.getAttribute('fill') === 'none') {
+                svg.setAttribute('fill', 'currentColor');
+            } else {
+                svg.setAttribute('fill', 'none');
+            }
             });
         });
     </script>

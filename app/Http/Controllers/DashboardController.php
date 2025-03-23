@@ -4,9 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Mudas;
 use App\Models\Tipo;
-use App\Models\MudaStatus;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
@@ -19,8 +17,10 @@ class DashboardController extends Controller
             $estados = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
             // Mudas disponíveis
-            $query = Mudas::with(['tipo', 'status', 'user'])
-                ->whereNull('disabled_at');
+            $query = Mudas::query()
+                ->with(['tipo', 'status', 'user'])
+                ->whereNull('disabled_at')
+                ->orderBy('created_at', 'desc');
 
             // Aplicar filtros
             if ($request->filled('tipo')) {
@@ -39,8 +39,15 @@ class DashboardController extends Controller
                 });
             }
 
+
             // Executar query principal
-            $mudas = $query->latest()->paginate(12)->withQueryString();
+            $mudas = $query->paginate(12)->onEachSide(1)->withQueryString();
+            // dd([
+            //     'total_mudas' => $mudas->total(),
+            //     'pagina_atual' => $mudas->currentPage(),
+            //     'por_pagina' => $mudas->perPage(),
+            //     'filtros' => $request->all()
+            // ]);
 
             // Carregar favoritos do usuário atual
             $favoritos = Mudas::whereNull('disabled_at')
