@@ -24,7 +24,10 @@ class DashboardController extends Controller
 
             // Aplicar filtros
             if ($request->filled('tipo')) {
-                $query->where('tipo_id', $request->tipo);
+                $tipo = Tipo::find($request->tipo);
+                if ($tipo) {
+                    $query->where('tipo_id', $tipo->id);
+                }
             }
 
             if ($request->filled('location')) {
