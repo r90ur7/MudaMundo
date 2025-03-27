@@ -26,7 +26,7 @@ class DashboardController extends Controller
             if ($request->filled('tipo')) {
                 $tipo = Tipo::find($request->tipo);
                 if ($tipo) {
-                    $query->where('tipo_id', $tipo->id);
+                    $query->where('tipos_id', $tipo->id);
                 }
             }
 
