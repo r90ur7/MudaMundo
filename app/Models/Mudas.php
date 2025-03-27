@@ -60,8 +60,7 @@ class Mudas extends Model
      */
     public function status()
     {
-        return $this->belongsTo(MudaStatus::class, 'muda_status_id')
-            ->where('table', 'muda_status');
+        return $this->belongsTo(MudaStatus::class, 'muda_status_id', 'id');
     }
 
     /**

@@ -12,6 +12,7 @@ class DashboardController extends Controller
     public function index(Request $request)
     {
         try {
+            // dd(Mudas::all());
             // Carregar dados básicos
             $tipos = Tipo::orderBy('nome')->get();
             $estados = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
@@ -57,6 +58,8 @@ class DashboardController extends Controller
                 ->take(4)
                 ->latest()
                 ->get();
+
+
 
             return view('dashboard', compact('mudas', 'favoritos', 'tipos', 'estados'));
 
