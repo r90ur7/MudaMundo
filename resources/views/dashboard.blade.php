@@ -86,113 +86,88 @@
                     @endif
 
                     <!-- Filtros -->
-                    <form action="{{ route('dashboard') }}"
-                        method="GET"
-                        class="mb-6"
-                        x-data="{
-                            submitting: false,
-                            handleSubmit(e) {
-                                if (this.submitting) {
-                                    e.preventDefault();
-                                    return;
-                                }
-                                this.submitting = true;
-                            }
-                        }"
-                        @submit="handleSubmit">
+                        <!-- Formulário -->
+<form action="{{ route('dashboard') }}" method="GET" class="mb-6">
+    <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <!-- Filtro Tipo -->
+        <div>
+            <label for="tipo" class="block text-sm font-medium text-gray-300 dark:text-neutral-700">Tipo</label>
+            <select id="tipo" name="tipo"
+                    class="mt-1 block w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500">
+                <option value="">Todos</option>
+                @forelse($tipos ?? [] as $tipo)
+                    <option value="{{ $tipo->id }}" {{ request()->get('tipo') == $tipo->id ? 'selected' : '' }}>
+                        {{ $tipo->nome }}
+                    </option>
+                @empty
+                    <option value="" disabled>Carregando tipos...</option>
+                @endforelse
+            </select>
+        </div>
 
-                        <!-- Campos do filtro -->
-                        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-                            <div>
-                                <label for="tipo" class="block text-sm font-medium text-gray-300 dark:text-neutral-700">Tipo</label>
-                                <select id="tipo" name="tipo"
-                                        class="mt-1 block w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500">
-                                    <option value="">Todos</option>
-                                    @forelse($tipos ?? [] as $tipo)
-                                        <option value="{{ $tipo->id }}" {{ request()->get('tipo') == $tipo->id ? 'selected' : '' }}>
-                                            {{ $tipo->nome }}
-                                        </option>
-                                    @empty
-                                        <option value="" disabled>Carregando tipos...</option>
-                                    @endforelse
-                                </select>
-                            </div>
+        <!-- Filtro Localização -->
+        <div>
+            <label for="location" class="block text-sm font-medium text-gray-300 dark:text-neutral-700">Localização</label>
+            <select id="location" name="location"
+                    class="mt-1 block w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500">
+                <option value="">Todas</option>
+                @forelse($estados ?? [] as $uf)
+                    <option value="{{ $uf }}" {{ request()->get('location') == $uf ? 'selected' : '' }}>
+                        {{ $uf }}
+                    </option>
+                @empty
+                    <option value="" disabled>Carregando localizações...</option>
+                @endforelse
+            </select>
+        </div>
 
-                            <!-- Filtro por Localização -->
-                            <div>
-                                <label for="location" class="block text-sm font-medium text-gray-300 dark:text-neutral-700">Localização</label>
-                                <select id="location" name="location"
-                                        class="mt-1 block w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500">
-                                    <option value="">Todas</option>
-                                    @forelse($estados ?? [] as $uf)
-                                        <option value="{{ $uf }}" {{ request()->get('location') == $uf ? 'selected' : '' }}>
-                                            {{ $uf }}
-                                        </option>
-                                    @empty
-                                        <option value="" disabled>Carregando localizações...</option>
-                                    @endforelse
-                                </select>
-                            </div>
+        <!-- Campo de busca -->
+        <div class="sm:col-span-2">
+            <label for="search" class="block text-sm font-medium text-gray-300 dark:text-neutral-700">Buscar</label>
+            <div class="mt-1 relative rounded-md shadow-sm">
+                <input type="text"
+                       name="search"
+                       id="search"
+                       value="{{ is_array(request('search')) ? request('search')[0] : request('search') }}"
+                       class="block w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black pl-10 focus:border-emerald-500 focus:ring-emerald-500"
+                       placeholder="Buscar mudas...">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg"
+                         viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                              d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                              clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </div>
 
-                            <!-- Busca -->
-                            <div class="sm:col-span-2">
-                                <label for="search" class="block text-sm font-medium text-gray-300 dark:text-neutral-700">Buscar</label>
-                                <div class="mt-1 relative rounded-md shadow-sm">
-                                    <input type="text"
-                                        name="search"
-                                        id="search"
-                                        value="{{ is_array(request('search')) ? request('search')[0] : request('search') }}"
-                                        class="block w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black pl-10 focus:border-emerald-500 focus:ring-emerald-500"
-                                        placeholder="Buscar mudas...">
-                                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+    <!-- Botões (opcional) -->
+    <div class="mt-4 flex justify-between items-center">
+        <p class="text-sm text-gray-400 dark:text-gray-500">
+            {{ App\Models\Mudas::whereNull('disabled_at')->count() }}
+            {{ Str::plural('muda', $mudas->total()) }}
+            <span class="text-emerald-500">Cadastradas</span>
+        </p>
 
-                        <!-- Botões -->
-                        <div class="mt-4 flex justify-between items-center">
-                            <!-- Lado esquerdo - Contador -->
-                            <p class="text-sm text-gray-400 dark:text-gray-500">
-                                {{ App\Models\Mudas::whereNull('disabled_at')->count() }}
-                                {{ Str::plural('muda', $mudas->total()) }}
-                                <span class="text-emerald-500">Cadastradas</span>
-                            </p>
+        <div class="flex gap-3">
+            @if(request()->hasAny(['tipo', 'location', 'search']))
+                <a href="{{ route('dashboard') }}"
+                   class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
+                    Limpar Filtros
+                </a>
+            @endif
 
-                            <!-- Lado direito - Botões -->
-                            <div class="flex gap-3">
-                                @if(request()->hasAny(['tipo', 'location', 'search']))
-                                    <a href="{{ route('dashboard') }}"
-                                       class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
-                                        Limpar Filtros
-                                    </a>
-                                @endif
+            <!-- Botão de aplicar filtros, se quiser manter -->
+            <button type="submit"
+                    class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors">
+                Aplicar Filtros
+            </button>
+        </div>
+    </div>
+</form>
 
-                                <button type="submit"
-                                        class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors"
-                                        :disabled="submitting"
-                                        x-bind:class="{ 'opacity-50 cursor-not-allowed': submitting }">
-                                    <span x-show="!submitting">Aplicar Filtros</span>
-                                    <span x-show="submitting" class="flex items-center">
-                                        <svg class="animate-spin -ml-1 mr-2 h-4 w-4" xmlns="http://www.w3.org/2000/svg"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                    stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                            </path>
-                                        </svg>
-                                        Carregando...
-                                    </span>
-                                </button>
-                            </div>
-                        </div>
-                    </form>
 
                     <!-- Após o formulário de filtros, antes do grid -->
                     <div class="flex justify-between items-center mb-6">
@@ -351,102 +326,43 @@
 
     @push('scripts')
         <script>
-            // Função auxiliar para verificar se um valor está vazio
-            function isEmpty(value) {
-                return value === null || value === undefined || value === '';
-            }
-
-            // Função para limpar os filtros vazios do formulário
-            function removeEmptyFilters(form) {
-                const formData = new FormData(form);
-                const searchParams = new URLSearchParams(formData);
-
-                // Remove parâmetros vazios
-                for (const [key, value] of searchParams.entries()) {
-                    if (isEmpty(value)) {
-                        searchParams.delete(key);
-                    }
-                }
-
-                // Atualiza a URL mantendo apenas os filtros preenchidos
-                const newUrl = `${window.location.pathname}?${searchParams.toString()}`;
-                window.history.pushState({}, '', newUrl);
-
-                return searchParams.toString();
-            }
-
-            // Handler para submit do formulário
-            document.querySelector('form').addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                const formData = new FormData(this);
-                const searchParams = new URLSearchParams();
-
-                // Adiciona apenas os campos que têm valor
-                for (const [key, value] of formData.entries()) {
-                    if (!isEmpty(value)) {
-                        searchParams.append(key, value);
-                    }
-                }
-
-                // Atualiza a URL e submete apenas se houver filtros
-                const queryString = searchParams.toString();
-                const newUrl = `${window.location.pathname}${queryString ? '?' + queryString : ''}`;
-                window.history.pushState({}, '', newUrl);
-
-                // Atualiza visual do botão
-                const submitButton = this.querySelector('button[type="submit"]');
-                submitButton.disabled = true;
-                submitButton.innerHTML = `
-                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Carregando...
-                `;
-
-                this.submit();
-            });
-
-            // Handler para os selects (tipo e localização)
+        document.addEventListener('DOMContentLoaded', function() {
+            // 1. Para os selects (tipo e localização), o submit automático já funciona
             document.querySelectorAll('select[name="tipo"], select[name="location"]').forEach(select => {
                 select.addEventListener('change', function() {
-                    const form = this.closest('form');
-                    if (!form) return;
-
-                    // Se o select foi limpo (valor vazio), remove o parâmetro da URL
-                    if (isEmpty(this.value)) {
-                        const params = new URLSearchParams(window.location.search);
-                        params.delete(this.name);
-                        window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
-                    }
-
-                    form.submit();
+                    // Apenas envia o formulário
+                    this.closest('form').submit();
                 });
             });
 
-            // Debounce melhorado para o campo de busca
+            // 2. Para o campo de busca, atualiza a URL automaticamente com debounce de 500ms
             const searchInput = document.querySelector('input[name="search"]');
             let searchTimeout;
-
             if (searchInput) {
                 searchInput.addEventListener('input', function() {
                     clearTimeout(searchTimeout);
-                    const form = this.closest('form');
-
                     searchTimeout = setTimeout(() => {
-                        // Só aplica o filtro se tiver 2 ou mais caracteres ou se estiver vazio
-                        if (this.value.length >= 2 || this.value.length === 0) {
-                            if (isEmpty(this.value)) {
-                                const params = new URLSearchParams(window.location.search);
-                                params.delete('search');
-                                window.history.pushState({}, '', `${window.location.pathname}?${params.toString()}`);
-                            }
-                            form.submit();
+                        const value = this.value.trim();
+                        // Cria um objeto URL baseado na URL atual
+                        const url = new URL(window.location.href);
+                        if (value.length > 0) {
+                            url.searchParams.set('search', value);
+                        } else {
+                            url.searchParams.delete('search');
                         }
+                        // Redireciona para a nova URL, recarregando a página com o filtro aplicado
+                        window.location.href = url.toString();
                     }, 500);
                 });
+
+                // Impede que a tecla Enter submeta imediatamente
+                searchInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                    }
+                });
             }
+        });
         </script>
     @endpush
 </x-app-layout>
