@@ -27,6 +27,7 @@ class Mudas extends Model
         'bairro',
         'cidade',
         'uf',
+        'foto_url',
         'donated_at',
         'disabled_at'
     ];

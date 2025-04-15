@@ -42,7 +42,7 @@ class MudasController extends Controller
             if ($request->filled('status')) {
                 $query->where('status_id', $request->status);
             } else {
-                $query->where('status_id', 1); // Padrão: apenas disponíveis
+                $query->where('status_id', 1);
             }
 
             if ($request->filled('search')) {
@@ -90,15 +90,56 @@ class MudasController extends Controller
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
             'tipo_id' => 'required|exists:tipos,id',
-            'status_id' => 'required|exists:muda_status,id',
-            'cidade' => 'required|string|max:255',
+            'especie_id' => 'required|exists:especies,id',
+            'quantidade' => 'nullable|integer|min:1',
+            'cep' => 'required|string|size:8',
+            'logradouro' => 'required|string|max:150',
+            'numero' => 'required|string|max:20',
+            'complemento' => 'nullable|string|max:100',
+            'bairro' => 'required|string|max:100',
+            'cidade' => 'required|string|max:100',
             'uf' => 'required|string|size:2',
-            'foto' => 'nullable|image|max:2048'
+            'foto' => 'nullable|image|max:2048',
+            'setAsDefault' => 'nullable|boolean'
         ]);
 
+        // Adiciona o ID do usuário autenticado
+        $validated['user_id'] = auth()->id();
+
+        // Define o status como "Disponível" (ID 1)
+        $statusDisponivel = MudaStatus::where('nome', 'Disponível')->first();
+        $validated['muda_status_id'] = $statusDisponivel ? $statusDisponivel->id : 1;
+
+        // Mapeia campos do formulário para os campos do banco de dados
+        $validated['tipos_id'] = $validated['tipo_id'];
+
+        // Remove campos que não existem no modelo e o campo setAsDefault
+        unset($validated['tipo_id'], $validated['setAsDefault']);
+
+        // Processar o upload da foto, se houver
         if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('mudas', 'public');
-            $validated['foto_url'] = asset('storage/' . $path);
+            $path = $this->processImageUpload($request->file('foto'));
+            if ($path) {
+                $validated['foto_url'] = $path;
+                Log::info('Imagem salva com sucesso em: ' . $path);
+            } else {
+                return back()->withInput()->withErrors(['foto' => 'Erro ao processar a imagem. Por favor, tente novamente.']);
+            }
+        }
+
+        // Se o checkbox "Salvar como endereço padrão" estiver marcado, atualizar o endereço do usuário
+        if ($request->has('setAsDefault') && $request->setAsDefault == '1') {
+            $user = auth()->user();
+
+            $user->update([
+                'cep' => $validated['cep'],
+                'logradouro' => $validated['logradouro'],
+                'numero' => $validated['numero'],
+                'complemento' => $validated['complemento'] ?? null,
+                'bairro' => $validated['bairro'],
+                'cidade' => $validated['cidade'],
+                'uf' => $validated['uf']
+            ]);
         }
 
         $muda = Mudas::create($validated);
@@ -141,9 +182,22 @@ class MudasController extends Controller
             'foto' => 'nullable|image|max:2048'
         ]);
 
+        // Mapeia campos do formulário para os campos do banco de dados
+        $validated['tipos_id'] = $validated['tipo_id'];
+        $validated['muda_status_id'] = $validated['status_id'];
+
+        // Remove campos que não existem no modelo
+        unset($validated['tipo_id'], $validated['status_id']);
+
+        // Processar o upload da foto, se houver
         if ($request->hasFile('foto')) {
-            $path = $request->file('foto')->store('mudas', 'public');
-            $validated['foto_url'] = asset('storage/' . $path);
+            $path = $this->processImageUpload($request->file('foto'));
+            if ($path) {
+                $validated['foto_url'] = $path;
+                Log::info('Imagem atualizada com sucesso em: ' . $path);
+            } else {
+                return back()->withInput()->withErrors(['foto' => 'Erro ao processar a imagem. Por favor, tente novamente.']);
+            }
         }
 
         $muda->update($validated);
@@ -177,5 +231,31 @@ class MudasController extends Controller
             Log::error('Erro no MudasController@favorites: ' . $e->getMessage());
             return back()->withErrors(['favoritos' => 'Não foi possível carregar seus favoritos.']);
         }
+    }
+
+    /**
+     * Processa o upload de uma imagem e retorna o caminho relativo para salvar no banco.
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return string|null
+     */
+    private function processImageUpload($file)
+    {
+        if ($file && $file->isValid()) {
+            try {
+                // Salva a imagem no diretório storage/app/public/mudas
+                $filename = $file->getClientOriginalName();
+                $newFilename = pathinfo($filename, PATHINFO_FILENAME) . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+                // Salva o arquivo e retorna apenas o caminho relativo (sem 'storage/')
+                return $file->storeAs('mudas', $newFilename, 'public');
+
+            } catch (\Exception $e) {
+                Log::error('Erro ao processar imagem: ' . $e->getMessage());
+                return null;
+            }
+        }
+
+        return null;
     }
 }

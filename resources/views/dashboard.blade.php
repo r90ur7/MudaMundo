@@ -12,6 +12,17 @@
 
     <div class="py-6 bg-neutral-800/40 dark:bg-neutral-200/40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+            <!-- Botão para Criar Nova Muda -->
+            <div class="flex justify-end">
+                <a href="{{ route('mudas.create') }}"
+                   class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-700 text-white font-medium rounded-lg shadow-lg hover:from-emerald-600 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/50 transition-all duration-300">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Publicar Nova Muda
+                </a>
+            </div>
+
             <!-- Seção de Favoritos -->
             <section class="bg-neutral-700/80 dark:bg-neutral-300/80 rounded-xl shadow-lg p-6">
                 <div class="flex items-center justify-between mb-4">
@@ -51,9 +62,18 @@
                         @forelse($favoritos ?? [] as $muda)
                             <div class="group relative bg-neutral-700 dark:bg-neutral-300 border border-neutral-600 dark:border-neutral-400 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
                                 <div class="aspect-w-3 aspect-h-2">
-                                    <img class="w-full h-32 object-cover rounded-t-lg"
-                                        src="{{ $muda->foto_url ?? 'https://images.unsplash.com/photo-1491147334573-44cbb4602074?q=80&w=2574&auto=format&fit=crop' }}"
-                                        alt="{{ $muda->nome }}">
+                                    @if($muda->foto_url)
+                                        <img class="w-full h-32 object-cover rounded-t-lg"
+                                            src="{{ asset('storage/' . $muda->foto_url) }}"
+                                            alt="{{ $muda->nome }}">
+                                    @else
+                                        <div class="w-full h-32 bg-neutral-600/50 dark:bg-neutral-400/50 flex items-center justify-center rounded-t-lg">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-emerald-500/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                            </svg>
+                                        </div>
+                                    @endif
                                 </div>
                                 <div class="p-4">
                                     <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $muda->nome }}</h3>
@@ -244,9 +264,21 @@
                                 <div class="group relative bg-neutral-700 dark:bg-neutral-300 border border-neutral-600 dark:border-neutral-400 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
                                     <!-- Imagem e Botão Favorito -->
                                     <div class="relative">
-                                        <img class="w-full h-52 object-cover rounded-t-xl"
-                                            src="{{ $unsplashImages[array_rand($unsplashImages)] }}"
-                                            alt="{{ $muda->nome }}">
+                                        @if($muda->foto_url)
+                                            @php
+                                                $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
+                                            @endphp
+                                            <img class="w-full h-52 object-cover rounded-t-xl"
+                                                src="{{ route('imagem.muda', ['filename' => $filename]) }}"
+                                                alt="{{ $muda->nome }}">
+                                        @else
+                                            <div class="w-full h-52 bg-neutral-600/50 dark:bg-neutral-400/50 flex items-center justify-center rounded-t-xl">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-500/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                                </svg>
+                                            </div>
+                                        @endif
 
                                         <!-- Botão Favorito (exemplo de placeholder) -->
                                         <button class="favorite-btn absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-800 transition-colors">
