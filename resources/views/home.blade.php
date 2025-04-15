@@ -77,10 +77,20 @@
                         <div class="relative h-full w-full flex flex-col">
                             <!-- Container da imagem com altura dinâmica -->
                             <div class="flex-1 overflow-hidden">
-                                <img
-                                    class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
-                                    src="{{ $muda->foto_url ?? $unsplashImages[array_rand($unsplashImages)] }}"
-                                    alt="{{ $muda->nome }}">
+                                @if($muda->foto_url)
+                                    @php
+                                        $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
+                                    @endphp
+                                    <img
+                                        class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                                        src="{{ route('imagem.muda', ['filename' => $filename]) }}"
+                                        alt="{{ $muda->nome }}">
+                                @else
+                                    <img
+                                        class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
+                                        src="{{ $unsplashImages[array_rand($unsplashImages)] }}"
+                                        alt="{{ $muda->nome }}">
+                                @endif
                             </div>
 
                             <!-- Overlay gradiente -->

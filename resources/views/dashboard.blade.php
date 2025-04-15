@@ -63,8 +63,11 @@
                             <div class="group relative bg-neutral-700 dark:bg-neutral-300 border border-neutral-600 dark:border-neutral-400 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
                                 <div class="aspect-w-3 aspect-h-2">
                                     @if($muda->foto_url)
+                                        @php
+                                            $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
+                                        @endphp
                                         <img class="w-full h-32 object-cover rounded-t-lg"
-                                            src="{{ asset('storage/' . $muda->foto_url) }}"
+                                            src="{{ route('imagem.muda', ['filename' => $filename]) }}"
                                             alt="{{ $muda->nome }}">
                                     @else
                                         <div class="w-full h-32 bg-neutral-600/50 dark:bg-neutral-400/50 flex items-center justify-center rounded-t-lg">
