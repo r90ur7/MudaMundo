@@ -41,8 +41,6 @@ class MudasController extends Controller
 
             if ($request->filled('status')) {
                 $query->where('status_id', $request->status);
-            } else {
-                $query->where('status_id', 1);
             }
 
             if ($request->filled('search')) {
