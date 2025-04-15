@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Muda_Status;
+use App\Models\MudaStatus;
 use Illuminate\Http\Request;
 
 class MudasStatusController extends Controller
@@ -34,7 +34,7 @@ class MudasStatusController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Muda_Status $muda_Status)
+    public function show(MudaStatus $mudaStatus)
     {
         //
     }
@@ -42,7 +42,7 @@ class MudasStatusController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Muda_Status $muda_Status)
+    public function edit(MudaStatus $mudaStatus)
     {
         //
     }
@@ -50,7 +50,7 @@ class MudasStatusController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Muda_Status $muda_Status)
+    public function update(Request $request, MudaStatus $mudaStatus)
     {
         //
     }
@@ -58,7 +58,7 @@ class MudasStatusController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Muda_Status $muda_Status)
+    public function destroy(MudaStatus $mudaStatus)
     {
         //
     }
