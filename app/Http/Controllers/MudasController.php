@@ -174,7 +174,10 @@ class MudasController extends Controller
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
             'tipo_id' => 'required|exists:tipos,id',
+            'especie_id' => 'required|exists:especies,id',
             'status_id' => 'required|exists:muda_status,id',
+            'quantidade' => 'nullable|integer|min:1',
+            'complemento' => 'nullable|string|max:100',
             'cidade' => 'required|string|max:255',
             'uf' => 'required|string|size:2',
             'foto' => 'nullable|image|max:2048'

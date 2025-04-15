@@ -47,7 +47,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                         </svg>
-                                        Excluir
+                                        Desabilitar
                                     </button>
                                 </form>
                             @endif
@@ -102,12 +102,12 @@
 
                                 <div class="flex items-center justify-between p-3 bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg">
                                     <span class="text-sm font-medium text-white dark:text-black">Tipo</span>
-                                    <span class="text-sm text-emerald-400">{{ $muda->tipo->nome ?? 'Não especificado' }}</span>
+                                    <span class="text-sm text-emerald-400 dark:text-emerald-600">{{ $muda->tipo->nome ?? 'Não especificado' }}</span>
                                 </div>
 
                                 <div class="flex items-center justify-between p-3 bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg">
                                     <span class="text-sm font-medium text-white dark:text-black">Espécie</span>
-                                    <span class="text-sm text-emerald-400">{{ $muda->especie->nome ?? 'Não especificado' }}</span>
+                                    <span class="text-sm text-emerald-400 dark:text-emerald-600">{{ $muda->especie->nome ?? 'Não especificado' }}</span>
                                 </div>
 
                                 <div class="flex items-center justify-between p-3 bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg">
@@ -127,7 +127,7 @@
                             <!-- Descrição -->
                             <div>
                                 <h3 class="text-lg font-medium text-white dark:text-black mb-3">Descrição</h3>
-                                <p class="text-gray-300 dark:text-gray-700">
+                                <p class="text-sm text-gray-400 dark:text-gray-600">
                                     {{ $muda->descricao }}
                                 </p>
                             </div>
@@ -139,7 +139,7 @@
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
                                             <p class="text-sm text-gray-400 dark:text-gray-600">Endereço</p>
-                                            <p class="text-gray-300 dark:text-gray-700">
+                                            <p class="text-sm text-emerald-400 dark:text-emerald-600">
                                                 {{ $muda->logradouro }}, {{ $muda->numero }}
                                                 @if($muda->complemento)
                                                     , {{ $muda->complemento }}
@@ -149,17 +149,17 @@
 
                                         <div>
                                             <p class="text-sm text-gray-400 dark:text-gray-600">Bairro</p>
-                                            <p class="text-gray-300 dark:text-gray-700">{{ $muda->bairro }}</p>
+                                            <p class="text-sm text-emerald-400 dark:text-emerald-600">{{ $muda->bairro }}</p>
                                         </div>
 
                                         <div>
                                             <p class="text-sm text-gray-400 dark:text-gray-600">Cidade/UF</p>
-                                            <p class="text-gray-300 dark:text-gray-700">{{ $muda->cidade }}/{{ $muda->uf }}</p>
+                                            <p class="text-sm text-emerald-400 dark:text-emerald-600">{{ $muda->cidade }}/{{ $muda->uf }}</p>
                                         </div>
 
                                         <div>
                                             <p class="text-sm text-gray-400 dark:text-gray-600">CEP</p>
-                                            <p class="text-gray-300 dark:text-gray-700">
+                                            <p class="text-sm text-emerald-400 dark:text-emerald-600">
                                                 {{ substr($muda->cep, 0, 5) }}-{{ substr($muda->cep, 5, 3) }}
                                             </p>
                                         </div>
@@ -169,15 +169,15 @@
 
                             <!-- Doador -->
                             <div>
-                                <h3 class="text-lg font-medium text-white dark:text-black mb-3">Doador</h3>
+                                <h3 class="text-lg font-medium text-white dark:text-black mb-3">Dono</h3>
                                 <div class="flex items-center">
                                     <div class="h-10 w-10 rounded-full bg-emerald-500 flex items-center justify-center">
-                                        <span class="text-white font-medium text-lg">
+                                        <span class="text-white font-medium text-lg" >
                                             {{ strtoupper(substr($muda->user->name ?? 'Anônimo', 0, 1)) }}
                                         </span>
                                     </div>
                                     <div class="ml-3">
-                                        <p class="text-gray-300 dark:text-gray-700 font-medium">
+                                        <p class=" text-gray-400 dark:text-gray-600 font-medium">
                                             {{ $muda->user->name ?? 'Usuário Anônimo' }}
                                         </p>
                                     </div>
@@ -234,26 +234,15 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                         </svg>
                     </div>
-                    <h3 class="mb-2 text-lg font-semibold text-white dark:text-black">Excluir "{{ $muda->nome }}"?</h3>
+                    <h3 class="mb-2 text-lg font-semibold text-white dark:text-black">Desabilitar "{{ $muda->nome }}"?</h3>
                     <p class="text-gray-400 dark:text-gray-600">
-                        Tem certeza que deseja excluir esta muda? Esta ação não poderá ser desfeita e todos os dados relacionados serão permanentemente removidos.
+                        Essa muda Ainda poderá ser reabilitada no menu minhas mudas
                     </p>
-
-                    <!-- Informações adicionais -->
-                    <div class="mt-4 p-3 bg-red-900/20 dark:bg-red-100/50 rounded-lg">
-                        <div class="flex items-center justify-center text-white dark:text-red-800">
-                            <svg class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                            </svg>
-                            <span class="text-sm font-medium">Esta ação não pode ser revertida</span>
-                        </div>
-                    </div>
                 </div>
-
                 <!-- Footer com botões de ação -->
                 <div class="flex justify-end items-center gap-x-2 py-3 px-4 sm:px-5 border-t border-neutral-700 dark:border-neutral-300">
                     <button type="button"
-                            class="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-lg border border-neutral-600 dark:border-neutral-400 font-medium text-white dark:text-gray-800 hover:bg-neutral-700 dark:hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all text-sm"
+                            class="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-lg border border-neutral-600 dark:border-neutral-400 font-medium text-white dark:text-black hover:bg-neutral-700 dark:hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all text-sm"
                             data-hs-overlay="#confirmDeleteModal">
                         Cancelar
                     </button>

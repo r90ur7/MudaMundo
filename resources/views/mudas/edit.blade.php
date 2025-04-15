@@ -34,7 +34,7 @@
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <!-- Nome da Muda -->
                             <div class="col-span-full">
-                                <label for="nome" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="nome" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Nome da Muda <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="nome" id="nome" value="{{ old('nome', $muda->nome) }}"
@@ -43,7 +43,7 @@
                             </div>
                             <!-- Tipo da Muda -->
                             <div>
-                                <label for="tipo_id" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="tipo_id" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Tipo <span class="text-red-500">*</span>
                                 </label>
                                 <select name="tipo_id" id="tipo_id"
@@ -59,7 +59,7 @@
                             </div>
                             <!-- Espécie -->
                             <div>
-                                <label for="especie_id" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="especie_id" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Espécie <span class="text-red-500">*</span>
                                 </label>
                                 <select name="especie_id" id="especie_id"
@@ -75,7 +75,7 @@
                             </div>
                             <!-- Status -->
                             <div>
-                                <label for="status_id" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="status_id" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Status <span class="text-red-500">*</span>
                                 </label>
                                 <select name="status_id" id="status_id"
@@ -91,7 +91,7 @@
                             </div>
                             <!-- Quantidade -->
                             <div>
-                                <label for="quantidade" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="quantidade" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Quantidade
                                 </label>
                                 <input type="number" name="quantidade" id="quantidade" value="{{ old('quantidade', $muda->quantidade) }}" min="1"
@@ -99,7 +99,7 @@
                             </div>
                             <!-- Descrição -->
                             <div class="col-span-full">
-                                <label for="descricao" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="descricao" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Descrição <span class="text-red-500">*</span>
                                 </label>
                                 <textarea name="descricao" id="descricao" rows="4"
@@ -160,7 +160,7 @@
                                     <!-- Informações sobre formatos aceitos -->
                                     <div class="flex items-center p-3 bg-gray-700/20 dark:bg-gray-300/20 rounded-lg text-sm text-gray-400 dark:text-gray-500">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                         <span>Formatos aceitos: JPG, PNG, GIF - Tamanho máximo: 2MB</span>
                                     </div>
@@ -171,7 +171,7 @@
                             </div>
                             <!-- CEP -->
                             <div>
-                                <label for="cep" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="cep" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     CEP <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="cep" id="cep" value="{{ old('cep', $muda->cep) }}"
@@ -180,7 +180,7 @@
                             </div>
                             <!-- Logradouro -->
                             <div class="col-span-full md:col-span-1">
-                                <label for="logradouro" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="logradouro" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Logradouro <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="logradouro" id="logradouro" value="{{ old('logradouro', $muda->logradouro) }}"
@@ -189,7 +189,7 @@
                             </div>
                             <!-- Número -->
                             <div>
-                                <label for="numero" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="numero" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Número <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="numero" id="numero" value="{{ old('numero', $muda->numero) }}"
@@ -198,7 +198,7 @@
                             </div>
                             <!-- Complemento -->
                             <div>
-                                <label for="complemento" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="complemento" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Complemento
                                 </label>
                                 <input type="text" name="complemento" id="complemento" value="{{ old('complemento', $muda->complemento) }}"
@@ -206,7 +206,7 @@
                             </div>
                             <!-- Bairro -->
                             <div>
-                                <label for="bairro" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="bairro" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Bairro <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="bairro" id="bairro" value="{{ old('bairro', $muda->bairro) }}"
@@ -215,7 +215,7 @@
                             </div>
                             <!-- Cidade -->
                             <div>
-                                <label for="cidade" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="cidade" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     Cidade <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" name="cidade" id="cidade" value="{{ old('cidade', $muda->cidade) }}"
@@ -224,7 +224,7 @@
                             </div>
                             <!-- UF -->
                             <div>
-                                <label for="uf" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                <label for="uf" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
                                     UF <span class="text-red-500">*</span>
                                 </label>
                                 <select name="uf" id="uf"
@@ -240,7 +240,7 @@
                         <!-- Botões -->
                         <div class="flex justify-end space-x-3 pt-4">
                             <a href="{{ route('dashboard') }}"
-                                class="px-6 py-2 border border-neutral-600 dark:border-neutral-400 text-neutral-300 dark:text-neutral-700 rounded-lg hover:bg-neutral-600 hover:text-white dark:hover:bg-neutral-400 dark:hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500 transition-colors">
+                                class="px-6 py-2 border border-neutral-600 dark:border-neutral-400 text-white dark:text-neutral-700 rounded-lg hover:bg-neutral-600 hover:text-white dark:hover:bg-neutral-400 dark:hover:text-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-neutral-500 transition-colors">
                                 Cancelar
                             </a>
                             <button type="submit"

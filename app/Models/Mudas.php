@@ -24,6 +24,7 @@ class Mudas extends Model
         'cep',
         'logradouro',
         'numero',
+        'complemento',
         'bairro',
         'cidade',
         'uf',
