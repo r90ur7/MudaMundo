@@ -39,9 +39,9 @@ Route::middleware('auth')->group(function () {
         Route::get('create', 'create')->name('create');
         Route::get('show/{muda}', 'show')->name('show');
         Route::post('store', 'store')->name('store');
-        Route::get('{id}/edit', 'edit')->name('edit');
-        Route::put('{id}/update', 'update')->name('update');
-        Route::delete('{id}/destroy', 'destroy')->name('destroy');
+        Route::get('{muda}/edit', 'edit')->name('edit');
+        Route::put('{muda}/update', 'update')->name('update');
+        Route::delete('{muda}/destroy', 'destroy')->name('destroy');
     });
 });
 

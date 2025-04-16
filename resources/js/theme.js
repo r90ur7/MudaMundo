@@ -1,4 +1,5 @@
 const HSThemeAppearance = {
+    // inicialize the theme appearance
     init() {
         const defaultTheme = 'light';
         let theme = localStorage.getItem('hs_theme') || defaultTheme;
@@ -9,7 +10,6 @@ const HSThemeAppearance = {
             this.setAppearance(theme);
         }
 
-        // Adicionar listeners para os botões de tema
         document.addEventListener('click', (e) => {
             const element = e.target.closest('[data-hs-theme-click-value]');
             if (!element) return;

@@ -4,12 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ config('app.name', 'MudaMundo') }}</title>
-
-    <!-- Meta Tags -->
     <meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="description" content="Crafted for agencies and studios specializing in web design and development.">
 
-    <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -62,7 +59,6 @@
                     </div>
                 </div>
 
-                <!-- Links Rápidos -->
                 <div class="grid grid-cols-2 gap-8 lg:col-span-2 lg:grid-cols-3">
                     <div>
                         <h3 class="font-bold text-white dark:text-neutral-900">Navegação</h3>
@@ -129,7 +125,6 @@
     <script defer src="https://cdn.jsdelivr.net/npm/preline/dist/index.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
 
-    <!-- Scripts personalizados das páginas -->
     @stack('scripts')
 </body>
 </html>
