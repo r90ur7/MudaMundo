@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Mudas;
 use App\Models\Tipo;
 use App\Models\MudaStatus;
+use App\Models\Especie;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -84,11 +85,12 @@ class MudasController extends Controller
      */
     public function store(Request $request)
     {
+        // Validar os dados do formulário
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
-            'tipo_id' => 'required|exists:tipos,id',
-            'especie_id' => 'required|exists:especies,id',
+            'tipo_nome' => 'required|string|max:255',
+            'especie_nome' => 'required|string|max:255',
             'quantidade' => 'nullable|integer|min:1',
             'cep' => 'required|string|size:8',
             'logradouro' => 'required|string|max:150',
@@ -104,22 +106,34 @@ class MudasController extends Controller
         // Adiciona o ID do usuário autenticado
         $validated['user_id'] = auth()->id();
 
+        // Processar o tipo (encontrar existente ou criar novo)
+        $tipo = Tipo::firstOrCreate(
+            ['nome' => $validated['tipo_nome']],
+            ['descricao' => 'Tipo adicionado pelo usuário']
+        );
+
+        // Processar a espécie (encontrar existente ou criar nova)
+        $especie = Especie::firstOrCreate(
+            ['nome' => $validated['especie_nome']],
+            ['descricao' => 'Espécie adicionada pelo usuário']
+        );
+
+        // Define o tipo e espécie IDs
+        $validated['tipos_id'] = $tipo->id;
+        $validated['especie_id'] = $especie->id;
+
         // Define o status como "Disponível" (ID 1)
-        $statusDisponivel = MudaStatus::where('nome', 'Disponível')->first();
-        $validated['muda_status_id'] = $statusDisponivel ? $statusDisponivel->id : 1;
+        $validated['muda_status_id'] = 1;
 
-        // Mapeia campos do formulário para os campos do banco de dados
-        $validated['tipos_id'] = $validated['tipo_id'];
-
-        // Remove campos que não existem no modelo e o campo setAsDefault
-        unset($validated['tipo_id'], $validated['setAsDefault']);
+        // Remove campos extras que não existem na tabela
+        unset($validated['tipo_nome'], $validated['especie_nome'], $validated['setAsDefault']);
 
         // Processar o upload da foto, se houver
         if ($request->hasFile('foto')) {
             $path = $this->processImageUpload($request->file('foto'));
             if ($path) {
                 $validated['foto_url'] = $path;
-                Log::info('Imagem salva com sucesso em: ' . $path);
+                Log::info('Imagem enviada com sucesso para: ' . $path);
             } else {
                 return back()->withInput()->withErrors(['foto' => 'Erro ao processar a imagem. Por favor, tente novamente.']);
             }
@@ -260,10 +274,12 @@ class MudasController extends Controller
         return null;
     }
 
-    public function getFileImage($filename)
+    public function getFileImage(Request $req)
     {
-        $path = storage_path('app/public/mudas/' . $filename);
+        $imageUrl = $req->query('filename'); // Obtém o nome do arquivo da URL
+        // Verifica se o arquivo existe no diretório de armazenamento
 
+        $path = storage_path('app/public/mudas/' . $imageUrl);
         if (!file_exists($path)) {
             abort(404);
         }
@@ -271,6 +287,9 @@ class MudasController extends Controller
         $file = file_get_contents($path);
         $type = mime_content_type($path);
 
+        // dd($imageUrl, $file, $type);
+
+        // Retorna o arquivo como resposta
         return response($file, 200)->header('Content-Type', $type);
     }
 }

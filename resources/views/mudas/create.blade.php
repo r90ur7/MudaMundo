@@ -47,16 +47,17 @@
                                 <label for="tipo_id" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
                                     Tipo <span class="text-red-500">*</span>
                                 </label>
-                                <select name="tipo_id" id="tipo_id"
+                                <input type="text" name="tipo_nome" id="tipo_nome"
                                     class="w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500"
-                                    required>
-                                    <option value="">Selecione um tipo</option>
+                                    required
+                                    placeholder="Ex: Árvore, Arbusto, Flor..."
+                                    list="tipos-sugestoes">
+                                <datalist id="tipos-sugestoes">
                                     @foreach($tipos as $tipo)
-                                        <option value="{{ $tipo->id }}" {{ old('tipo_id') == $tipo->id ? 'selected' : '' }}>
-                                            {{ $tipo->nome }}
-                                        </option>
+                                        <option value="{{ $tipo->nome }}">
                                     @endforeach
-                                </select>
+                                </datalist>
+                                <input type="hidden" name="tipo_id" id="tipo_id" value="">
                             </div>
 
                             <!-- Espécie -->
@@ -64,16 +65,17 @@
                                 <label for="especie_id" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
                                     Espécie <span class="text-red-500">*</span>
                                 </label>
-                                <select name="especie_id" id="especie_id"
+                                <input type="text" name="especie_nome" id="especie_nome"
                                     class="w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500"
-                                    required>
-                                    <option value="">Selecione uma espécie</option>
+                                    required
+                                    placeholder="Ex: Ipê Amarelo, Pau Brasil, Orquídea..."
+                                    list="especies-sugestoes">
+                                <datalist id="especies-sugestoes">
                                     @foreach(App\Models\Especie::orderBy('nome')->get() as $especie)
-                                        <option value="{{ $especie->id }}" {{ old('especie_id') == $especie->id ? 'selected' : '' }}>
-                                            {{ $especie->nome }}
-                                        </option>
+                                        <option value="{{ $especie->nome }}">
                                     @endforeach
-                                </select>
+                                </datalist>
+                                <input type="hidden" name="especie_id" id="especie_id" value="">
                             </div>
 
                             <!-- Nota informativa sobre o status -->
@@ -189,7 +191,7 @@
                                         Último Endereço Usado
                                     </button>
                                     <div class="flex items-center ml-auto">
-                                        <input type="checkbox" id="setAsDefault" name="setAsDefault" class="rounded border-gray-400 text-emerald-600 focus:ring-emerald-500">
+                                        <input type="checkbox" id="setAsDefault" name="setAsDefault" value="1" class="rounded border-gray-400 text-emerald-600 focus:ring-emerald-500">
                                         <label for="setAsDefault" class="ml-2 text-sm text-gray-300 dark:text-neutral-700">
                                             Salvar como endereço padrão
                                         </label>
@@ -680,6 +682,22 @@
 
                 return document.querySelector(selector);
             };
+
+            // Configuração para campos de tipo e espécie
+            const tipoNomeInput = document.getElementById('tipo_nome');
+            const tipoIdInput = document.getElementById('tipo_id');
+            const especieNomeInput = document.getElementById('especie_nome');
+            const especieIdInput = document.getElementById('especie_id');
+
+            // Manipular o envio do formulário para garantir que os campos tipo_id e especie_id sejam enviados
+            document.querySelector('form').addEventListener('submit', function(event) {
+                // Tipo e espécie são sempre válidos, mesmo que sejam novos
+                // O controlador vai criar novos registros se necessário
+
+                console.log('Formulário sendo enviado');
+                console.log('Tipo nome:', tipoNomeInput.value);
+                console.log('Espécie nome:', especieNomeInput.value);
+            });
         });
     </script>
     @endpush

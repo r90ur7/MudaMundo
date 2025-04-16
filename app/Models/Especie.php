@@ -6,5 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 
 class Especie extends Model
 {
-    //
+    // Adicionando campos preenchíveis
+    protected $fillable = [
+        'nome',
+        'descricao'
+    ];
 }

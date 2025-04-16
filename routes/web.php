@@ -7,9 +7,11 @@ use App\Http\Controllers\MudasController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 
-// Does not need auth
+// não precisa de autenticação
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('mudas/index', [MudasController::class, 'index'])->name('mudas.index');
+
+//rota para imagens
 Route::get('mudas/get-file-image', [MudasController::class, 'getFileImage'])->name('mudas.getFileImage');
 
 // Needs auth
@@ -32,6 +34,7 @@ Route::middleware('auth')->group(function () {
         Route::get('last-address',  'getLastUsedAddress')->name('getLastUsedAddress');
     });
 
+    // Mudas
     Route::controller(MudasController::class)->prefix('mudas')->name('mudas.')->group(function () {
         Route::get('create', 'create')->name('create');
         Route::get('show/{id}', 'show')->name('show');
