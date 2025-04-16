@@ -37,7 +37,7 @@ Route::middleware('auth')->group(function () {
     // Mudas
     Route::controller(MudasController::class)->prefix('mudas')->name('mudas.')->group(function () {
         Route::get('create', 'create')->name('create');
-        Route::get('show/{id}', 'show')->name('show');
+        Route::get('show/{muda}', 'show')->name('show');
         Route::post('store', 'store')->name('store');
         Route::get('{id}/edit', 'edit')->name('edit');
         Route::put('{id}/update', 'update')->name('update');
