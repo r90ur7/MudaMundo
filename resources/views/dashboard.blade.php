@@ -67,7 +67,7 @@
                                             $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
                                         @endphp
                                         <img class="w-full h-32 object-cover rounded-t-lg"
-                                            src="{{ route('imagem.muda', ['filename' => $filename]) }}"
+                                            src="{{ route('mudas.getFileImage', ['filename' => $filename]) }}"
                                             alt="{{ $muda->nome }}">
                                     @else
                                         <div class="w-full h-32 bg-neutral-600/50 dark:bg-neutral-400/50 flex items-center justify-center rounded-t-lg">
@@ -272,7 +272,7 @@
                                                 $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
                                             @endphp
                                             <img class="w-full h-52 object-cover rounded-t-xl"
-                                                src="{{ route('imagem.muda', ['filename' => $filename]) }}"
+                                                src="{{ route('mudas.getFileImage', ['filename' => $filename]) }}"
                                                 alt="{{ $muda->nome }}">
                                         @else
                                             <div class="w-full h-52 bg-neutral-600/50 dark:bg-neutral-400/50 flex items-center justify-center rounded-t-xl">

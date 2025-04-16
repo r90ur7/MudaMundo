@@ -65,7 +65,7 @@
                                     @php
                                         $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
                                     @endphp
-                                    <img src="{{ route('imagem.muda', ['filename' => $filename]) }}"
+                                    <img src="{{ route('mudas.getFileImage', ['filename' => $filename]) }}"
                                         alt="{{ $muda->nome }}"
                                         class="w-full h-auto rounded-lg object-cover">
                                 @else

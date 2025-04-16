@@ -126,7 +126,7 @@
                                             @php
                                                 $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
                                             @endphp
-                                            <img id="imagePreview" class="absolute inset-0 w-full h-full object-cover" alt="Preview da imagem" src="{{ route('imagem.muda', ['filename' => $filename]) }}">
+                                            <img id="imagePreview" class="absolute inset-0 w-full h-full object-cover" alt="Preview da imagem" src="{{ route('mudas.getFileImage', ['filename' => $filename]) }}">
                                         @else
                                             <img id="imagePreview" class="absolute inset-0 w-full h-full object-cover hidden" alt="Preview da imagem" src="">
                                         @endif

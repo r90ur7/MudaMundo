@@ -83,7 +83,7 @@
                                     @endphp
                                     <img
                                         class="w-full h-full object-cover transform transition-transform duration-500 group-hover:scale-105"
-                                        src="{{ route('imagem.muda', ['filename' => $filename]) }}"
+                                        src="{{ route('mudas.getFileImage', ['filename' => $filename]) }}"
                                         alt="{{ $muda->nome }}">
                                 @else
                                     <img
