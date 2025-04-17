@@ -82,20 +82,10 @@
 
                     <!-- Aba Mudas -->
                     <div x-show="activeTab === 'mudas'" class="space-y-6">
-                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
-                            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Minhas Mudas</h3>
-
-                            <div class="space-y-4">
-                                <p class="text-gray-600 dark:text-gray-400 italic">Você ainda não cadastrou nenhuma muda.</p>
-
-                                <div class="mt-4">
-                                    <a href="{{ route('mudas.create') }}" class="inline-flex items-center px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition">
-                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
-                                        </svg>
-                                        Cadastrar Nova Muda
-                                    </a>
-                                </div>
+                        <div class="flex flex-col md:flex-row">
+                            @include('profile.partials.sidebar-filtros', ['tipos' => $tipos, 'estados' => $estados])
+                            <div class="flex-1" id="mudas-cards-container">
+                                @include('mudas.partials.cards', ['mudas' => $mudas])
                             </div>
                         </div>
                     </div>
@@ -160,4 +150,125 @@
             </div>
         </div>
     </div>
+
+    @push('scripts')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Drawer mobile
+        const openDrawerBtn = document.getElementById('openDrawerBtn');
+        const closeDrawerBtn = document.getElementById('closeDrawerBtn');
+        const drawer = document.getElementById('drawerFiltros');
+        if(openDrawerBtn && closeDrawerBtn && drawer) {
+            openDrawerBtn.addEventListener('click', function() {
+                drawer.classList.remove('hidden');
+            });
+            closeDrawerBtn.addEventListener('click', function() {
+                drawer.classList.add('hidden');
+            });
+            drawer.addEventListener('click', function(e) {
+                if(e.target === drawer) drawer.classList.add('hidden');
+            });
+        }
+
+        //filtros desktop
+        const form = document.getElementById('filtros-mudas-form');
+        const cardsContainer = document.getElementById('mudas-cards-container');
+        if(form && cardsContainer) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+                const params = new URLSearchParams(formData).toString();
+                fetch('{{ route('profile.mudas.filter') }}?' + params, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    cardsContainer.innerHTML = data.html;
+                    window.history.replaceState({}, '', '{{ route('profile.edit') }}?' + params);
+                });
+            });
+        }
+
+        // filtros mobile
+        const formMobile = document.getElementById('filtros-mudas-form-mobile');
+        if(formMobile && cardsContainer) {
+            formMobile.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const formData = new FormData(formMobile);
+                const params = new URLSearchParams(formData).toString();
+                fetch('{{ route('profile.mudas.filter') }}?' + params, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    cardsContainer.innerHTML = data.html;
+                    window.history.replaceState({}, '', '{{ route('profile.edit') }}?' + params);
+                    drawer.classList.add('hidden');
+                });
+            });
+        }
+
+        // Filtros por tipo de muda (Todas, Favoritas, Cadastradas, Doadas)
+        const filterRadios = document.querySelectorAll('input[name="filter-type"]');
+        filterRadios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const filterType = this.value;
+                const url = new URL('{{ route('profile.mudas.filter') }}', window.location.origin);
+                url.searchParams.append('filter_type', filterType);
+
+                // Adicionar outros parâmetros de filtro existentes
+                if (form) {
+                    const formData = new FormData(form);
+                    for (const [key, value] of formData.entries()) {
+                        if (value) url.searchParams.append(key, value);
+                    }
+                }
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    cardsContainer.innerHTML = data.html;
+                    // Atualizar URL sem recarregar a página
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('filter_type', filterType);
+                    window.history.replaceState({}, '', currentUrl);
+                });
+            });
+        });
+
+        // Versão mobile dos filtros por tipo de muda
+        const filterRadiosMobile = document.querySelectorAll('input[name="filter-type-mobile"]');
+        filterRadiosMobile.forEach(radio => {
+            radio.addEventListener('change', function() {
+                const filterType = this.value;
+                const url = new URL('{{ route('profile.mudas.filter') }}', window.location.origin);
+                url.searchParams.append('filter_type', filterType);
+
+                // Adicionar outros parâmetros de filtro existentes do formulário mobile
+                if (formMobile) {
+                    const formData = new FormData(formMobile);
+                    for (const [key, value] of formData.entries()) {
+                        if (value) url.searchParams.append(key, value);
+                    }
+                }
+
+                fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    cardsContainer.innerHTML = data.html;
+                    // Atualizar URL sem recarregar a página
+                    const currentUrl = new URL(window.location.href);
+                    currentUrl.searchParams.set('filter_type', filterType);
+                    window.history.replaceState({}, '', currentUrl);
+                    drawer.classList.add('hidden');
+                });
+            });
+        });
+    });
+    </script>
+    @endpush
 </x-app-layout>

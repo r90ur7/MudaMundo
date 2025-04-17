@@ -12,7 +12,6 @@
 
     <div class="py-6 bg-neutral-800/40 dark:bg-neutral-200/40">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-            <!-- Botão para Criar Nova Muda -->
             <div class="flex justify-end">
                 <a href="{{ route('mudas.create') }}"
                    class="inline-flex items-center px-6 py-3 bg-gradient-to-r from-emerald-500 to-emerald-700 text-white font-medium rounded-lg shadow-lg hover:from-emerald-600 hover:to-emerald-800 focus:outline-none focus:ring-4 focus:ring-emerald-500/50 transition-all duration-300">

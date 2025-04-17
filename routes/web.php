@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
         Route::get('', 'edit')->name('edit');
         Route::patch('', 'update')->name('update');
         Route::delete('', 'destroy')->name('destroy');
+        Route::get('mudas/filter', 'minhasMudas')->name('mudas.filter');
     });
 
     // User
