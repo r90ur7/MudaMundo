@@ -55,15 +55,117 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
-        $request->user()->fill($request->validated());
+        $validated = $request->validated();
+        $user = $request->user();
 
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
+        if ($request->hasFile('foto')) {
+            $path = $this->processImageUpload($request->file('foto'));
+            if ($path) {
+                $validated['foto_url'] = $path;
+            }
+        }
+        unset($validated['foto']);
+
+        $user->fill($validated);
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
         }
 
-        $request->user()->save();
+        $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
+    }
+
+    /**
+     * Atualiza apenas a foto de perfil do usuário.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function updatePhoto(Request $request): RedirectResponse
+    {
+        // Validação do upload
+        try {
+            $request->validate([
+                'foto' => ['required', 'image', 'max:51200'], // 50MB
+            ], [
+                'foto.required' => 'Por favor, selecione uma imagem para enviar.',
+                'foto.image' => 'O arquivo selecionado não é uma imagem válida.',
+                'foto.max' => 'A imagem não pode ultrapassar 50 MB.',
+                'foto.uploaded' => 'Falha ao enviar a imagem. Verifique sua conexão e tente novamente.',
+            ]);
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            return back()->withErrors($e->validator->errors()->getMessages());
+        }
+
+        $user = $request->user();
+        $file = $request->file('foto');
+        if (! $file->isValid()) {
+            $code = $file->getError();
+            $msg = match ($code) {
+                UPLOAD_ERR_INI_SIZE   => 'O arquivo excede o tamanho máximo permitido pelo servidor.',
+                UPLOAD_ERR_FORM_SIZE  => 'O arquivo excede o tamanho máximo definido no formulário.',
+                UPLOAD_ERR_PARTIAL    => 'O upload foi parcial. Tente novamente.',
+                UPLOAD_ERR_NO_FILE    => 'Nenhum arquivo foi enviado.',
+                UPLOAD_ERR_NO_TMP_DIR => 'Pasta temporária ausente.',
+                UPLOAD_ERR_CANT_WRITE => 'Falha ao gravar o arquivo em disco.',
+                UPLOAD_ERR_EXTENSION  => 'Upload interrompido por extensão.',
+                default               => 'Erro desconhecido no upload de arquivo.',
+            };
+            return back()->withErrors(['foto' => $msg]);
+        }
+
+        try {
+            $path = $this->processImageUpload($file);
+            if ($path) {
+                $user->foto_url = $path;
+                $user->save();
+                return redirect()->route('profile.edit')->with('status', 'profile-photo-updated');
+            }
+            return back()->withErrors(['foto' => 'Não foi possível salvar a imagem. Tente novamente.']);
+        } catch (\Exception $e) {
+            return back()->withErrors(['foto' => 'Erro ao processar imagem: ' . $e->getMessage()]);
+        }
+    }
+
+    /**
+     * Processa o upload de uma imagem de perfil e retorna o caminho relativo.
+     *
+     * @param \Illuminate\Http\UploadedFile $file
+     * @return string|null
+     */
+    private function processImageUpload($file)
+    {
+        if ($file && $file->isValid()) {
+            try {
+                // Salva a imagem no diretório storage/app/public/profile
+                $newFilename = 'profile_' . auth()->id() . '_' . time() . '.' . $file->getClientOriginalExtension();
+
+                return $file->storeAs('profile', $newFilename, 'public');
+
+            } catch (\Exception $e) {
+                \Illuminate\Support\Facades\Log::error('Erro ao processar imagem de perfil: ' . $e->getMessage());
+                return null;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Exibe a foto de perfil do usuário.
+     */
+    public function getPhoto(Request $request)
+    {
+        $filename = $request->query('filename');
+        $path = storage_path('app/public/' . $filename);
+        if (!file_exists($path)) {
+            abort(404);
+        }
+        $content = file_get_contents($path);
+        $mime = mime_content_type($path);
+        return response($content, 200)->header('Content-Type', $mime);
     }
 
     /**
@@ -99,7 +201,6 @@ class ProfileController extends Controller
         $filterType = $request->get('filter_type', 'all');
 
         if ($filterType === 'favoritas') {
-            // Se o filtro for 'favoritas', busca as mudas que o usuário favoritou
             $query = \App\Models\Mudas::with(['tipo', 'status'])
                 ->whereHas('favoritos', function ($query) use ($user) {
                     $query->where('user_id', $user->id);
@@ -125,7 +226,6 @@ class ProfileController extends Controller
         if ($request->filled('location')) {
             $query->where('uf', $request->location);
         }
-        // Se o campo de pesquisa estiver preenchido, aplicar filtro de pesquisa
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -135,8 +235,6 @@ class ProfileController extends Controller
         }
 
         $mudas = $query->latest()->paginate(12)->appends($request->query());
-
-        // Retorna apenas o HTML dos cards
         return response()->json([
             'html' => view('mudas.partials.cards', compact('mudas'))->render()
         ]);

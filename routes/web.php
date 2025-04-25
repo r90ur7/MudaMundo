@@ -7,11 +7,9 @@ use App\Http\Controllers\MudasController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 
-// não precisa de autenticação
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('mudas/index', [MudasController::class, 'index'])->name('mudas.index');
 
-//rota para imagens
 Route::get('mudas/get-file-image', [MudasController::class, 'getFileImage'])->name('mudas.getFileImage');
 
 // Needs auth
@@ -27,6 +25,8 @@ Route::middleware('auth')->group(function () {
         Route::patch('', 'update')->name('update');
         Route::delete('', 'destroy')->name('destroy');
         Route::get('mudas/filter', 'minhasMudas')->name('mudas.filter');
+        Route::post('update-photo', 'updatePhoto')->name('update.photo');
+        Route::get('photo', 'getPhoto')->name('photo');
     });
 
     // User

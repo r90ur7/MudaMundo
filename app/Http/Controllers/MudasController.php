@@ -21,7 +21,7 @@ class MudasController extends Controller
     public function index(Request $request)
     {
         try {
-            // Carregar dados dos filtros
+
             $tipos = Tipo::orderBy('nome')->get();
             $status = MudaStatus::orderBy('nome')->get();
             $estados = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
@@ -31,7 +31,7 @@ class MudasController extends Controller
                 ->with(['tipo', 'status'])
                 ->where('disabled_at', null);
 
-            // Aplicar filtros
+
             if ($request->filled('tipo')) {
                 $query->where('tipo_id', $request->tipo);
             }
@@ -52,15 +52,15 @@ class MudasController extends Controller
                 });
             }
 
-            // Executar a query com paginação
+
             $mudas = $query->latest()->paginate(12)->appends($request->query());
 
-            // Debug para verificar as variáveis
+
             if (!isset($tipos)) {
                 Log::error('Variável $tipos não está definida');
             }
 
-            // Retornar a view com todos os dados necessários
+
             return view('dashboard', compact('mudas', 'tipos', 'status', 'estados'));
 
         } catch (\Exception $e) {
@@ -85,7 +85,6 @@ class MudasController extends Controller
      */
     public function store(Request $request)
     {
-        // Validar os dados do formulário
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
@@ -103,32 +102,24 @@ class MudasController extends Controller
             'setAsDefault' => 'nullable|boolean'
         ]);
 
-        // Adiciona o ID do usuário autenticado
         $validated['user_id'] = auth()->id();
 
-        // Processar o tipo (encontrar existente ou criar novo)
         $tipo = Tipo::firstOrCreate(
             ['nome' => $validated['tipo_nome']],
             ['descricao' => 'Tipo adicionado pelo usuário']
         );
-
-        // Processar a espécie (encontrar existente ou criar nova)
         $especie = Especie::firstOrCreate(
             ['nome' => $validated['especie_nome']],
             ['descricao' => 'Espécie adicionada pelo usuário']
         );
 
-        // Define o tipo e espécie IDs
         $validated['tipos_id'] = $tipo->id;
         $validated['especie_id'] = $especie->id;
 
-        // Define o status como "Disponível" (ID 1)
         $validated['muda_status_id'] = 1;
 
-        // Remove campos extras que não existem na tabela
         unset($validated['tipo_nome'], $validated['especie_nome'], $validated['setAsDefault']);
 
-        // Processar o upload da foto, se houver
         if ($request->hasFile('foto')) {
             $path = $this->processImageUpload($request->file('foto'));
             if ($path) {
@@ -139,7 +130,6 @@ class MudasController extends Controller
             }
         }
 
-        // Se o checkbox "Salvar como endereço padrão" estiver marcado, atualizar o endereço do usuário
         if ($request->has('setAsDefault') && $request->setAsDefault == '1') {
             $user = auth()->user();
 
@@ -196,8 +186,6 @@ class MudasController extends Controller
             'uf' => 'required|string|size:2',
             'foto' => 'nullable|image|max:2048'
         ]);
-
-        // Mapeia campos do formulário para os campos do banco de dados
         $validated['tipos_id'] = $validated['tipo_id'];
         $validated['muda_status_id'] = $validated['status_id'];
 
@@ -258,11 +246,9 @@ class MudasController extends Controller
     {
         if ($file && $file->isValid()) {
             try {
-                // Salva a imagem no diretório storage/app/public/mudas
                 $filename = $file->getClientOriginalName();
                 $newFilename = pathinfo($filename, PATHINFO_FILENAME) . '_' . time() . '.' . $file->getClientOriginalExtension();
 
-                // Salva o arquivo e retorna apenas o caminho relativo (sem 'storage/')
                 return $file->storeAs('mudas', $newFilename, 'public');
 
             } catch (\Exception $e) {
@@ -276,8 +262,7 @@ class MudasController extends Controller
 
     public function getFileImage(Request $req)
     {
-        $imageUrl = $req->query('filename'); // Obtém o nome do arquivo da URL
-        // Verifica se o arquivo existe no diretório de armazenamento
+        $imageUrl = $req->query('filename');
 
         $path = storage_path('app/public/mudas/' . $imageUrl);
         if (!file_exists($path)) {
@@ -289,7 +274,6 @@ class MudasController extends Controller
 
         // dd($imageUrl, $file, $type);
 
-        // Retorna o arquivo como resposta
         return response($file, 200)->header('Content-Type', $type);
     }
 }

@@ -21,6 +21,15 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'descricao',
+        'foto_url',
+        'cep',
+        'logradouro',
+        'numero',
+        'complemento',
+        'bairro',
+        'cidade',
+        'uf',
     ];
 
     /**
@@ -44,6 +53,31 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    /**
+     * Acessor para obter a URL da foto de perfil formatada corretamente
+     *
+     * @return string
+     */
+    public function getProfilePhotoUrlAttribute()
+    {
+        if (!$this->foto_url) {
+            return null;
+        }
+
+        // Garantir que a URL comece com "profile/" e não "public/profile/"
+        $path = $this->foto_url;
+
+        // Se o caminho já começa com "public/", remova para evitar duplicação
+        if (strpos($path, 'public/') === 0) {
+            $path = substr($path, 7); // Remove "public/"
+        }
+
+        // Logar o que está sendo retornado
+        \Illuminate\Support\Facades\Log::info('URL da foto de perfil: storage/' . $path);
+
+        return $path;
     }
 
     public function favorites()
