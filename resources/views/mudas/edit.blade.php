@@ -73,6 +73,29 @@
                                     @endforeach
                                 </select>
                             </div>
+                            <!-- Tipo de Solicitação (Doação/Permuta) -->
+                            <div>
+                                <label for="modo_solicitacao" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">
+                                    Tipo de Solicitação <span class="text-red-500">*</span>
+                                </label>
+                                @php
+                                    $tipoSolicitacao = '';
+                                    if ($muda->tipo && $muda->tipo->nome) {
+                                        $tipoSolicitacao = strtolower($muda->tipo->nome) === 'permuta' ? 'permuta' : 'doacao';
+                                    }
+                                    $tipoSolicitacao = old('modo_solicitacao', $tipoSolicitacao);
+                                @endphp
+                                <select name="modo_solicitacao" id="modo_solicitacao"
+                                    class="w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500"
+                                    required>
+                                    <option value="doacao" {{ $tipoSolicitacao == 'doacao' ? 'selected' : '' }}>Doação</option>
+                                    <option value="permuta" {{ $tipoSolicitacao == 'permuta' ? 'selected' : '' }}>Permuta</option>
+                                </select>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                    <span class="font-medium text-emerald-500">Doação:</span> Você oferece a muda sem esperar nada em troca.<br>
+                                    <span class="font-medium text-emerald-500">Permuta:</span> Você troca a muda por outra de seu interesse.
+                                </p>
+                            </div>
                             <!-- Status -->
                             <div>
                                 <label for="status_id" class="block text-sm font-medium text-white dark:text-neutral-700 mb-1">

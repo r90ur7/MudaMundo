@@ -11,11 +11,8 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('solicitacao_status', function (Blueprint $table) {
-            $table->id();
-            $table->string('nome');
-            $table->text('descricao')->nullable();
-            $table->timestamps();
+        Schema::table('mudas', function (Blueprint $table) {
+            //
         });
     }
 
@@ -24,6 +21,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('solicitacao_status');
+        Schema::table('mudas', function (Blueprint $table) {
+            //
+        });
     }
 };

@@ -31,9 +31,34 @@
                                 {{ $muda->tipo->nome ?? 'Desconhecido' }}
                             </p>
                         </div>
-                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                            {{ $muda->status?->nome === 'Disponível' ? 'bg-green-100 text-green-800' : ($muda->status?->nome === 'Indisponível' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                            {{ $muda->status->nome ?? 'Indisponível' }}
+                        @php
+                            if($muda->donated_to && auth()->id() == $muda->donated_to) {
+                                // Receptor: status 'Reservada'
+                                $displayStatus = 'Reservada';
+                                $badgeClasses = 'bg-blue-100 text-blue-800';
+                            } elseif($muda->donated_at && auth()->id() == $muda->user_id) {
+                                // Doador original: status 'Doada'
+                                $displayStatus = 'Doada';
+                                $badgeClasses = 'bg-yellow-100 text-yellow-800';
+                            } else {
+                                // Status padrão pelo nome
+                                $displayStatus = $muda->status->nome ?? 'Indisponível';
+                                // Cores conforme status
+                                if($displayStatus === 'Reservada') {
+                                    $badgeClasses = 'bg-blue-100 text-blue-800';
+                                } elseif($displayStatus === 'Doada') {
+                                    $badgeClasses = 'bg-yellow-100 text-yellow-800';
+                                } elseif($displayStatus === 'Disponível') {
+                                    $badgeClasses = 'bg-green-100 text-green-800';
+                                } elseif($displayStatus === 'Indisponível') {
+                                    $badgeClasses = 'bg-red-100 text-red-800';
+                                } else {
+                                    $badgeClasses = 'bg-gray-100 text-gray-800';
+                                }
+                            }
+                        @endphp
+                        <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ $badgeClasses }}">
+                            {{ $displayStatus }}
                         </span>
                     </div>
                     <p class="mt-3 text-sm text-gray-500 dark:text-gray-400">

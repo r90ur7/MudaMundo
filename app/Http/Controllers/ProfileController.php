@@ -21,11 +21,41 @@ class ProfileController extends Controller
         $tipos = \App\Models\Tipo::orderBy('nome')->get();
         $estados = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
-        $query = \App\Models\Mudas::query()
-            ->with(['tipo', 'status'])
-            ->where('user_id', $user->id)
-            ->whereNull('disabled_at');
+        // Filtro de tipo de exibição (favoritas, cadastradas, transferidas, desabilitadas)
+        $filterType = $request->get('filter_type', 'all');
 
+        $query = \App\Models\Mudas::with(['tipo', 'status']);
+        switch ($filterType) {
+            case 'favoritas':
+                $query->whereHas('favoritos', fn($q) => $q->where('user_id', $user->id))
+                      ->whereNull('disabled_at');
+                break;
+            case 'cadastradas':
+                $query->where('user_id', $user->id)
+                      ->whereNull('donated_at')
+                      ->whereNull('disabled_at');
+                break;
+            case 'transferidas':
+                $query->whereNotNull('donated_at')
+                      ->where(fn($q) => $q->where('user_id', $user->id)
+                                             ->orWhere('donated_to', $user->id));
+                break;
+            case 'desabilitadas':
+                $query->whereNotNull('disabled_at')
+                      ->where('user_id', $user->id);
+                break;
+            default: // all
+                $query->whereNull('disabled_at')
+                      ->where(fn($q) =>
+                          $q->where(fn($q2) =>
+                              $q2->where('user_id', $user->id)
+                                  ->whereNull('donated_at')
+                          )
+                          ->orWhere('donated_to', $user->id)
+                      );
+        }
+
+        // Aplicar filtros adicionais de busca, tipo, localização
         if ($request->filled('tipo')) {
             $query->where('tipos_id', $request->tipo);
         }
@@ -199,26 +229,37 @@ class ProfileController extends Controller
         $estados = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
         $filterType = $request->get('filter_type', 'all');
-
-        if ($filterType === 'favoritas') {
-            $query = \App\Models\Mudas::with(['tipo', 'status'])
-                ->whereHas('favoritos', function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
-                })
-                ->whereNull('disabled_at');
-        } elseif ($filterType === 'cadastradas') {
-            $query = \App\Models\Mudas::with(['tipo', 'status'])
-                ->where('user_id', $user->id)
-                ->whereNull('disabled_at');
-        } elseif ($filterType === 'doadas') {
-            $query = \App\Models\Mudas::with(['tipo', 'status'])
-                ->where('user_id', $user->id)
-                ->where('status_id', 3)
-                ->whereNull('disabled_at');
-        } else {
-            $query = \App\Models\Mudas::with(['tipo', 'status'])
-                ->where('user_id', $user->id)
-                ->whereNull('disabled_at');
+        $query = \App\Models\Mudas::with(['tipo', 'status']);
+        switch ($filterType) {
+            case 'favoritas':
+                $query->whereHas('favoritos', fn($q) => $q->where('user_id', $user->id))
+                      ->whereNull('disabled_at');
+                break;
+            case 'cadastradas':
+                $query->where('user_id', $user->id)
+                      ->whereNull('donated_at')
+                      ->whereNull('disabled_at');
+                break;
+            case 'transferidas':
+                $query->whereNotNull('donated_at')
+                      ->where(fn($q) =>
+                          $q->where('user_id', $user->id)
+                            ->orWhere('donated_to', $user->id)
+                      );
+                break;
+            case 'desabilitadas':
+                $query->whereNotNull('disabled_at')
+                      ->where('user_id', $user->id);
+                break;
+            default: // all
+                $query->whereNull('disabled_at')
+                      ->where(fn($q) =>
+                          $q->where(fn($q2) =>
+                              $q2->where('user_id', $user->id)
+                                 ->whereNull('donated_at')
+                          )
+                          ->orWhere('donated_to', $user->id)
+                      );
         }
         if ($request->filled('tipo')) {
             $query->where('tipos_id', $request->tipo);

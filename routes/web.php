@@ -6,6 +6,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\MudasController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\SolicitacoesController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('mudas/index', [MudasController::class, 'index'])->name('mudas.index');
@@ -43,7 +44,16 @@ Route::middleware('auth')->group(function () {
         Route::get('{muda}/edit', 'edit')->name('edit');
         Route::put('{muda}/update', 'update')->name('update');
         Route::delete('{muda}/destroy', 'destroy')->name('destroy');
+        Route::patch('{muda}/release', 'release')->name('release');
     });
+
+    // Solicitações de mudas
+    Route::get('solicitacoes/checkout/{muda}', [SolicitacoesController::class, 'checkout'])->name('solicitacoes.checkout');
+    Route::post('solicitacoes', [SolicitacoesController::class, 'store'])->name('solicitacoes.store');
+    Route::get('solicitacoes/{solicitacao}', [SolicitacoesController::class, 'show'])->name('solicitacoes.show');
+    Route::patch('solicitacoes/{solicitacao}/accept', [SolicitacoesController::class, 'accept'])->name('solicitacoes.accept');
+    Route::patch('solicitacoes/{solicitacao}/reject', [SolicitacoesController::class, 'reject'])->name('solicitacoes.reject');
+    Route::patch('solicitacoes/{solicitacao}/negotiate', [SolicitacoesController::class, 'negotiate'])->name('solicitacoes.negotiate');
 });
 
 require __DIR__.'/auth.php';

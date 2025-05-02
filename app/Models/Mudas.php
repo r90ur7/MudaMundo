@@ -30,7 +30,19 @@ class Mudas extends Model
         'uf',
         'foto_url',
         'donated_at',
-        'disabled_at'
+        'donated_to',
+        'disabled_at',
+        'modo_solicitacao', // novo campo para doação ou permuta
+    ];
+
+    /**
+     * Cast attributes to proper types.
+     *
+     * @var array<string,string>
+     */
+    protected $casts = [
+        'donated_at' => 'datetime',
+        'donated_to' => 'integer',
     ];
 
     /**

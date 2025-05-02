@@ -226,7 +226,7 @@
                             @if(request()->has('location') && !empty(request()->get('location')))
                                 @php
                                     $queryParamsSemLocation = array_filter(request()->except(['location']));
-                                    $urlSemLocation = url()->current() . ($queryParamsSemLocation ? '?' . http_build_query($queryParamsSemLocation) : '');
+                                    $urlSemLocation = url()->current() . ($queryParamsSemLocation ? '?' . http-build_query($queryParamsSemLocation) : '');
                                 @endphp
                                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-emerald-700 text-white dark:bg-emerald-200 dark:text-emerald-900">
                                     Local: {{ request()->get('location') }}
@@ -303,9 +303,26 @@
                                                     {{ $muda->tipo->nome ?? 'Desconhecido' }}
                                                 </p>
                                             </div>
-                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                                                {{ $muda->status?->nome === 'Disponível' ? 'bg-green-100 text-green-800' : ($muda->status?->nome === 'Indisponível' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800') }}">
-                                                {{ $muda->status->nome ?? 'Indisponível' }}
+                                            @php
+                                                if($muda->donated_to && auth()->id() == $muda->donated_to) {
+                                                    $displayStatus = 'Reservada';
+                                                    $badgeClasses = 'bg-blue-100 text-blue-800';
+                                                } elseif($muda->donated_at && auth()->id() == $muda->user_id) {
+                                                    $displayStatus = 'Doada';
+                                                    $badgeClasses = 'bg-yellow-100 text-yellow-800';
+                                                } else {
+                                                    $displayStatus = $muda->status->nome ?? 'Indisponível';
+                                                    if($displayStatus === 'Disponível') {
+                                                        $badgeClasses = 'bg-green-100 text-green-800';
+                                                    } elseif($displayStatus === 'Indisponível') {
+                                                        $badgeClasses = 'bg-red-100 text-red-800';
+                                                    } else {
+                                                        $badgeClasses = 'bg-yellow-100 text-yellow-800';
+                                                    }
+                                                }
+                                            @endphp
+                                            <span class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium {{ $badgeClasses }}">
+                                                {{ $displayStatus }}
                                             </span>
                                         </div>
 

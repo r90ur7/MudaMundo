@@ -26,6 +26,8 @@ class DatabaseSeeder extends Seeder
             EspecieSeeder::class,
             MudaStatusSeeder::class,
             MudaSeeder::class,
+            SolicitacaoTiposSeeder::class,
+            SolicitacaoStatusSeeder::class,
         ]);
     }
 }

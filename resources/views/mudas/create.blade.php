@@ -78,6 +78,23 @@
                                 <input type="hidden" name="especie_id" id="especie_id" value="">
                             </div>
 
+                            <!-- Tipo de Solicitação (Doação/Permuta) -->
+                            <div>
+                                <label for="modo_solicitacao" class="block text-sm font-medium text-gray-300 dark:text-neutral-700 mb-1">
+                                    Tipo de Solicitação <span class="text-red-500">*</span>
+                                </label>
+                                <select name="modo_solicitacao" id="modo_solicitacao"
+                                    class="w-full rounded-md border-neutral-600 dark:border-neutral-400 bg-neutral-700 dark:bg-neutral-300 text-white dark:text-black focus:border-emerald-500 focus:ring-emerald-500"
+                                    required>
+                                    <option value="doacao" {{ old('modo_solicitacao') == 'doacao' ? 'selected' : '' }}>Doação</option>
+                                    <option value="permuta" {{ old('modo_solicitacao') == 'permuta' ? 'selected' : '' }}>Permuta</option>
+                                </select>
+                                <p class="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                    <span class="font-medium text-emerald-500">Doação:</span> Você oferece a muda sem esperar nada em troca.<br>
+                                    <span class="font-medium text-emerald-500">Permuta:</span> Você troca a muda por outra de seu interesse.
+                                </p>
+                            </div>
+
                             <!-- Nota informativa sobre o status -->
                             <div>
                                 <div class="flex items-center p-3 bg-emerald-100/20 dark:bg-emerald-100/30 rounded-lg">

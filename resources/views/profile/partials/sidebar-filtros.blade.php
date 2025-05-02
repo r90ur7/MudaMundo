@@ -4,25 +4,30 @@
         <h3 class="text-sm font-medium mb-3">Minhas Mudas</h3>
         <div class="space-y-2">
             <label class="flex items-center cursor-pointer">
-                <input type="radio" name="filter-type" value="all" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" checked>
+                <input type="radio" name="filter_type" value="all" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type','all') === 'all' ? 'checked' : '' }}>
                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Todas</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="radio" name="filter-type" value="favoritas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded">
+                <input type="radio" name="filter_type" value="favoritas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'favoritas' ? 'checked' : '' }}>
                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Favoritas</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="radio" name="filter-type" value="cadastradas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded">
+                <input type="radio" name="filter_type" value="cadastradas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'cadastradas' ? 'checked' : '' }}>
                 <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Cadastradas</span>
             </label>
             <label class="flex items-center cursor-pointer">
-                <input type="radio" name="filter-type" value="doadas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded">
-                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Doadas</span>
+                <input type="radio" name="filter_type" value="transferidas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'transferidas' ? 'checked' : '' }}>
+                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Transferidas</span>
+            </label>
+            <label class="flex items-center cursor-pointer">
+                <input type="radio" name="filter_type" value="desabilitadas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'desabilitadas' ? 'checked' : '' }}>
+                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Desabilitadas</span>
             </label>
         </div>
     </div>
 
     <form id="filtros-mudas-form" class="space-y-6">
+        <input type="hidden" name="filter_type" value="{{ request()->get('filter_type','all') }}">
         <div>
             <label for="search" class="block text-sm font-medium mb-1">Buscar</label>
             <input type="text" name="search" id="search" value="{{ is_array(request('search')) ? request('search')[0] : request('search') }}" class="block w-full rounded-md border-neutral-300 dark:border-neutral-600 focus:border-emerald-500 focus:ring-emerald-500" placeholder="Buscar por nome ou descrição...">
@@ -95,25 +100,30 @@
                 <h3 class="text-sm font-medium mb-3">Minhas Mudas</h3>
                 <div class="space-y-2">
                     <label class="flex items-center cursor-pointer">
-                        <input type="radio" name="filter-type-mobile" value="all" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" checked>
+                        <input type="radio" name="filter_type_mobile" value="all" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type','all') === 'all' ? 'checked' : '' }}>
                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Todas</span>
                     </label>
                     <label class="flex items-center cursor-pointer">
-                        <input type="radio" name="filter-type-mobile" value="favoritas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded">
+                        <input type="radio" name="filter_type_mobile" value="favoritas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'favoritas' ? 'checked' : '' }}>
                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Favoritas</span>
                     </label>
                     <label class="flex items-center cursor-pointer">
-                        <input type="radio" name="filter-type-mobile" value="cadastradas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded">
+                        <input type="radio" name="filter_type_mobile" value="cadastradas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'cadastradas' ? 'checked' : '' }}>
                         <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Cadastradas</span>
                     </label>
                     <label class="flex items-center cursor-pointer">
-                        <input type="radio" name="filter-type-mobile" value="doadas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded">
-                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Doadas</span>
+                        <input type="radio" name="filter_type_mobile" value="transferidas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'transferidas' ? 'checked' : '' }}>
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Transferidas</span>
+                    </label>
+                    <label class="flex items-center cursor-pointer">
+                        <input type="radio" name="filter_type_mobile" value="desabilitadas" class="h-4 w-4 text-emerald-600 focus:ring-emerald-500 border-gray-300 dark:border-neutral-600 rounded" {{ request()->get('filter_type') === 'desabilitadas' ? 'checked' : '' }}>
+                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Desabilitadas</span>
                     </label>
                 </div>
             </div>
 
             <form id="filtros-mudas-form-mobile" class="space-y-6 flex-1 overflow-y-auto">
+                <input type="hidden" name="filter_type" value="{{ request()->get('filter_type','all') }}">
                 <div>
                     <label for="tipo_mobile" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipo</label>
                     <select id="tipo_mobile" name="tipo" class="block w-full rounded-md border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-800 text-gray-900 dark:text-white focus:border-emerald-500 focus:ring-emerald-500">

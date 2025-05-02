@@ -6,6 +6,7 @@ use App\Models\Mudas;
 use App\Models\Tipo;
 use App\Models\MudaStatus;
 use App\Models\Especie;
+use App\Models\solicitacao_tipos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -85,11 +86,15 @@ class MudasController extends Controller
      */
     public function store(Request $request)
     {
+        // Log de depuração para verificar dados do request
+        Log::info('MudasController@store request data:', $request->all());
+
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
             'tipo_nome' => 'required|string|max:255',
             'especie_nome' => 'required|string|max:255',
+            'modo_solicitacao' => 'required|in:doacao,permuta',
             'quantidade' => 'nullable|integer|min:1',
             'cep' => 'required|string|size:8',
             'logradouro' => 'required|string|max:150',
@@ -102,12 +107,21 @@ class MudasController extends Controller
             'setAsDefault' => 'nullable|boolean'
         ]);
 
+        // Log de dados validados
+        Log::info('MudasController@store validated data:', $validated);
+
+        // Persistir modo de solicitação (doacao ou permuta)
+        $validated['modo_solicitacao'] = $request->input('modo_solicitacao');
+
         $validated['user_id'] = auth()->id();
 
+        // Configurar tipo_id para a muda
         $tipo = Tipo::firstOrCreate(
             ['nome' => $validated['tipo_nome']],
             ['descricao' => 'Tipo adicionado pelo usuário']
         );
+
+        // Configurar espécie_id para a muda
         $especie = Especie::firstOrCreate(
             ['nome' => $validated['especie_nome']],
             ['descricao' => 'Espécie adicionada pelo usuário']
@@ -116,7 +130,16 @@ class MudasController extends Controller
         $validated['tipos_id'] = $tipo->id;
         $validated['especie_id'] = $especie->id;
 
-        $validated['muda_status_id'] = 1;
+        // Definir o tipo de solicitação (doação ou permuta)
+        $solicitacaoTipo = solicitacao_tipos::firstOrCreate(
+            ['nome' => $validated['modo_solicitacao'] === 'permuta' ? 'Permuta' : 'Doação'],
+            ['descricao' => 'Tipo de solicitação: ' . ($validated['modo_solicitacao'] === 'permuta' ? 'Permuta' : 'Doação')]
+        );
+
+        // Guardar o ID do tipo de solicitação para uso na criação de solicitações
+        $validated['solicitacao_tipo_id'] = $solicitacaoTipo->id;
+
+        $validated['muda_status_id'] = 1; // Status inicial: Disponível
 
         unset($validated['tipo_nome'], $validated['especie_nome'], $validated['setAsDefault']);
 
@@ -174,18 +197,44 @@ class MudasController extends Controller
      */
     public function update(Request $request, Mudas $muda)
     {
+        // Não permite editar se já tiver sido doada/transferida
+        if ($muda->donated_at !== null) {
+            abort(403, 'Apenas o novo proprietário pode modificar esta muda.');
+        }
+
         $validated = $request->validate([
             'nome' => 'required|string|max:255',
             'descricao' => 'required|string',
             'tipo_id' => 'required|exists:tipos,id',
             'especie_id' => 'required|exists:especies,id',
+            'modo_solicitacao' => 'required|in:doacao,permuta',
             'status_id' => 'required|exists:muda_status,id',
             'quantidade' => 'nullable|integer|min:1',
+            'cep' => 'required|string|size:8',
+            'logradouro' => 'required|string|max:150',
+            'numero' => 'required|string|max:20',
             'complemento' => 'nullable|string|max:100',
+            'bairro' => 'required|string|max:100',
             'cidade' => 'required|string|max:255',
             'uf' => 'required|string|size:2',
             'foto' => 'nullable|image|max:2048'
         ]);
+
+        // Persistir modo de solicitação (doacao ou permuta)
+        $validated['modo_solicitacao'] = $request->input('modo_solicitacao');
+
+        // Processar o tipo de solicitação (doação ou permuta)
+        $tipoSolicitacao = $validated['modo_solicitacao'] === 'permuta' ? 'Permuta' : 'Doação';
+
+        // Definir o tipo de solicitação (doação ou permuta)
+        $solicitacaoTipo = solicitacao_tipos::firstOrCreate(
+            ['nome' => $tipoSolicitacao],
+            ['descricao' => 'Tipo de solicitação: ' . $tipoSolicitacao]
+        );
+
+        // Guardar o ID do tipo de solicitação para uso nas solicitações
+        $validated['solicitacao_tipo_id'] = $solicitacaoTipo->id;
+
         $validated['tipos_id'] = $validated['tipo_id'];
         $validated['muda_status_id'] = $validated['status_id'];
 
@@ -214,6 +263,11 @@ class MudasController extends Controller
      */
     public function destroy(Mudas $muda)
     {
+        // Não permite remover se já tiver sido doada/transferida
+        if ($muda->donated_at !== null) {
+            abort(403, 'Apenas o novo proprietário pode desabilitar esta muda.');
+        }
+
         $muda->update(['disabled_at' => now()]);
 
         return redirect()->route('mudas.index')
@@ -234,6 +288,23 @@ class MudasController extends Controller
             Log::error('Erro no MudasController@favorites: ' . $e->getMessage());
             return back()->withErrors(['favoritos' => 'Não foi possível carregar seus favoritos.']);
         }
+    }
+
+    /**
+     * Torna a muda novamente disponível para solicitações.
+     */
+    public function release(Mudas $muda)
+    {
+        // Apenas o proprietário atual pode liberar a muda
+        abort_if(auth()->id() !== $muda->user_id, 403);
+        // Resetar flags e status para Disponível
+        $muda->update([
+            'donated_at'     => null,
+            'donated_to'     => null,
+            'disabled_at'    => null,
+            'muda_status_id' => 1, // Disponível
+        ]);
+        return back()->with('success', 'Muda novamente disponível.');
     }
 
     /**

@@ -64,6 +64,11 @@
                         :class="{'text-emerald-500 border-b-2 border-emerald-500': activeTab === 'historico', 'text-gray-700 dark:text-gray-300': activeTab !== 'historico'}">
                         Histórico
                     </button>
+                    <button @click.prevent="activeTab = 'solicitacoes'"
+                        class="px-6 py-3 font-semibold transition-all"
+                        :class="{'text-emerald-500 border-b-2 border-emerald-500': activeTab === 'solicitacoes', 'text-gray-700 dark:text-gray-300': activeTab !== 'solicitacoes'}">
+                        Minhas Solicitações
+                    </button>
                 </div>
 
                 <div class="p-6">
@@ -81,7 +86,6 @@
                         </div>
                     </div>
 
-
                     <div x-show="activeTab === 'mudas'" class="space-y-6">
                         <div class="flex flex-col md:flex-row">
                             @include('profile.partials.sidebar-filtros', ['tipos' => $tipos, 'estados' => $estados])
@@ -91,17 +95,12 @@
                         </div>
                     </div>
 
-
                     <div x-show="activeTab === 'chats'" class="space-y-6">
                         <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
                             <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Minhas Conversas</h3>
-
                             <div class="space-y-4">
                                 <p class="text-gray-600 dark:text-gray-400 italic">Você não tem nenhuma conversa ativa no momento.</p>
-
-                                <!-- Lista de conversas (será preenchida dinamicamente) -->
                                 <div class="space-y-2">
-                                    <!-- Exemplo de conversa -->
                                     <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow hover:bg-gray-50 dark:hover:bg-gray-600 transition cursor-pointer">
                                         <div class="flex items-center justify-between">
                                             <div class="flex items-center">
@@ -145,6 +144,13 @@
                                     <p class="text-gray-600 dark:text-gray-300">Você doou uma muda de Jabuticabeira para Maria.</p>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Aba Solicitações -->
+                    <div x-show="activeTab === 'solicitacoes'" class="space-y-6">
+                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
+                            @include('profile.partials.minhas-solicitacoes')
                         </div>
                     </div>
                 </div>
@@ -297,7 +303,10 @@
         if(form && cardsContainer) {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
+                // Considerar filtro de tipo selecionado
                 const formData = new FormData(form);
+                const selectedFilter = document.querySelector('input[name="filter_type"]:checked');
+                if (selectedFilter) formData.set('filter_type', selectedFilter.value);
                 const params = new URLSearchParams(formData).toString();
                 fetch('{{ route('profile.mudas.filter') }}?' + params, {
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -306,6 +315,31 @@
                 .then(data => {
                     cardsContainer.innerHTML = data.html;
                     window.history.replaceState({}, '', '{{ route('profile.edit') }}?' + params);
+                });
+            });
+
+            // Auto-aplicar filtros ao mudar selects ou ao pressionar Enter na busca
+            const tipoSelect = document.getElementById('tipo');
+            const locationSelect = document.getElementById('location');
+            const searchInput = document.getElementById('search');
+            if(tipoSelect) tipoSelect.addEventListener('change', () => form.dispatchEvent(new Event('submit')));
+            if(locationSelect) locationSelect.addEventListener('change', () => form.dispatchEvent(new Event('submit')));
+            if(searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if(e.key === 'Enter') {
+                        e.preventDefault();
+                        form.dispatchEvent(new Event('submit'));
+                    }
+                });
+            }
+
+            // Aplicar filtros ao mudar rádio dentro do form (desktop)
+            const desktopFilterRadios = document.querySelectorAll('input[name="filter_type"]');
+            desktopFilterRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const hidden = form.querySelector('input[name="filter_type"]');
+                    if (hidden) hidden.value = radio.value;
+                    form.dispatchEvent(new Event('submit'));
                 });
             });
         }
@@ -327,68 +361,32 @@
                     drawer.classList.add('hidden');
                 });
             });
+
+            // Auto-aplicar filtros mobile ao mudar selects ou ao pressionar Enter na busca
+            const tipoMobile = document.getElementById('tipo_mobile');
+            const locationMobile = document.getElementById('location_mobile');
+            const searchMobile = document.getElementById('search_mobile');
+            if(tipoMobile) tipoMobile.addEventListener('change', () => formMobile.dispatchEvent(new Event('submit')));
+            if(locationMobile) locationMobile.addEventListener('change', () => formMobile.dispatchEvent(new Event('submit')));
+            if(searchMobile) {
+                searchMobile.addEventListener('keypress', function(e) {
+                    if(e.key === 'Enter') {
+                        e.preventDefault();
+                        formMobile.dispatchEvent(new Event('submit'));
+                    }
+                });
+            }
+
+            // Aplicar filtros ao mudar rádio dentro do form mobile
+            const mobileFilterRadios = document.querySelectorAll('input[name="filter_type_mobile"]');
+            mobileFilterRadios.forEach(radio => {
+                radio.addEventListener('change', () => {
+                    const hidden = formMobile.querySelector('input[name="filter_type"]');
+                    if (hidden) hidden.value = radio.value;
+                    formMobile.dispatchEvent(new Event('submit'));
+                });
+            });
         }
-
-        // Filtros por tipo de muda (Todas, Favoritas, Cadastradas, Doadas)
-        const filterRadios = document.querySelectorAll('input[name="filter-type"]');
-        filterRadios.forEach(radio => {
-            radio.addEventListener('change', function() {
-                const filterType = this.value;
-                const url = new URL('{{ route('profile.mudas.filter') }}', window.location.origin);
-                url.searchParams.append('filter_type', filterType);
-
-                // Adicionar outros parâmetros de filtro existentes
-                if (form) {
-                    const formData = new FormData(form);
-                    for (const [key, value] of formData.entries()) {
-                        if (value) url.searchParams.append(key, value);
-                    }
-                }
-
-                fetch(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    cardsContainer.innerHTML = data.html;
-                    // Atualizar URL sem recarregar a página
-                    const currentUrl = new URL(window.location.href);
-                    currentUrl.searchParams.set('filter_type', filterType);
-                    window.history.replaceState({}, '', currentUrl);
-                });
-            });
-        });
-
-        // Versão mobile dos filtros por tipo de muda
-        const filterRadiosMobile = document.querySelectorAll('input[name="filter-type-mobile"]');
-        filterRadiosMobile.forEach(radio => {
-            radio.addEventListener('change', function() {
-                const filterType = this.value;
-                const url = new URL('{{ route('profile.mudas.filter') }}', window.location.origin);
-                url.searchParams.append('filter_type', filterType);
-
-                // Adicionar outros parâmetros de filtro existentes do formulário mobile
-                if (formMobile) {
-                    const formData = new FormData(formMobile);
-                    for (const [key, value] of formData.entries()) {
-                        if (value) url.searchParams.append(key, value);
-                    }
-                }
-
-                fetch(url, {
-                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    cardsContainer.innerHTML = data.html;
-                    // Atualizar URL sem recarregar a página
-                    const currentUrl = new URL(window.location.href);
-                    currentUrl.searchParams.set('filter_type', filterType);
-                    window.history.replaceState({}, '', currentUrl);
-                    drawer.classList.add('hidden');
-                });
-            });
-        });
 
         // Auto-remover notificação de sucesso
         const photoSuccessNotification = document.getElementById('photoSuccessNotification');

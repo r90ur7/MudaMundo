@@ -3,7 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\solicitacoes;
+use App\Models\Mudas;
+use App\Models\solicitacao_status;
+use App\Models\solicitacao_tipos;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Schema;
 
 class SolicitacoesController extends Controller
 {
@@ -24,19 +31,175 @@ class SolicitacoesController extends Controller
     }
 
     /**
+     * Exibe a página de checkout para criar uma nova solicitação
+     */
+    public function checkout(Mudas $muda)
+    {
+        return view('solicitacoes.checkout', compact('muda'));
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            $isAjax = $request->ajax();
+            Log::info('Dados recebidos na solicitação:', $request->all());
+            $validator = Validator::make($request->all(), [
+                'muda_id' => 'required|exists:mudas,id',
+                'solicitacao_tipos_id' => 'required',
+                'muda_troca_id' => 'nullable|exists:mudas,id',
+                'mensagem' => 'nullable|string',
+            ]);
+
+            if ($validator->fails()) {
+                if ($isAjax) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Formulário contém erros. Por favor, corrija-os.',
+                        'errors' => $validator->errors()
+                    ], 422);
+                }
+                return back()->withErrors($validator)->withInput();
+            }
+            $validated = $validator->validated();
+
+            $validated['user_id'] = auth()->id();
+            $tipoId = $validated['solicitacao_tipos_id'];
+            $tiposCount = solicitacao_tipos::count();
+            if ($tiposCount == 0) {
+                solicitacao_tipos::create([
+                    'id' => 1,
+                    'nome' => 'Doação',
+                    'descricao' => 'Solicitação de doação de muda'
+                ]);
+
+                solicitacao_tipos::create([
+                    'id' => 2,
+                    'nome' => 'Permuta',
+                    'descricao' => 'Solicitação de troca de muda'
+                ]);
+            }
+
+            $statusInicial = solicitacao_status::where('nome', 'Pendente')->first();
+            if (!$statusInicial) {
+                $statusInicial = solicitacao_status::create([
+                    'nome' => 'Pendente'
+                ]);
+            }
+            $validated['solicitacao_status_id'] = $statusInicial->id;
+
+            $muda = Mudas::findOrFail($validated['muda_id']);
+            if ($muda->user_id == auth()->id()) {
+                DB::rollBack();
+                if ($isAjax) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Você não pode solicitar sua própria muda.'
+                    ], 400);
+                }
+                return back()->withErrors(['error' => 'Você não pode solicitar sua própria muda.'])->withInput();
+            }
+
+            $existingSolicitation = solicitacoes::where('muda_id', $validated['muda_id'])
+                ->where('user_id', $validated['user_id'])
+                ->whereNull('canceled_at')
+                ->whereNull('rejected_at')
+                ->whereNull('finished_at')
+                ->first();
+
+            if ($existingSolicitation) {
+                DB::rollBack();
+                if ($isAjax) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Você já tem uma solicitação pendente para esta muda.'
+                    ], 400);
+                }
+                return back()->withErrors(['error' => 'Você já tem uma solicitação pendente para esta muda.'])->withInput();
+            }
+
+            $hasColumn_muda_troca_id = Schema::hasColumn('solicitacoes', 'muda_troca_id');
+            $hasColumn_mensagem = Schema::hasColumn('solicitacoes', 'mensagem');
+
+            try {
+                Log::info('Tentando inserir via DB::table');
+
+                $dataToInsert = [
+                    'user_id' => $validated['user_id'],
+                    'muda_id' => $validated['muda_id'],
+                    'solicitacao_tipos_id' => $validated['solicitacao_tipos_id'],
+                    'solicitacao_status_id' => $validated['solicitacao_status_id'],
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ];
+
+                if ($hasColumn_muda_troca_id && isset($validated['muda_troca_id'])) {
+                    $dataToInsert['muda_troca_id'] = $validated['muda_troca_id'];
+                }
+
+                if ($hasColumn_mensagem && isset($validated['mensagem'])) {
+                    $dataToInsert['mensagem'] = $validated['mensagem'];
+                }
+
+                $solicitacaoId = DB::table('solicitacoes')->insertGetId($dataToInsert);
+
+                Log::info('Solicitação inserida com sucesso via query builder. ID: ' . $solicitacaoId);
+
+                DB::commit();
+
+                if ($isAjax) {
+                    return response()->json([
+                        'success' => true,
+                        'message' => 'Solicitação enviada com sucesso! Em breve o proprietário entrará em contato.',
+                        'redirect' => route('dashboard')
+                    ]);
+                }
+
+                return redirect()->route('dashboard')
+                    ->with('success', 'Solicitação enviada com sucesso! Em breve o proprietário entrará em contato.');
+
+            } catch (\Exception $e) {
+                DB::rollBack();
+                Log::error('Erro ao inserir via query builder: ' . $e->getMessage());
+                Log::error('Trace: ' . $e->getTraceAsString());
+
+
+                if ($isAjax) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Erro ao salvar a solicitação: ' . $e->getMessage()
+                    ], 500);
+                }
+
+                return back()->withInput()->withErrors(['error' => 'Erro ao salvar a solicitação: ' . $e->getMessage()]);
+            }
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Erro geral ao processar solicitação: ' . $e->getMessage());
+            Log::error('Stack trace: ' . $e->getTraceAsString());
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Ocorreu um erro ao processar sua solicitação: ' . $e->getMessage()
+                ], 500);
+            }
+
+            return back()->withInput()->withErrors(['error' => 'Ocorreu um erro ao processar sua solicitação: ' . $e->getMessage()]);
+        }
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(solicitacoes $solicitacoes)
+    public function show(solicitacoes $solicitacao)
     {
-        //
+        return view('solicitacoes.show', compact('solicitacao'));
     }
 
     /**
@@ -61,5 +224,63 @@ class SolicitacoesController extends Controller
     public function destroy(solicitacoes $solicitacoes)
     {
         //
+    }
+
+    /**
+     * Aceitar uma solicitação (doação ou permuta).
+     */
+    public function accept(solicitacoes $solicitacao)
+    {
+        // Define status Aceita
+        $statusAceita = solicitacao_status::firstOrCreate(['nome' => 'Aceita']);
+        $solicitacao->update([
+            'solicitacao_status_id' => $statusAceita->id,
+            'finished_at' => now(),
+        ]);
+
+        // Atualiza a muda como reservada (não altera owner nem desabilita)
+        $statusReservada = \App\Models\MudaStatus::firstOrCreate(['nome' => 'Reservada']);
+        $muda = $solicitacao->mudas;
+        $muda->update([
+            'muda_status_id' => $statusReservada->id,
+            'donated_at'     => now(),
+            'donated_to'     => $solicitacao->user_id,
+            // 'disabled_at' omitido para permitir reserva
+        ]);
+
+        return back()->with('success', 'Solicitação aceita com sucesso.');
+    }
+
+    /**
+     * Rejeitar uma solicitação (doação ou permuta).
+     */
+    public function reject(solicitacoes $solicitacao)
+    {
+        // Define status Rejeitada
+        $statusRejeitada = solicitacao_status::firstOrCreate(['nome' => 'Rejeitada']);
+        $solicitacao->update([
+            'solicitacao_status_id' => $statusRejeitada->id,
+            'rejected_at' => now(),
+        ]);
+
+        return back()->with('success', 'Solicitação rejeitada.');
+    }
+
+    /**
+     * Negociar permuta alterando a muda de troca.
+     */
+    public function negotiate(Request $request, solicitacoes $solicitacao)
+    {
+        // Valida muda_troca_id
+        $request->validate(['muda_troca_id' => 'required|exists:mudas,id']);
+
+        // Define status Em negociação
+        $statusNegoc = solicitacao_status::firstOrCreate(['nome' => 'Em negociação']);
+        $solicitacao->update([
+            'muda_troca_id' => $request->muda_troca_id,
+            'solicitacao_status_id' => $statusNegoc->id,
+        ]);
+
+        return back()->with('success', 'Proposta de permuta atualizada. Em negociação.');
     }
 }

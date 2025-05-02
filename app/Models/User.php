@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
@@ -84,5 +83,13 @@ class User extends Authenticatable
     {
         return $this->belongsToMany(Mudas::class, 'favoritos', 'user_id', 'muda_id')
                     ->withTimestamps();
+    }
+
+    /**
+     * Relacionamento com as mudas do usuário.
+     */
+    public function mudas()
+    {
+        return $this->hasMany(\App\Models\Mudas::class, 'user_id');
     }
 }

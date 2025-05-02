@@ -55,10 +55,8 @@
                     </div>
                 </div>
 
-                <!-- Conteúdo principal -->
                 <div class="p-6">
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <!-- Coluna da Imagem -->
                         <div class="lg:col-span-1">
                             <div class="bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg p-1">
                                 @if($muda->foto_url)
@@ -90,7 +88,6 @@
                                 @endif
                             </div>
 
-                            <!-- Informações rápidas -->
                             <div class="mt-6 space-y-4">
                                 <div class="flex items-center justify-between p-3 bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg">
                                     <span class="text-sm font-medium text-white dark:text-black">Status</span>
@@ -103,6 +100,11 @@
                                 <div class="flex items-center justify-between p-3 bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg">
                                     <span class="text-sm font-medium text-white dark:text-black">Tipo</span>
                                     <span class="text-sm text-emerald-400 dark:text-emerald-600">{{ $muda->tipo->nome ?? 'Não especificado' }}</span>
+                                </div>
+
+                                <div class="flex items-center justify-between p-3 bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg">
+                                    <span class="text-sm font-medium text-white dark:text-black">Tipo de Solicitação</span>
+                                    <span class="text-sm text-emerald-400 dark:text-emerald-600">{{ ucfirst($muda->modo_solicitacao ?? 'doacao') }}</span>
                                 </div>
 
                                 <div class="flex items-center justify-between p-3 bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg">
@@ -122,9 +124,7 @@
                             </div>
                         </div>
 
-                        <!-- Coluna dos Detalhes -->
                         <div class="lg:col-span-2 space-y-6">
-                            <!-- Descrição -->
                             <div>
                                 <h3 class="text-lg font-medium text-white dark:text-black mb-3">Descrição</h3>
                                 <p class="text-sm text-gray-400 dark:text-gray-600">
@@ -132,7 +132,6 @@
                                 </p>
                             </div>
 
-                            <!-- Localização -->
                             <div>
                                 <h3 class="text-lg font-medium text-white dark:text-black mb-3">Localização</h3>
                                 <div class="bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg p-4">
@@ -186,21 +185,25 @@
 
                             <!-- Botões de Ação -->
                             <div class="pt-4">
+                                @if(is_null($muda->donated_at))
                                 <div class="flex flex-col sm:flex-row gap-3">
-                                    <a href="#" class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-emerald-600 font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all text-sm py-3 px-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                                        </svg>
+                                    <a href="{{ route('solicitacoes.checkout', $muda) }}" class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-emerald-600 font-semibold text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all text-sm py-3 px-4">
                                         Entrar em Contato
                                     </a>
 
                                     <button type="button" class="w-full inline-flex justify-center items-center gap-2 rounded-lg border border-emerald-500/50 font-semibold text-emerald-500 hover:text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all text-sm py-3 px-4">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                        </svg>
                                         Favoritar
                                     </button>
                                 </div>
+                                @elseif(auth()->id() === $muda->donated_to)
+                                <form method="POST" action="{{ route('mudas.release', $muda) }}" class="flex">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full inline-flex justify-center items-center gap-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all text-sm py-3 px-4">
+                                        Disponibilizar Muda
+                                    </button>
+                                </form>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -209,7 +212,6 @@
         </div>
     </div>
 
-    <!-- Modal de confirmação de exclusão -->
     <div id="confirmDeleteModal" class="hs-overlay hidden w-full h-full fixed top-0 left-0 z-[60] overflow-x-hidden overflow-y-auto">
         <div class="hs-overlay-open:mt-7 hs-overlay-open:opacity-100 hs-overlay-open:duration-500 mt-0 opacity-0 ease-out transition-all sm:max-w-lg sm:w-full m-3 sm:mx-auto min-h-[calc(100%-3.5rem)] flex items-center">
             <div class="flex flex-col bg-neutral-800 dark:bg-neutral-100 border border-neutral-700 dark:border-neutral-300 shadow-sm rounded-xl overflow-hidden">
@@ -227,7 +229,6 @@
                     </button>
                 </div>
 
-                <!-- Corpo do modal -->
                 <div class="p-4 sm:p-6 text-center">
                     <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-red-100 dark:bg-red-700 mb-4">
                         <svg class="h-8 w-8 text-red-600 dark:text-red-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -239,7 +240,6 @@
                         Essa muda Ainda poderá ser reabilitada no menu minhas mudas
                     </p>
                 </div>
-                <!-- Footer com botões de ação -->
                 <div class="flex justify-end items-center gap-x-2 py-3 px-4 sm:px-5 border-t border-neutral-700 dark:border-neutral-300">
                     <button type="button"
                             class="py-2.5 px-4 inline-flex justify-center items-center gap-2 rounded-lg border border-neutral-600 dark:border-neutral-400 font-medium text-white dark:text-black hover:bg-neutral-700 dark:hover:bg-neutral-300 focus:outline-none focus:ring-2 focus:ring-neutral-500 transition-all text-sm"
@@ -261,14 +261,12 @@
 
     @push('scripts')
     <script>
-        // Inicializar o comportamento de excluir quando o documento estiver pronto
         document.addEventListener('DOMContentLoaded', function() {
             const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
             const deleteForm = document.getElementById('deleteForm');
 
             if (confirmDeleteBtn && deleteForm) {
                 confirmDeleteBtn.addEventListener('click', function() {
-                    // Enviar o formulário de exclusão
                     deleteForm.submit();
                 });
             }
