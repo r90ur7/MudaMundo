@@ -14,8 +14,19 @@
                             <span class="font-semibold">{{ $solicitacao->mudas->nome }}</span>
                             <span class="text-sm text-gray-500 ml-2">({{ $solicitacao->tipo->nome }})</span>
                             <div class="text-gray-600 dark:text-gray-300 text-sm">
-                                Solicitante: {{ $solicitacao->user->name }}<br>
-                                Status: {{ $solicitacao->status->nome }}
+                                @php
+                                    if ($solicitacao->status->nome === 'Aceita' && is_null($solicitacao->confirmed_at)) {
+                                        $badgeLabel = 'Doada';
+                                        $badgeClasses = 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100';
+                                    } elseif (!is_null($solicitacao->confirmed_at)) {
+                                        $badgeLabel = 'Reservada';
+                                        $badgeClasses = 'bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100';
+                                    } else {
+                                        $badgeLabel = $solicitacao->status->nome;
+                                        $badgeClasses = 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100';
+                                    }
+                                @endphp
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClasses }}">{{ $badgeLabel }}</span>
                             </div>
                         </div>
                         <div class="mt-2 md:mt-0">

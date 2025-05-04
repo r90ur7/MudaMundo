@@ -54,6 +54,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('solicitacoes/{solicitacao}/accept', [SolicitacoesController::class, 'accept'])->name('solicitacoes.accept');
     Route::patch('solicitacoes/{solicitacao}/reject', [SolicitacoesController::class, 'reject'])->name('solicitacoes.reject');
     Route::patch('solicitacoes/{solicitacao}/negotiate', [SolicitacoesController::class, 'negotiate'])->name('solicitacoes.negotiate');
+    Route::patch('solicitacoes/{solicitacao}/confirm', [SolicitacoesController::class, 'confirm'])->name('solicitacoes.confirm');
 });
 
 require __DIR__.'/auth.php';

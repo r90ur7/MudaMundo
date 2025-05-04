@@ -17,7 +17,8 @@ class SolicitacaoTiposFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'nome' => $this->faker->randomElement(['Doação', 'Permuta']),
+            'descricao' => $this->faker->sentence(),
         ];
     }
 }

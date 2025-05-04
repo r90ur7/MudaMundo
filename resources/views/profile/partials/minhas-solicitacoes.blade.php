@@ -2,11 +2,16 @@
 $usuarioId = auth()->id();
 $solicitacoesFeitas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo'])
     ->where('user_id', $usuarioId)
+    ->whereNull('finished_at')
+    ->whereNull('rejected_at')
     ->latest()
     ->get();
 $solicitacoesRecebidas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo', 'user'])
     ->whereHas('mudas', function($q) use ($usuarioId) {
         $q->where('user_id', $usuarioId);
+    })
+    ->whereHas('status', function($q) {
+        $q->whereIn('nome', ['Pendente', 'Em negociação']);
     })
     ->latest()
     ->get();

@@ -32,18 +32,17 @@
                             </p>
                         </div>
                         @php
-                            if($muda->donated_to && auth()->id() == $muda->donated_to) {
-                                // Receptor: status 'Reservada'
-                                $displayStatus = 'Reservada';
-                                $badgeClasses = 'bg-blue-100 text-blue-800';
-                            } elseif($muda->donated_at && auth()->id() == $muda->user_id) {
-                                // Doador original: status 'Doada'
+                            if($muda->donated_to) {
+                                // Status quando doação aceita
                                 $displayStatus = 'Doada';
                                 $badgeClasses = 'bg-yellow-100 text-yellow-800';
+                            } elseif($muda->donated_at) {
+                                // Status quando reserva confirmada
+                                $displayStatus = 'Reservada';
+                                $badgeClasses = 'bg-blue-100 text-blue-800';
                             } else {
                                 // Status padrão pelo nome
                                 $displayStatus = $muda->status->nome ?? 'Indisponível';
-                                // Cores conforme status
                                 if($displayStatus === 'Reservada') {
                                     $badgeClasses = 'bg-blue-100 text-blue-800';
                                 } elseif($displayStatus === 'Doada') {

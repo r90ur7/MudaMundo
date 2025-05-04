@@ -33,6 +33,7 @@ class Mudas extends Model
         'donated_to',
         'disabled_at',
         'modo_solicitacao', // novo campo para doação ou permuta
+        'original_user_id', // novo campo para registrar criador original
     ];
 
     /**

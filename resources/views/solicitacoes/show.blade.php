@@ -27,7 +27,19 @@
                     </div>
                     <div class="flex justify-between">
                         <span class="font-medium text-gray-700 dark:text-gray-300">Status:</span>
-                        <span class="text-gray-900 dark:text-gray-100">{{ $solicitacao->status->nome }}</span>
+                        @php
+                            if (!is_null($solicitacao->confirmed_at)) {
+                                $badgeLabel = 'Reservada';
+                                $badgeClasses = 'bg-yellow-100 dark:bg-yellow-800 text-yellow-800 dark:text-yellow-100';
+                            } elseif ($solicitacao->status->nome === 'Aceita') {
+                                $badgeLabel = 'Doada';
+                                $badgeClasses = 'bg-green-100 dark:bg-green-800 text-green-800 dark:text-green-100';
+                            } else {
+                                $badgeLabel = $solicitacao->status->nome;
+                                $badgeClasses = 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-100';
+                            }
+                        @endphp
+                        <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $badgeClasses }}">{{ $badgeLabel }}</span>
                     </div>
                     <div class="flex justify-between">
                         <span class="font-medium text-gray-700 dark:text-gray-300">Solicitante:</span>
@@ -52,6 +64,15 @@
                 </div>
 
                 <div class="mt-6 flex justify-end">
+                    @if(auth()->id() == $solicitacao->user_id && $solicitacao->status->nome === 'Aceita' && is_null($solicitacao->confirmed_at))
+                        <form action="{{ route('solicitacoes.confirm', $solicitacao) }}" method="POST" class="mr-2">
+                            @csrf
+                            @method('PATCH')
+                            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                                {{ __('Confirmar Recebimento') }}
+                            </button>
+                        </form>
+                    @endif
                     <a href="{{ route('dashboard') }}" class="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600">
                         {{ __('Voltar ao Dashboard') }}
                     </a>

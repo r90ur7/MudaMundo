@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Auth;
+use App\Models\MudaStatus;
 
 class SolicitacoesController extends Controller
 {
@@ -67,7 +69,7 @@ class SolicitacoesController extends Controller
             }
             $validated = $validator->validated();
 
-            $validated['user_id'] = auth()->id();
+            $validated['user_id'] = Auth::id();
             $tipoId = $validated['solicitacao_tipos_id'];
             $tiposCount = solicitacao_tipos::count();
             if ($tiposCount == 0) {
@@ -93,7 +95,7 @@ class SolicitacoesController extends Controller
             $validated['solicitacao_status_id'] = $statusInicial->id;
 
             $muda = Mudas::findOrFail($validated['muda_id']);
-            if ($muda->user_id == auth()->id()) {
+            if ($muda->user_id == Auth::id()) {
                 DB::rollBack();
                 if ($isAjax) {
                     return response()->json([
@@ -233,19 +235,22 @@ class SolicitacoesController extends Controller
     {
         // Define status Aceita
         $statusAceita = solicitacao_status::firstOrCreate(['nome' => 'Aceita']);
+        // Atualiza status da solicitação e data de aceite
         $solicitacao->update([
             'solicitacao_status_id' => $statusAceita->id,
-            'finished_at' => now(),
+            'accepted_at' => now(),
         ]);
 
         // Atualiza a muda como reservada (não altera owner nem desabilita)
         $statusReservada = \App\Models\MudaStatus::firstOrCreate(['nome' => 'Reservada']);
         $muda = $solicitacao->mudas;
+        // Armazena criador original e marca reserva
+        $originalOwner = $muda->user_id;
         $muda->update([
-            'muda_status_id' => $statusReservada->id,
-            'donated_at'     => now(),
-            'donated_to'     => $solicitacao->user_id,
-            // 'disabled_at' omitido para permitir reserva
+            'original_user_id' => $originalOwner,
+            'muda_status_id'   => $statusReservada->id,
+            'donated_at'       => now(),
+            'donated_to'       => $solicitacao->user_id,
         ]);
 
         return back()->with('success', 'Solicitação aceita com sucesso.');
@@ -282,5 +287,47 @@ class SolicitacoesController extends Controller
         ]);
 
         return back()->with('success', 'Proposta de permuta atualizada. Em negociação.');
+    }
+
+    /**
+     * Confirmar recebimento da muda e atualizar inventário.
+     */
+    public function confirm(solicitacoes $solicitacao)
+    {
+        // Define status Recebida
+        $statusRecebida = solicitacao_status::firstOrCreate(['nome' => 'Recebida']);
+        // Atualiza status da solicitação e data de confirmação
+        $solicitacao->update([
+            'solicitacao_status_id' => $statusRecebida->id,
+            'confirmed_at' => now(),
+        ]);
+
+        // Reserva e transfere propriedade da(s) muda(s)
+        $statusReservada = MudaStatus::firstOrCreate(['nome' => 'Reservada']);
+        $mainMuda = $solicitacao->mudas;
+        // Armazena criador original e transfere propriedade
+        $originalOwner = $mainMuda->user_id;
+        $mainMuda->update([
+            'original_user_id' => $originalOwner,
+            'user_id'          => $solicitacao->user_id,
+            'muda_status_id'   => $statusReservada->id,
+            'donated_at'       => now(),
+            'donated_to'       => $solicitacao->user_id,
+        ]);
+        // Se for permuta, reserva e transfere também a muda de troca para o dono original
+        if ($solicitacao->muda_troca_id && $solicitacao->mudaTroca) {
+            $tradeMuda = $solicitacao->mudaTroca;
+            // Armazena criador original da troca e transfere propriedade
+            $originalTradeOwner = $tradeMuda->user_id;
+            $tradeMuda->update([
+                'original_user_id' => $originalTradeOwner,
+                'user_id'          => $originalOwner,
+                'muda_status_id'   => $statusReservada->id,
+                'donated_at'       => now(),
+                'donated_to'       => $originalOwner,
+            ]);
+        }
+
+        return back()->with('success', 'Recebimento confirmado e inventário atualizado.');
     }
 }

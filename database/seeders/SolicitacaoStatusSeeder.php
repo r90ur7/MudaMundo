@@ -19,7 +19,8 @@ class SolicitacaoStatusSeeder extends Seeder
             ['id' => 2, 'nome' => 'Aceita', 'descricao' => 'Solicitação aceita pelo dono da muda'],
             ['id' => 3, 'nome' => 'Rejeitada', 'descricao' => 'Solicitação rejeitada pelo dono da muda'],
             ['id' => 4, 'nome' => 'Cancelada', 'descricao' => 'Solicitação cancelada pelo solicitante'],
-            ['id' => 5, 'nome' => 'Concluída', 'descricao' => 'Solicitação concluída com sucesso']
+            ['id' => 5, 'nome' => 'Concluída', 'descricao' => 'Solicitação concluída com sucesso'],
+            ['id' => 6, 'nome' => 'Recebida', 'descricao' => 'Solicitação recebida e confirmada pelo solicitante'],
         ];
 
         foreach ($statusList as $status) {

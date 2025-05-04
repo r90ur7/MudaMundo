@@ -25,7 +25,21 @@ class solicitacoes extends Model
         'rejected_by',
         'rejected_at',
         'finished_at',
+        'accepted_at',
+        'confirmed_at',
         'canceled_at'
+    ];
+
+    /**
+     * Os atributos que devem ser convertidos para tipos nativos.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'rejected_at' => 'datetime',
+        'finished_at' => 'datetime',
+        'accepted_at' => 'datetime',
+        'confirmed_at' => 'datetime',
     ];
 
     /**
