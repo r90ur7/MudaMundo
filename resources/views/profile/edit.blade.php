@@ -131,17 +131,187 @@
                     <div x-show="activeTab === 'historico'" class="space-y-6">
                         <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
                             <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Histórico de Atividades</h3>
-
-                            <div class="space-y-4">
-                                <p class="text-gray-600 dark:text-gray-400 italic">Nenhuma atividade registrada ainda.</p>
-
-
-                                <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow">
-                                    <div class="flex justify-between items-center mb-2">
-                                        <h4 class="font-semibold text-gray-900 dark:text-gray-100">Doação de Muda</h4>
-                                        <span class="text-sm text-gray-500 dark:text-gray-400">10/04/2025</span>
+                            <div x-data="{ kanbanView: true, activeSection: null }">
+                                <!-- Kanban Overview -->
+                                <div x-show="kanbanView" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                    <!-- Card: Mudas Cadastradas -->
+                                    <div @click="kanbanView = false; activeSection = 'cadastradas'" class="cursor-pointer rounded-xl border border-emerald-200 dark:border-emerald-700 bg-emerald-50/40 dark:bg-emerald-900/30 p-6 flex flex-col items-center hover:shadow-lg transition">
+                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4'/></svg></span>
+                                        <h4 class="font-semibold text-lg text-emerald-700 dark:text-emerald-200">Mudas Cadastradas</h4>
+                                        <span class="text-3xl font-bold text-emerald-900 dark:text-emerald-100 mt-2">{{$mudasCadastradas->count()}}</span>
                                     </div>
-                                    <p class="text-gray-600 dark:text-gray-300">Você doou uma muda de Jabuticabeira para Maria.</p>
+                                    <!-- Card: Mudas Doadas -->
+                                    <div @click="kanbanView = false; activeSection = 'doadas'" class="cursor-pointer rounded-xl border border-emerald-200 dark:border-emerald-700 bg-emerald-50/40 dark:bg-emerald-900/30 p-6 flex flex-col items-center hover:shadow-lg transition">
+                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/></svg></span>
+                                        <h4 class="font-semibold text-lg text-emerald-700 dark:text-emerald-200">Mudas Doadas</h4>
+                                        <span class="text-3xl font-bold text-emerald-900 dark:text-emerald-100 mt-2">{{$mudasDoadas->count()}}</span>
+                                    </div>
+                                    <!-- Card: Solicitações Enviadas -->
+                                    <div @click="kanbanView = false; activeSection = 'enviadas'" class="cursor-pointer rounded-xl border border-blue-200 dark:border-blue-700 bg-blue-50/40 dark:bg-blue-900/30 p-6 flex flex-col items-center hover:shadow-lg transition">
+                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 17l4 4 4-4m0-5V3'/></svg></span>
+                                        <h4 class="font-semibold text-lg text-blue-700 dark:text-blue-200">Solicitações Enviadas</h4>
+                                        <span class="text-3xl font-bold text-blue-900 dark:text-blue-100 mt-2">{{$solicitacoesEnviadas->count()}}</span>
+                                    </div>
+                                    <!-- Card: Solicitações Recebidas -->
+                                    <div @click="kanbanView = false; activeSection = 'recebidas'" class="cursor-pointer rounded-xl border border-purple-200 dark:border-purple-700 bg-purple-50/40 dark:bg-purple-900/30 p-6 flex flex-col items-center hover:shadow-lg transition">
+                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-200 dark:bg-purple-700 text-purple-900 dark:text-purple-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg></span>
+                                        <h4 class="font-semibold text-lg text-purple-700 dark:text-purple-200">Solicitações Recebidas</h4>
+                                        <span class="text-3xl font-bold text-purple-900 dark:text-purple-100 mt-2">{{$solicitacoesRecebidas->count()}}</span>
+                                    </div>
+                                    <!-- Card: Solicitações Rejeitadas -->
+                                    <div @click="kanbanView = false; activeSection = 'rejeitadas'" class="cursor-pointer rounded-xl border border-red-200 dark:border-red-700 bg-red-50/40 dark:bg-red-900/30 p-6 flex flex-col items-center hover:shadow-lg transition">
+                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-200 dark:bg-red-700 text-red-900 dark:text-red-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg></span>
+                                        <h4 class="font-semibold text-lg text-red-700 dark:text-red-200">Solicitações Rejeitadas</h4>
+                                        <span class="text-3xl font-bold text-red-900 dark:text-red-100 mt-2">{{$solicitacoesRejeitadas->count()}}</span>
+                                    </div>
+                                </div>
+                                <!-- Detalhe de cada seção -->
+                                <div x-show="!kanbanView" class="flex justify-center items-start min-h-[400px]">
+                                    <div class="relative w-full max-w-2xl">
+                                        <!-- Botão Voltar (centralizado e maior) -->
+                                        <div class="flex justify-center mb-2">
+                                            <button @click="kanbanView = true; activeSection = null" class="flex items-center gap-3 px-8 py-3 bg-gray-100 dark:bg-gray-800 border-2 border-emerald-400 dark:border-emerald-700 shadow-lg rounded-xl text-lg font-semibold text-emerald-700 dark:text-emerald-200 hover:bg-emerald-50 dark:hover:bg-emerald-900 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-emerald-400">
+                                                <svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 19l-7-7 7-7'/></svg>
+                                                Voltar ao Kanban
+                                            </button>
+                                        </div>
+
+                                        <!-- Mudas Cadastradas Detalhe -->
+                                        <div x-show="activeSection === 'cadastradas'" class="rounded-2xl border-4 border-emerald-300 dark:border-emerald-700 bg-white dark:bg-gray-900 shadow-2xl p-8 pt-14 animate-fade-in">
+                                            <div class="flex items-center gap-3 mb-6">
+                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4'/></svg></span>
+                                                <h4 class="font-bold text-2xl text-emerald-700 dark:text-emerald-200">Mudas Cadastradas</h4>
+                                                <span class="ml-auto text-lg font-semibold text-emerald-900 dark:text-emerald-100 bg-emerald-100 dark:bg-emerald-800 px-3 py-1 rounded-full">{{$mudasCadastradas->count()}} mudas</span>
+                                            </div>
+                                            <div class="divide-y divide-emerald-100 dark:divide-emerald-800 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                                            @forelse($mudasCadastradas as $muda)
+                                                <div class="py-3 flex items-center gap-3">
+                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-800 text-emerald-700 dark:text-emerald-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4'/></svg></span>
+                                                    <div class="flex-1">
+                                                        <div class="flex flex-wrap gap-2 items-center mb-1">
+                                                            <span class="font-bold">{{ $muda->nome }}</span>
+                                                            <span class="text-xs px-2 py-0.5 rounded bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100">Tipo: {{ $muda->tipo->nome ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-4">
+                                                            <span>Cadastrada em: {{ $muda->created_at->format('d/m/Y H:i') }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-gray-500 italic">Nenhuma muda cadastrada.</p>
+                                            @endforelse
+                                            </div>
+                                        </div>
+                                        <!-- Mudas Doadas Detalhe -->
+                                        <div x-show="activeSection === 'doadas'" class="rounded-2xl border-4 border-emerald-300 dark:border-emerald-700 bg-white dark:bg-gray-900 shadow-2xl p-8 pt-14 animate-fade-in">
+                                            <div class="flex items-center gap-3 mb-6">
+                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/></svg></span>
+                                                <h4 class="font-bold text-2xl text-emerald-700 dark:text-emerald-200">Mudas Doadas</h4>
+                                                <span class="ml-auto text-lg font-semibold text-emerald-900 dark:text-emerald-100 bg-emerald-100 dark:bg-emerald-800 px-3 py-1 rounded-full">{{$mudasDoadas->count()}} mudas</span>
+                                            </div>
+                                            <div class="divide-y divide-emerald-100 dark:divide-emerald-800 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                                            @forelse($mudasDoadas as $muda)
+                                                <div class="py-3 flex items-center gap-3">
+                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 dark:bg-emerald-800 text-emerald-700 dark:text-emerald-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/></svg></span>
+                                                    <div class="flex-1">
+                                                        <div class="flex flex-wrap gap-2 items-center mb-1">
+                                                            <span class="font-bold">{{ $muda->nome }}</span>
+                                                            <span class="text-xs px-2 py-0.5 rounded bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100">Tipo: {{ $muda->tipo->nome ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-4">
+                                                            <span>Doadas para: <span class="font-semibold text-emerald-700 dark:text-emerald-200">{{ $muda->donated_to->name ?? '-' }}</span></span>
+                                                            <span>Data da doação: {{ $muda->donated_at ? $muda->donated_at->format('d/m/Y H:i') : '-' }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-gray-500 italic">Nenhuma muda doada.</p>
+                                            @endforelse
+                                            </div>
+                                        </div>
+                                        <!-- Solicitações Enviadas Detalhe -->
+                                        <div x-show="activeSection === 'enviadas'" class="rounded-2xl border-4 border-blue-300 dark:border-blue-700 bg-white dark:bg-gray-900 shadow-2xl p-8 pt-14 animate-fade-in">
+                                            <div class="flex items-center gap-3 mb-6">
+                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 17l4 4 4-4m0-5V3'/></svg></span>
+                                                <h4 class="font-bold text-2xl text-blue-700 dark:text-blue-200">Solicitações Enviadas</h4>
+                                                <span class="ml-auto text-lg font-semibold text-blue-900 dark:text-blue-100 bg-blue-100 dark:bg-blue-800 px-3 py-1 rounded-full">{{$solicitacoesEnviadas->count()}} solicitações</span>
+                                            </div>
+                                            <div class="divide-y divide-blue-100 dark:divide-blue-800 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                                            @forelse($solicitacoesEnviadas as $sol)
+                                                <div class="py-3 flex items-center gap-3">
+                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 17l4 4 4-4m0-5V3'/></svg></span>
+                                                    <div class="flex-1">
+                                                        <div class="flex flex-wrap gap-2 items-center mb-1">
+                                                            <span class="font-bold">{{ $sol->mudas->nome ?? '-' }}</span>
+                                                            <span class="text-xs px-2 py-0.5 rounded bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100">Status: {{ $sol->status->nome ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-4">
+                                                            <span>Enviado para: <span class="font-semibold text-blue-700 dark:text-blue-200">{{ $sol->mudas->user->name ?? '-' }}</span></span>
+                                                            <span>Data: {{ $sol->created_at->format('d/m/Y H:i') }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-gray-500 italic">Nenhuma solicitação enviada.</p>
+                                            @endforelse
+                                            </div>
+                                        </div>
+                                        <!-- Solicitações Recebidas Detalhe -->
+                                        <div x-show="activeSection === 'recebidas'" class="rounded-2xl border-4 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-900 shadow-2xl p-8 pt-14 animate-fade-in">
+                                            <div class="flex items-center gap-3 mb-6">
+                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-200 dark:bg-purple-700 text-purple-900 dark:text-purple-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg></span>
+                                                <h4 class="font-bold text-2xl text-purple-700 dark:text-purple-200">Solicitações Recebidas</h4>
+                                                <span class="ml-auto text-lg font-semibold text-purple-900 dark:text-purple-100 bg-purple-100 dark:bg-purple-800 px-3 py-1 rounded-full">{{$solicitacoesRecebidas->count()}} solicitações</span>
+                                            </div>
+                                            <div class="divide-y divide-purple-100 dark:divide-purple-800 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                                            @forelse($solicitacoesRecebidas as $sol)
+                                                <div class="py-3 flex items-center gap-3">
+                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg></span>
+                                                    <div class="flex-1">
+                                                        <div class="flex flex-wrap gap-2 items-center mb-1">
+                                                            <span class="font-bold">{{ $sol->mudas->nome ?? '-' }}</span>
+                                                            <span class="text-xs px-2 py-0.5 rounded bg-purple-200 dark:bg-purple-700 text-purple-900 dark:text-purple-100">Status: {{ $sol->status->nome ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-4">
+                                                            <span>Solicitante: <span class="font-semibold text-purple-700 dark:text-purple-200">{{ $sol->user->name ?? '-' }}</span></span>
+                                                            <span>Data: {{ $sol->created_at->format('d/m/Y H:i') }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-gray-500 italic">Nenhuma solicitação recebida.</p>
+                                            @endforelse
+                                            </div>
+                                        </div>
+                                        <!-- Solicitações Rejeitadas Detalhe -->
+                                        <div x-show="activeSection === 'rejeitadas'" class="rounded-2xl border-4 border-red-300 dark:border-red-700 bg-white dark:bg-gray-900 shadow-2xl p-8 pt-14 animate-fade-in">
+                                            <div class="flex items-center gap-3 mb-6">
+                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-red-200 dark:bg-red-700 text-red-900 dark:text-red-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg></span>
+                                                <h4 class="font-bold text-2xl text-red-700 dark:text-red-200">Solicitações Rejeitadas</h4>
+                                                <span class="ml-auto text-lg font-semibold text-red-900 dark:text-red-100 bg-red-100 dark:bg-red-800 px-3 py-1 rounded-full">{{$solicitacoesRejeitadas->count()}} solicitações</span>
+                                            </div>
+                                            <div class="divide-y divide-red-100 dark:divide-red-800 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
+                                            @forelse($solicitacoesRejeitadas as $sol)
+                                                <div class="py-3 flex items-center gap-3">
+                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-red-100 dark:bg-red-800 text-red-700 dark:text-red-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg></span>
+                                                    <div class="flex-1">
+                                                        <div class="flex flex-wrap gap-2 items-center mb-1">
+                                                            <span class="font-bold">{{ $sol->mudas->nome ?? '-' }}</span>
+                                                            <span class="text-xs px-2 py-0.5 rounded bg-red-200 dark:bg-red-700 text-red-900 dark:text-red-100">Status: {{ $sol->status->nome ?? '-' }}</span>
+                                                        </div>
+                                                        <div class="text-xs text-gray-500 dark:text-gray-400 flex flex-wrap gap-4">
+                                                            <span>Solicitante: <span class="font-semibold text-red-700 dark:text-red-200">{{ $sol->user->name ?? '-' }}</span></span>
+                                                            <span>Destinatário: <span class="font-semibold text-red-700 dark:text-red-200">{{ $sol->mudas->user->name ?? '-' }}</span></span>
+                                                            <span>Rejeitada em: {{ $sol->rejected_at ? $sol->rejected_at->format('d/m/Y H:i') : '-' }}</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-gray-500 italic">Nenhuma solicitação rejeitada.</p>
+                                            @endforelse
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -21,6 +21,49 @@ class ProfileController extends Controller
         $tipos = \App\Models\Tipo::orderBy('nome')->get();
         $estados = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
+        // Histórico de atividades
+        // Mudas cadastradas pelo usuário
+        $mudasCadastradas = \App\Models\Mudas::where('user_id', $user->id)
+            ->whereNull('donated_at')
+            ->whereNull('disabled_at')
+            ->latest()
+            ->take(10)
+            ->get();
+        // Mudas doadas pelo usuário
+        $mudasDoadas = \App\Models\Mudas::where('user_id', $user->id)
+            ->whereNotNull('donated_at')
+            ->latest('donated_at')
+            ->take(10)
+            ->get();
+        // Solicitações enviadas
+        $solicitacoesEnviadas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo'])
+            ->where('user_id', $user->id)
+            ->latest()
+            ->take(10)
+            ->get();
+        // Solicitações recebidas (nas mudas do usuário)
+        $solicitacoesRecebidas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo', 'user'])
+            ->whereHas('mudas', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })
+            ->latest()
+            ->take(10)
+            ->get();
+        // Solicitações rejeitadas (enviadas ou recebidas)
+        $solicitacoesRejeitadas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo', 'user'])
+            ->where(function($q) use ($user) {
+                $q->where('user_id', $user->id)
+                  ->orWhereHas('mudas', function($q2) use ($user) {
+                      $q2->where('user_id', $user->id);
+                  });
+            })
+            ->whereHas('status', function($q) {
+                $q->where('nome', 'Rejeitada');
+            })
+            ->latest('rejected_at')
+            ->take(10)
+            ->get();
+
         // Filtro de tipo de exibição (favoritas, cadastradas, transferidas, desabilitadas)
         $filterType = $request->get('filter_type', 'all');
 
@@ -77,6 +120,12 @@ class ProfileController extends Controller
             'mudas' => $mudas,
             'tipos' => $tipos,
             'estados' => $estados,
+            // Histórico
+            'mudasCadastradas' => $mudasCadastradas,
+            'mudasDoadas' => $mudasDoadas,
+            'solicitacoesEnviadas' => $solicitacoesEnviadas,
+            'solicitacoesRecebidas' => $solicitacoesRecebidas,
+            'solicitacoesRejeitadas' => $solicitacoesRejeitadas,
         ]);
     }
 
