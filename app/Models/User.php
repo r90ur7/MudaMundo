@@ -92,4 +92,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(\App\Models\Mudas::class, 'user_id');
     }
+
+    /**
+     * Relacionamento com as mensagens do usuário.
+     */
+    public function mensagens()
+    {
+        return $this->hasMany(\App\Models\solicitacao_mensagem::class, 'user_id');
+    }
 }

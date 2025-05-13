@@ -6,6 +6,7 @@
     <title>{{ config('app.name', 'MudaMundo') }}</title>
     <meta name="robots" content="max-snippet:-1, max-image-preview:large, max-video-preview:-1">
     <meta name="description" content="Crafted for agencies and studios specializing in web design and development.">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 

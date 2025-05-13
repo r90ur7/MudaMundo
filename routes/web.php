@@ -7,6 +7,7 @@ use App\Http\Controllers\MudasController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SolicitacoesController;
+use App\Http\Controllers\SolicitacaoMensagemController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('mudas/index', [MudasController::class, 'index'])->name('mudas.index');
@@ -55,6 +56,13 @@ Route::middleware('auth')->group(function () {
     Route::patch('solicitacoes/{solicitacao}/reject', [SolicitacoesController::class, 'reject'])->name('solicitacoes.reject');
     Route::patch('solicitacoes/{solicitacao}/negotiate', [SolicitacoesController::class, 'negotiate'])->name('solicitacoes.negotiate');
     Route::patch('solicitacoes/{solicitacao}/confirm', [SolicitacoesController::class, 'confirm'])->name('solicitacoes.confirm');
+
+    // Chat de mensagens de solicitação
+    Route::get('chat/{solicitacao}', [SolicitacaoMensagemController::class, 'chat'])->name('chat.solicitacao');
+    Route::post('chat/send', [SolicitacaoMensagemController::class, 'store'])->name('chat.solicitacao.send');
+
+    // API de chats do usuário (agora autenticada via sessão)
+    Route::get('/api/chats', [SolicitacaoMensagemController::class, 'userChats'])->middleware('auth');
 });
 
 require __DIR__.'/auth.php';

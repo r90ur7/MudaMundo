@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\solicitacoes;
+use App\Models\Solicitacao;
 use App\Models\Mudas;
 use App\Models\solicitacao_status;
 use App\Models\solicitacao_tipos;
@@ -106,7 +106,7 @@ class SolicitacoesController extends Controller
                 return back()->withErrors(['error' => 'Você não pode solicitar sua própria muda.'])->withInput();
             }
 
-            $existingSolicitation = solicitacoes::where('muda_id', $validated['muda_id'])
+            $existingSolicitation = Solicitacao::where('muda_id', $validated['muda_id'])
                 ->where('user_id', $validated['user_id'])
                 ->whereNull('canceled_at')
                 ->whereNull('rejected_at')
@@ -199,7 +199,7 @@ class SolicitacoesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(solicitacoes $solicitacao)
+    public function show(Solicitacao $solicitacao)
     {
         return view('solicitacoes.show', compact('solicitacao'));
     }
@@ -207,7 +207,7 @@ class SolicitacoesController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(solicitacoes $solicitacoes)
+    public function edit(Solicitacao $solicitacao)
     {
         //
     }
@@ -215,7 +215,7 @@ class SolicitacoesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, solicitacoes $solicitacoes)
+    public function update(Request $request, Solicitacao $solicitacao)
     {
         //
     }
@@ -223,7 +223,7 @@ class SolicitacoesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(solicitacoes $solicitacoes)
+    public function destroy(Solicitacao $solicitacao)
     {
         //
     }
@@ -231,7 +231,7 @@ class SolicitacoesController extends Controller
     /**
      * Aceitar uma solicitação (doação ou permuta).
      */
-    public function accept(solicitacoes $solicitacao)
+    public function accept(Solicitacao $solicitacao)
     {
         // Define status Aceita
         $statusAceita = solicitacao_status::firstOrCreate(['nome' => 'Aceita']);
@@ -259,7 +259,7 @@ class SolicitacoesController extends Controller
     /**
      * Rejeitar uma solicitação (doação ou permuta).
      */
-    public function reject(solicitacoes $solicitacao)
+    public function reject(Solicitacao $solicitacao)
     {
         // Define status Rejeitada
         $statusRejeitada = solicitacao_status::firstOrCreate(['nome' => 'Rejeitada']);
@@ -274,7 +274,7 @@ class SolicitacoesController extends Controller
     /**
      * Negociar permuta alterando a muda de troca.
      */
-    public function negotiate(Request $request, solicitacoes $solicitacao)
+    public function negotiate(Request $request, Solicitacao $solicitacao)
     {
         // Valida muda_troca_id
         $request->validate(['muda_troca_id' => 'required|exists:mudas,id']);
@@ -292,7 +292,7 @@ class SolicitacoesController extends Controller
     /**
      * Confirmar recebimento da muda e atualizar inventário.
      */
-    public function confirm(solicitacoes $solicitacao)
+    public function confirm(Solicitacao $solicitacao)
     {
         // Define status Recebida
         $statusRecebida = solicitacao_status::firstOrCreate(['nome' => 'Recebida']);

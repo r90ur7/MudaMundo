@@ -36,13 +36,13 @@ class ProfileController extends Controller
             ->take(10)
             ->get();
         // Solicitações enviadas
-        $solicitacoesEnviadas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo'])
+        $solicitacoesEnviadas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo'])
             ->where('user_id', $user->id)
             ->latest()
             ->take(10)
             ->get();
         // Solicitações recebidas (nas mudas do usuário)
-        $solicitacoesRecebidas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo', 'user'])
+        $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo', 'user'])
             ->whereHas('mudas', function($q) use ($user) {
                 $q->where('user_id', $user->id);
             })
@@ -50,7 +50,7 @@ class ProfileController extends Controller
             ->take(10)
             ->get();
         // Solicitações rejeitadas (enviadas ou recebidas)
-        $solicitacoesRejeitadas = \App\Models\solicitacoes::with(['mudas', 'status', 'tipo', 'user'])
+        $solicitacoesRejeitadas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo', 'user'])
             ->where(function($q) use ($user) {
                 $q->where('user_id', $user->id)
                   ->orWhereHas('mudas', function($q2) use ($user) {

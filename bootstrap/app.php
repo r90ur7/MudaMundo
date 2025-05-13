@@ -16,3 +16,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         //
     })->create();
+
+// Carrega as definições de canais de broadcast
+require_once __DIR__.'/../routes/channels.php';

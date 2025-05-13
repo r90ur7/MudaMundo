@@ -4,7 +4,7 @@
             {{ __('Perfil') }}
         </h2>
     </x-slot>
-    <div class="py-12" x-data="{ activeTab: 'account' }">
+    <div class="py-12" x-data="{ activeTab: 'account', showChatNotification: false, notificationChatId: null, notificationChatData: null }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden mb-6">
                 <div class="p-6 flex flex-col md:flex-row items-center">
@@ -98,32 +98,7 @@
                     <div x-show="activeTab === 'chats'" class="space-y-6">
                         <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
                             <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Minhas Conversas</h3>
-                            <div class="space-y-4">
-                                <p class="text-gray-600 dark:text-gray-400 italic">Você não tem nenhuma conversa ativa no momento.</p>
-                                <div class="space-y-2">
-                                    <div class="bg-white dark:bg-gray-700 p-4 rounded-lg shadow hover:bg-gray-50 dark:hover:bg-gray-600 transition cursor-pointer">
-                                        <div class="flex items-center justify-between">
-                                            <div class="flex items-center">
-                                                <div class="h-10 w-10 bg-gray-200 dark:bg-gray-800 rounded-full flex items-center justify-center text-sm text-gray-500 dark:text-gray-300 mr-3">
-                                                    M
-                                                </div>
-                                                <div>
-                                                    <h4 class="font-semibold text-gray-900 dark:text-gray-100">Maria Silva</h4>
-                                                    <p class="text-sm text-gray-600 dark:text-gray-300">Interesse na Jabuticabeira</p>
-                                                </div>
-                                            </div>
-                                            <div class="text-right">
-                                                <span class="text-xs text-gray-500 dark:text-gray-400">10/04/2025</span>
-                                                <div class="mt-1">
-                                                    <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-500">
-                                                        <span class="text-xs font-medium text-white">2</span>
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                            @include('profile.partials.chats')
                         </div>
                     </div>
 
@@ -391,6 +366,17 @@
     </div>
     @endif
 
+    <div x-show="showChatNotification" class="fixed bottom-6 right-6 z-50">
+        <div class="bg-emerald-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 cursor-pointer animate-bounce"
+             @click="activeTab = 'chats'; showChatNotification = false; $nextTick(() => { if (notificationChatId) { window.openChatFromNotification(notificationChatId, notificationChatData); } })">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8a2 2 0 012-2h2M15 3h-6a2 2 0 00-2 2v2a2 2 0 002 2h6a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
+            <div>
+                <div class="font-bold">Nova mensagem recebida!</div>
+                <div class="text-sm" x-text="notificationChatData ? notificationChatData.otherUserName + ': ' + notificationChatData.preview : ''"></div>
+            </div>
+        </div>
+    </div>
+
     @push('scripts')
     <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -566,6 +552,71 @@
             }, 5000);
         }
     });
+
+    window.openChatFromNotification = function(chatId, chatData) {
+        // Espera Alpine carregar o componente de chat
+        setTimeout(() => {
+            const chatList = document.querySelector('#chats-list');
+            if (chatList && chatList.__x) {
+                const comp = chatList.__x.$data;
+                if (comp && typeof comp.openChat === 'function') {
+                    comp.openChat(chatId);
+                }
+            }
+        }, 300);
+    };
+
+    // --- INÍCIO: Atualizar lista de chats após nova solicitação ---
+    window.addEventListener('solicitacao-criada', function() {
+        // Aguarda Alpine inicializar
+        setTimeout(() => {
+            const chatList = document.querySelector('#chats-list');
+            if (chatList && chatList.__x) {
+                const comp = chatList.__x.$data;
+                if (comp && typeof comp.fetchChats === 'function') {
+                    comp.fetchChats();
+                }
+            }
+        }, 300);
+    });
+
+    if (window.Echo) {
+        window.Echo.private('user.' + {{ auth()->id() }})
+            .listen('.App\\Events\\NovaMensagemChat', (e) => {
+                if (e.mensagem && e.mensagem.user_id !== {{ auth()->id() }}) {
+                    window.dispatchEvent(new CustomEvent('chat-notification', {
+                        detail: {
+                            chatId: e.mensagem.solicitacao_id,
+                            chatData: {
+                                otherUserName: e.mensagem.user.name,
+                                preview: e.mensagem.mensagem
+                            }
+                        }
+                    }));
+
+                    // Atualiza a lista de chats em tempo real
+                    const chatList = document.querySelector('#chats-list');
+                    if (chatList && chatList.__x) {
+                        const comp = chatList.__x.$data;
+                        if (comp && typeof comp.fetchChats === 'function') {
+                            comp.fetchChats();
+                        }
+                        // Se o chat modal está aberto para o mesmo chat, adiciona a mensagem em tempo real
+                        if (comp && comp.showChatModal && comp.activeChat && comp.activeChat.solicitacao.id === e.mensagem.solicitacao_id) {
+                            // Evita duplicidade se já existe pelo local_id
+                            const exists = comp.messages.some(m => m.id === e.mensagem.id);
+                            if (!exists) {
+                                comp.messages.push({ ...e.mensagem, status: 'sent' });
+                                setTimeout(() => {
+                                    const el = document.getElementById('chat-messages');
+                                    if (el) el.scrollTop = el.scrollHeight;
+                                }, 50);
+                            }
+                        }
+                    }
+                }
+            });
+    }
     </script>
     @endpush
 </x-app-layout>

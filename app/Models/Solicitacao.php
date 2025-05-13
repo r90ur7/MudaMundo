@@ -5,10 +5,17 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class solicitacoes extends Model
+class Solicitacao extends Model
 {
     /** @use HasFactory<\Database\Factories\SolicitacoesFactory> */
     use HasFactory;
+
+    /**
+     * A tabela associada ao modelo.
+     *
+     * @var string
+     */
+    protected $table = 'solicitacoes';
 
     /**
      * Os atributos que podem ser atribuídos em massa.
@@ -81,6 +88,7 @@ class solicitacoes extends Model
     {
         return $this->belongsTo(\App\Models\User::class, 'user_id');
     }
+
     /**
      * Relacionamento com as mensagens da solicitação
      */
@@ -89,4 +97,3 @@ class solicitacoes extends Model
         return $this->hasMany(\App\Models\solicitacao_mensagem::class, 'solicitacao_id');
     }
 }
-

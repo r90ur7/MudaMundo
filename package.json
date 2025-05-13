@@ -19,7 +19,10 @@
         "vite": "^6.2.0"
     },
     "dependencies": {
+        "@ably/laravel-echo": "^1.0.6",
         "@floating-ui/dom": "^1.6.13",
+        "ably": "^1.2.50",
+        "laravel-echo": "^2.1.0",
         "preline": "^3.0.1",
         "vanilla-calendar-pro": "^3.0.3"
     }

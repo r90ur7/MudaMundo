@@ -147,6 +147,9 @@
                         `;
                         statusDiv.classList.remove('hidden');
 
+                        // Disparar evento global para atualizar lista de chats
+                        window.dispatchEvent(new Event('solicitacao-criada'));
+
                         // Redirecionar após alguns segundos
                         setTimeout(() => {
                             window.location.href = data.redirect;
