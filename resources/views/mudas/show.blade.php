@@ -191,8 +191,17 @@
                                         Entrar em Contato
                                     </a>
 
-                                    <button type="button" class="w-full inline-flex justify-center items-center gap-2 rounded-lg border border-emerald-500/50 font-semibold text-emerald-500 hover:text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all text-sm py-3 px-4">
-                                        Favoritar
+                                    @php
+                                        $isFavorited = auth()->check() && $muda->favoritedBy->contains(auth()->id());
+                                    @endphp
+                                    <button type="button" class="favorite-btn w-full inline-flex justify-center items-center gap-2 rounded-lg border border-emerald-500/50 font-semibold text-emerald-500 hover:text-white hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 transition-all text-sm py-3 px-4"
+                                        data-muda-id="{{ $muda->id }}"
+                                        aria-pressed="{{ $isFavorited ? 'true' : 'false' }}"
+                                        title="{{ $isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}">
+                                        <svg class="w-5 h-5 transition-colors {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                        <span class="ml-2">{{ $isFavorited ? 'Remover dos favoritos' : 'Favoritar' }}</span>
                                     </button>
                                 </div>
                                 @elseif(auth()->id() === $muda->donated_to)
@@ -270,6 +279,39 @@
                     deleteForm.submit();
                 });
             }
+
+            // Lógica do botão de favorito (igual ao dashboard)
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const mudaId = this.getAttribute('data-muda-id');
+                    const isFavorited = this.getAttribute('aria-pressed') === 'true';
+                    const url = `/mudas/${mudaId}/favorite`;
+                    fetch(url, {
+                        method: isFavorited ? 'DELETE' : 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                            'Accept': 'application/json',
+                        },
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.favorited !== undefined) {
+                            this.setAttribute('aria-pressed', data.favorited ? 'true' : 'false');
+                            this.title = data.favorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+                            const svg = this.querySelector('svg');
+                            if (svg) {
+                                svg.classList.toggle('text-red-500', data.favorited);
+                                svg.classList.toggle('text-gray-400', !data.favorited);
+                            }
+                            const span = this.querySelector('span');
+                            if (span) {
+                                span.textContent = data.favorited ? 'Remover dos favoritos' : 'Favoritar';
+                            }
+                        }
+                    });
+                });
+            });
         });
     </script>
     @endpush

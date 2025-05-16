@@ -24,6 +24,7 @@
         "ably": "^1.2.50",
         "laravel-echo": "^2.1.0",
         "preline": "^3.0.1",
+        "pusher-js": "^8.4.0",
         "vanilla-calendar-pro": "^3.0.3"
     }
 }

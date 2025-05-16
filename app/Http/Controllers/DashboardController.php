@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Mudas;
 use App\Models\Tipo;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -40,7 +42,14 @@ class DashboardController extends Controller
             }
 
             $mudas = $query->paginate(12)->onEachSide(1)->withQueryString();
-            $favoritos = Mudas::whereNull('disabled_at')->take(4)->latest()->get();
+
+            // Buscar favoritos do usuário autenticado
+            $favoritos = [];
+            if (Auth::check()) {
+                /** @var User $user */
+                $user = Auth::user();
+                $favoritos = $user->favorites()->with(['tipo', 'status', 'user'])->latest('favoritos.created_at')->take(4)->get();
+            }
 
             return view('dashboard', compact('mudas', 'favoritos', 'tipos', 'estados'));
 
@@ -48,5 +57,21 @@ class DashboardController extends Controller
             Log::error('Erro no DashboardController@index: ' . $e->getMessage());
             return back()->with('error', 'Ocorreu um erro ao carregar o dashboard.');
         }
+    }
+
+    /**
+     * Retorna o HTML dos favoritos do usuário autenticado para AJAX
+     */
+    public function favoritosHtml()
+    {
+        $favoritos = [];
+        if (Auth::check()) {
+            /** @var \App\Models\User $user */
+            $user = Auth::user();
+            $favoritos = $user->favorites()->with(['tipo', 'status', 'user'])->latest('favoritos.created_at')->take(4)->get();
+        }
+        $html = view('dashboard.partials.favoritos', compact('favoritos'))->render();
+        // Retorna HTML puro para facilitar o uso no JS
+        return response($html);
     }
 }

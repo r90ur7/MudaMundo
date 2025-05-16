@@ -9,6 +9,7 @@ use App\Models\Especie;
 use App\Models\solicitacao_tipos;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Auth;
 
 class MudasController extends Controller
 {
@@ -113,7 +114,7 @@ class MudasController extends Controller
         // Persistir modo de solicitação (doacao ou permuta)
         $validated['modo_solicitacao'] = $request->input('modo_solicitacao');
 
-        $validated['user_id'] = auth()->id();
+        $validated['user_id'] = Auth::id();
 
         // Configurar tipo_id para a muda
         $tipo = Tipo::firstOrCreate(
@@ -154,7 +155,7 @@ class MudasController extends Controller
         }
 
         if ($request->has('setAsDefault') && $request->setAsDefault == '1') {
-            $user = auth()->user();
+            $user = Auth::user();
 
             $user->update([
                 'cep' => $validated['cep'],
@@ -197,8 +198,8 @@ class MudasController extends Controller
      */
     public function update(Request $request, Mudas $muda)
     {
-        // Não permite editar se já tiver sido doada/transferida
-        if ($muda->donated_at !== null) {
+        // Permite edição apenas pelo proprietário atual
+        if ($muda->donated_at !== null && Auth::id() !== $muda->user_id) {
             abort(403, 'Apenas o novo proprietário pode modificar esta muda.');
         }
 
@@ -280,7 +281,7 @@ class MudasController extends Controller
     public function favorites(Request $request)
     {
         try {
-            $user = \Illuminate\Support\Facades\Auth::user();
+            $user = Auth::user();
             $favorites = $user->favorites()->paginate(12);
 
             return view('mudas.favorites', compact('favorites'));
@@ -296,7 +297,7 @@ class MudasController extends Controller
     public function release(Mudas $muda)
     {
         // Apenas o proprietário atual pode liberar a muda
-        abort_if(auth()->id() !== $muda->user_id, 403);
+        abort_if(Auth::id() !== $muda->user_id, 403);
         // Resetar flags e status para Disponível
         $muda->update([
             'donated_at'     => null,
@@ -346,5 +347,41 @@ class MudasController extends Controller
         // dd($imageUrl, $file, $type);
 
         return response($file, 200)->header('Content-Type', $type);
+    }
+
+    /**
+     * Adiciona uma muda aos favoritos do usuário autenticado.
+     */
+    public function favorite(Request $request, Mudas $muda)
+    {
+        try {
+            $user = $request->user();
+            \Log::info('[FAVORITE] Usuário autenticado:', ['user_id' => $user ? $user->id : null]);
+            \Log::info('[FAVORITE] Muda:', ['muda_id' => $muda->id]);
+            if (!$user->favorites()->where('muda_id', $muda->id)->exists()) {
+                $user->favorites()->attach($muda->id); // Adiciona o favorito no banco
+                \Log::info('[FAVORITE] Favorito adicionado com sucesso.', ['user_id' => $user->id, 'muda_id' => $muda->id]);
+            } else {
+                \Log::info('[FAVORITE] Já favoritado.', ['user_id' => $user->id, 'muda_id' => $muda->id]);
+            }
+            return response()->json(['favorited' => true]);
+        } catch (\Throwable $e) {
+            \Log::error('[FAVORITE][ERRO] Falha ao favoritar muda', ['exception' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['favorited' => false, 'error' => 'Erro ao favoritar.'], 500);
+        }
+    }
+
+    /**
+     * Remove uma muda dos favoritos do usuário autenticado.
+     */
+    public function unfavorite(Request $request, Mudas $muda)
+    {
+        $user = $request->user();
+        Log::info('[UNFAVORITE] Usuário autenticado:', ['user_id' => $user ? $user->id : null]);
+        Log::info('[UNFAVORITE] Muda:', ['muda_id' => $muda->id]);
+        $user->favorites()->detach($muda->id);
+        Log::info('[UNFAVORITE] Favorito removido.', ['user_id' => $user->id, 'muda_id' => $muda->id]);
+        // dd('unfavorite executado', $user->favorites()->pluck('muda_id'));
+        return response()->json(['favorited' => false]);
     }
 }

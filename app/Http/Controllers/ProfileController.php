@@ -80,8 +80,14 @@ class ProfileController extends Controller
                 break;
             case 'transferidas':
                 $query->whereNotNull('donated_at')
-                      ->where(fn($q) => $q->where('user_id', $user->id)
-                                             ->orWhere('donated_to', $user->id));
+                      ->where(function($q) use ($user) {
+                          $q->where('user_id', $user->id)
+                            ->orWhere('donated_to', $user->id)
+                            ->orWhere(function($q2) use ($user) {
+                                $q2->where('original_user_id', $user->id)
+                                   ->where('user_id', '!=', $user->id);
+                            });
+                      });
                 break;
             case 'desabilitadas':
                 $query->whereNotNull('disabled_at')
@@ -219,7 +225,7 @@ class ProfileController extends Controller
         if ($file && $file->isValid()) {
             try {
                 // Salva a imagem no diretório storage/app/public/profile
-                $newFilename = 'profile_' . auth()->id() . '_' . time() . '.' . $file->getClientOriginalExtension();
+                $newFilename = 'profile_' . \Illuminate\Support\Facades\Auth::id() . '_' . time() . '.' . $file->getClientOriginalExtension();
 
                 return $file->storeAs('profile', $newFilename, 'public');
 
@@ -291,10 +297,14 @@ class ProfileController extends Controller
                 break;
             case 'transferidas':
                 $query->whereNotNull('donated_at')
-                      ->where(fn($q) =>
+                      ->where(function($q) use ($user) {
                           $q->where('user_id', $user->id)
                             ->orWhere('donated_to', $user->id)
-                      );
+                            ->orWhere(function($q2) use ($user) {
+                                $q2->where('original_user_id', $user->id)
+                                   ->where('user_id', '!=', $user->id);
+                            });
+                      });
                 break;
             case 'desabilitadas':
                 $query->whereNotNull('disabled_at')

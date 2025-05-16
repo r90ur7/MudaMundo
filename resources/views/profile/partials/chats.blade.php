@@ -10,6 +10,7 @@ window.chatList = function() {
         echoChannel: null,
         sendingMessage: false,
         pendingMessages: {},
+        listenerCount: 0, // Para depuração
         fetchChats() {
             fetch('/api/chats')
                 .then(r => r.json())
@@ -36,34 +37,67 @@ window.chatList = function() {
             this.newMessage = '';
             this.sendingMessage = false;
             this.pendingMessages = {};
+            this.listenerCount = 0;
+            // Remove listeners do canal anterior
             if (this.echoChannel) {
-                this.echoChannel.stopListening('.App\\Events\\NovaMensagemChat');
+                try {
+                    this.echoChannel.stopListening('.App\\Events\\NovaMensagemChat');
+                } catch (e) { console.warn('stopListening falhou:', e); }
                 this.echoChannel = null;
             }
         },
         listenToChannel(solicitacaoId) {
+            // Sempre remove listeners antigos antes de adicionar um novo
             if (this.echoChannel) {
-                this.echoChannel.stopListening('.App\\Events\\NovaMensagemChat');
+                try {
+                    this.echoChannel.stopListening('.App\\Events\\NovaMensagemChat');
+                } catch (e) { console.warn('stopListening falhou:', e); }
+                this.echoChannel = null;
+                this.listenerCount = 0;
+                console.log('[Echo] Listener antigo removido');
             }
             if (window.Echo) {
-                console.log(`Escutando o canal: chat.${solicitacaoId}`); // Log para depuração
-                this.echoChannel = window.Echo.private(`chat.${solicitacaoId}`)
-                    .listen('.App\\Events\\NovaMensagemChat', (e) => {
-                        console.log('Evento recebido:', e); // Log para verificar o evento recebido
-                        if (e.mensagem) {
-                            const idx = this.messages.findIndex(m => m.local_id && m.local_id === e.mensagem.local_id);
-                            if (idx !== -1) {
-                                this.messages[idx] = {...e.mensagem, status: 'sent'};
-                            } else {
-                                this.messages.push({...e.mensagem, status: 'sent'});
-                            }
-                            this.$nextTick(() => {
-                                const el = document.getElementById('chat-messages');
-                                if (el) el.scrollTop = el.scrollHeight;
-                            });
+                console.log('Abrindo canal privado: chat.' + solicitacaoId);
+                this.echoChannel = window.Echo.private(`chat.${solicitacaoId}`);
+                console.log('[Echo] Canal privado inscrito:', this.echoChannel);
+                // Adiciona listener novo
+                this.echoChannel.listen('.App\\Events\\NovaMensagemChat', (e) => {
+                    console.log('[Echo] Evento recebido:', e);
+                    if (e.mensagem) {
+                        // Verifica se a mensagem já existe pelo id ou local_id
+                        const idx = this.messages.findIndex(m => (m.id && m.id === e.mensagem.id) || (m.local_id && m.local_id === e.mensagem.local_id));
+                        if (idx !== -1) {
+                            // Substitui o array inteiro para garantir reatividade
+                            this.messages = this.messages.map((m, i) => i === idx ? { ...e.mensagem, status: 'sent' } : m);
+                            console.log('[Echo] Mensagem atualizada no array (replace)');
+                        } else {
+                            // Cria novo array para garantir reatividade
+                            this.messages = [...this.messages, { ...e.mensagem, status: 'sent' }];
+                            console.log('[Echo] Mensagem adicionada ao array (push)');
                         }
-                    });
+                        this.forceUpdateMessages();
+                        this.$nextTick(() => {
+                            const el = document.getElementById('chat-messages');
+                            if (el) el.scrollTop = el.scrollHeight;
+                        });
+                    } else {
+                        console.warn('[Echo] Evento recebido sem payload de mensagem:', e);
+                    }
+                });
+                // Listener global para debug de todos os eventos
+                this.echoChannel.listenForWhisper('debug', (payload) => {
+                    console.log('[Echo] Whisper debug recebido:', payload);
+                });
+                this.listenerCount++;
+                console.log(`[Echo] Listener adicionado. Total: ${this.listenerCount}`);
             }
+        },
+        forceUpdateMessages() {
+            // Força Alpine a reprocessar o array
+            this.messages = JSON.parse(JSON.stringify(this.messages));
+            // Fallback: dispara evento customizado para forçar update se necessário
+            this.$dispatch && this.$dispatch('chat-messages-updated');
+            console.log('[Echo] Forçando atualização do array de mensagens');
         },
         sendMessage() {
             if (!this.newMessage.trim() || !this.activeChat || this.sendingMessage) return;
@@ -117,6 +151,27 @@ window.chatList = function() {
         },
         init() {
             this.fetchChats();
+            // Listener global para todos os eventos Echo recebidos (debug)
+            if (window.Echo) {
+                window.Echo.connector.pusher.connection.bind('message', function(data) {
+                    console.log('[Echo][GLOBAL] Evento bruto recebido:', data);
+                });
+                window.Echo.connector.pusher.connection.bind('state_change', function(states) {
+                    console.log('[Echo][GLOBAL] Estado da conexão mudou:', states);
+                });
+                window.Echo.connector.pusher.connection.bind('connected', function() {
+                    console.log('[Echo][GLOBAL] Conectado ao Pusher/Ably!');
+                });
+                window.Echo.connector.pusher.connection.bind('error', function(err) {
+                    console.error('[Echo][GLOBAL] Erro de conexão:', err);
+                });
+                window.Echo.connector.pusher.connection.bind('subscription_error', function(channel, err) {
+                    console.error('[Echo][GLOBAL] Erro ao se inscrever no canal:', channel, err);
+                });
+                window.Echo.connector.pusher.connection.bind('subscription_succeeded', function(channel) {
+                    console.log('[Echo][GLOBAL] Inscrição bem-sucedida no canal:', channel);
+                });
+            }
         }
     }
 }
@@ -203,6 +258,22 @@ window.chatList = function() {
 document.addEventListener('DOMContentLoaded', () => {
     if (window.Echo) {
         console.log('Cliente Echo conectado:', window.Echo.connector.socketId);
+        // Listener global para depuração de TODOS os eventos recebidos
+        window.Echo.connector.pusher.connection.bind('message', function(data) {
+            console.log('[Echo][GLOBAL] Evento bruto recebido:', data);
+        });
+        // Listener global para eventos de canal privado
+        window.Echo.private = new Proxy(window.Echo.private, {
+            apply(target, thisArg, argumentsList) {
+                const channel = argumentsList[0];
+                const result = Reflect.apply(target, thisArg, argumentsList);
+                // Adiciona listener global para todos os eventos desse canal
+                result.listen('App\\Events\\NovaMensagemChat', (e) => {
+                    console.log('[Echo][GLOBAL] Evento NovaMensagemChat recebido no canal', channel, e);
+                });
+                return result;
+            }
+        });
     } else {
         console.error('Cliente Echo não está conectado. Verifique a configuração.');
     }

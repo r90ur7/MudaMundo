@@ -42,52 +42,8 @@
                         </a>
                     @endif
                 </div>
-
-                <!-- Conteúdo dos Favoritos com Skeleton -->
-                <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6" x-data="{ loading: true }" x-init="setTimeout(() => loading = false, 1300)">
-                    <template x-if="loading">
-                        @for ($i = 0; $i < 4; $i++)
-                            <div class="animate-pulse bg-neutral-600/50 dark:bg-neutral-200/50 rounded-xl overflow-hidden">
-                                <div class="h-32 bg-neutral-500/50 dark:bg-neutral-400/50"></div>
-                                <div class="p-4 space-y-3">
-                                    <div class="h-4 bg-neutral-500/50 dark:bg-neutral-400/50 rounded w-3/4"></div>
-                                    <div class="h-3 bg-neutral-500/50 dark:bg-neutral-400/50 rounded w-1/2"></div>
-                                </div>
-                            </div>
-                        @endfor
-                    </template>
-
-                    <template x-if="!loading">
-                        @forelse($favoritos ?? [] as $muda)
-                            <div class="group relative bg-neutral-700 dark:bg-neutral-300 border border-neutral-600 dark:border-neutral-400 rounded-xl shadow-sm hover:shadow-lg transition-shadow duration-300">
-                                <div class="aspect-w-3 aspect-h-2">
-                                    @if($muda->foto_url)
-                                        @php
-                                            $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
-                                        @endphp
-                                        <img class="w-full h-32 object-cover rounded-t-lg"
-                                            src="{{ route('mudas.getFileImage', ['filename' => $filename]) }}"
-                                            alt="{{ $muda->nome }}">
-                                    @else
-                                        <div class="w-full h-32 bg-neutral-600/50 dark:bg-neutral-400/50 flex items-center justify-center rounded-t-lg">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-emerald-500/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                                                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                            </svg>
-                                        </div>
-                                    @endif
-                                </div>
-                                <div class="p-4">
-                                    <h3 class="text-sm font-medium text-gray-900 dark:text-gray-100">{{ $muda->nome }}</h3>
-                                    <p class="mt-1 text-xs text-emerald-600 dark:text-emerald-400">{{ $muda->tipo->nome ?? 'Desconhecido' }}</p>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="col-span-full text-center py-8">
-                                <p class="text-gray-400 dark:text-neutral-600">Nenhum favorito encontrado</p>
-                            </div>
-                        @endforelse
-                    </template>
+                <div id="favoritos-list" class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    @include('dashboard.partials.favoritos', ['favoritos' => $favoritos])
                 </div>
             </section>
 
@@ -226,7 +182,7 @@
                             @if(request()->has('location') && !empty(request()->get('location')))
                                 @php
                                     $queryParamsSemLocation = array_filter(request()->except(['location']));
-                                    $urlSemLocation = url()->current() . ($queryParamsSemLocation ? '?' . http-build_query($queryParamsSemLocation) : '');
+                                    $urlSemLocation = url()->current() . ($queryParamsSemLocation ? '?' . http_build_query($queryParamsSemLocation) : '');
                                 @endphp
                                 <span class="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium bg-emerald-700 text-white dark:bg-emerald-200 dark:text-emerald-900">
                                     Local: {{ request()->get('location') }}
@@ -278,15 +234,18 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-emerald-500/70" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                                                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                                </svg>
                                             </div>
                                         @endif
 
                                         <!-- Botão Favorito (exemplo de placeholder) -->
-                                        <button class="favorite-btn absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-800 transition-colors">
-                                            <svg class="w-5 h-5 text-red-500 hover:text-red-600 transition-colors"
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        @php
+                                            $isFavorited = auth()->check() && $muda->favoritedBy->contains(auth()->id());
+                                        @endphp
+                                        <button class="favorite-btn absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-800 transition-colors"
+                                            data-muda-id="{{ $muda->id }}"
+                                            aria-pressed="{{ $isFavorited ? 'true' : 'false' }}"
+                                            title="{{ $isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}">
+                                            <svg class="w-5 h-5 transition-colors {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                             </svg>
@@ -376,44 +335,88 @@
     </div>
 
     @push('scripts')
-        <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 1. Para os selects (tipo e localização), o submit automático já funciona
-            document.querySelectorAll('select[name="tipo"], select[name="location"]').forEach(select => {
-                select.addEventListener('change', function() {
-                    // Apenas envia o formulário
-                    this.closest('form').submit();
-                });
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. Para os selects (tipo e localização), o submit automático já funciona
+        document.querySelectorAll('select[name="tipo"], select[name="location"]').forEach(select => {
+            select.addEventListener('change', function() {
+                this.closest('form').submit();
             });
-
-            // 2. Para o campo de busca, atualiza a URL automaticamente com debounce de 500ms
-            const searchInput = document.querySelector('input[name="search"]');
-            let searchTimeout;
-            if (searchInput) {
-                searchInput.addEventListener('input', function() {
-                    clearTimeout(searchTimeout);
-                    searchTimeout = setTimeout(() => {
-                        const value = this.value.trim();
-                        // Cria um objeto URL baseado na URL atual
-                        const url = new URL(window.location.href);
-                        if (value.length > 0) {
-                            url.searchParams.set('search', value);
-                        } else {
-                            url.searchParams.delete('search');
-                        }
-                        // Redireciona para a nova URL, recarregando a página com o filtro aplicado
-                        window.location.href = url.toString();
-                    }, 500);
-                });
-
-                // Impede que a tecla Enter submeta imediatamente
-                searchInput.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                    }
-                });
-            }
         });
-        </script>
+
+        // 2. Para o campo de busca, atualiza a URL automaticamente com debounce de 500ms
+        const searchInput = document.querySelector('input[name="search"]');
+        let searchTimeout;
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                clearTimeout(searchTimeout);
+                searchTimeout = setTimeout(() => {
+                    const value = this.value.trim();
+                    const url = new URL(window.location.href);
+                    if (value.length > 0) {
+                        url.searchParams.set('search', value);
+                    } else {
+                        url.searchParams.delete('search');
+                    }
+                    window.location.href = url.toString();
+                }, 500);
+            });
+            searchInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                }
+            });
+        }
+
+        // Função para atualizar a lista de favoritos via AJAX
+        function atualizarFavoritos() {
+            const favoritosList = document.getElementById('favoritos-list');
+            if (!favoritosList) return;
+            favoritosList.innerHTML = '<div class="col-span-full text-center py-8"><span class="loader inline-block w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></span></div>';
+            fetch('/dashboard/favoritos-html', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(res => res.text())
+            .then(html => {
+                favoritosList.innerHTML = html;
+            });
+        }
+
+        // Delegação de eventos para botões de favoritos
+        document.body.addEventListener('click', function(e) {
+            const btn = e.target.closest('.favorite-btn');
+            if (!btn) return;
+            e.preventDefault();
+            const mudaId = btn.getAttribute('data-muda-id');
+            const isFavorited = btn.getAttribute('aria-pressed') === 'true';
+            const url = `/mudas/${mudaId}/favorite`;
+            let fetchOptions = {
+                method: isFavorited ? 'DELETE' : 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: isFavorited ? undefined : JSON.stringify({})
+            };
+            fetch(url, fetchOptions)
+            .then(res => res.json())
+            .then(data => {
+                if (data.favorited !== undefined) {
+                    document.querySelectorAll('.favorite-btn[data-muda-id="'+mudaId+'"]').forEach(function(favBtn) {
+                        favBtn.setAttribute('aria-pressed', data.favorited ? 'true' : 'false');
+                        favBtn.title = data.favorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+                        const svg = favBtn.querySelector('svg');
+                        if (svg) {
+                            svg.classList.toggle('text-red-500', data.favorited);
+                            svg.classList.toggle('text-gray-400', !data.favorited);
+                        }
+                    });
+                    atualizarFavoritos();
+                }
+            });
+        });
+    });
+    </script>
     @endpush
 </x-app-layout>

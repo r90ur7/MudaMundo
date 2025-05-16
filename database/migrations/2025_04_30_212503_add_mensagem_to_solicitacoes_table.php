@@ -23,8 +23,18 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('solicitacoes', function (Blueprint $table) {
-            $table->dropColumn('mensagem');
-            $table->dropColumn('muda_troca_id');
+            if (Schema::hasColumn('solicitacoes', 'mensagem')) {
+                $table->dropColumn('mensagem');
+            }
+            if (Schema::hasColumn('solicitacoes', 'muda_troca_id')) {
+                // Remove a foreign key constraint se existir (ignorado em SQLite)
+                try {
+                    $table->dropForeign(['muda_troca_id']);
+                } catch (\Throwable $e) {
+                    // Ignora erro se não existir FK ou não suportado
+                }
+                $table->dropColumn('muda_troca_id');
+            }
         });
     }
 };

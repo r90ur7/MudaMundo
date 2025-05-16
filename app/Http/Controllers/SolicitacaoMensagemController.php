@@ -42,8 +42,8 @@ class SolicitacaoMensagemController extends Controller
             'mensagem' => $request->mensagem,
         ]);
         $msg->load('user');
-        // Dispara evento para websocket (broadcast)
-        broadcast(new NovaMensagemChat($msg))->toOthers();
+        Log::info('[Chat] Disparando evento NovaMensagemChat para solicitacao_id=' . $msg->solicitacao_id . ', user_id=' . Auth::id());
+        broadcast(new NovaMensagemChat($msg));
         return response()->json(['mensagem' => $msg]);
     }
 
@@ -85,7 +85,6 @@ class SolicitacaoMensagemController extends Controller
     public function chat(Request $request, $solicitacaoId)
     {
         $solicitacao = Solicitacao::with(['user', 'mudas', 'mensagens.user'])->findOrFail($solicitacaoId);
-        // Aqui pode-se adicionar verificação de permissão se desejar
         return response()->json([
             'mensagens' => $solicitacao->mensagens()->with('user')->orderBy('created_at')->get(),
             'solicitacao' => $solicitacao
@@ -99,11 +98,11 @@ class SolicitacaoMensagemController extends Controller
     {
         $userId = Auth::id();
         Log::info('[userChats] chamado para user_id: ' . $userId);
-        // Busca todas as solicitações em que o usuário está envolvido (como solicitante ou dono da muda)
         $solicitacoes = Solicitacao::where(function($q) use ($userId) {
             $q->where('user_id', $userId)
               ->orWhereHas('mudas', function($q2) use ($userId) {
-                  $q2->where('user_id', $userId);
+                  $q2->where('user_id', $userId)
+                     ->orWhere('original_user_id', $userId);
               });
         })
         ->with(['mensagens' => function($q) { $q->latest(); }, 'user', 'mudas.user'])
@@ -131,7 +130,6 @@ class SolicitacaoMensagemController extends Controller
             ];
         })
         ->sortByDesc(function($chat) {
-            // Ordena por data da última mensagem, chats sem mensagem vão para o final
             return $chat['lastMessageDate'] ? \Carbon\Carbon::createFromFormat('d/m/Y H:i', $chat['lastMessageDate']) : \Carbon\Carbon::createFromTimestamp(0);
         })
         ->values();

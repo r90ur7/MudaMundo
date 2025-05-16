@@ -8,6 +8,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\SolicitacoesController;
 use App\Http\Controllers\SolicitacaoMensagemController;
+use Illuminate\Support\Facades\Broadcast;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('mudas/index', [MudasController::class, 'index'])->name('mudas.index');
@@ -46,9 +47,11 @@ Route::middleware('auth')->group(function () {
         Route::put('{muda}/update', 'update')->name('update');
         Route::delete('{muda}/destroy', 'destroy')->name('destroy');
         Route::patch('{muda}/release', 'release')->name('release');
+        Route::post('{muda}/favorite', 'favorite')->name('favorite');
+        Route::delete('{muda}/favorite', 'unfavorite')->name('unfavorite');
+        Route::get('favoritos', 'favorites')->name('favoritos');
     });
-
-    // Solicitações de mudas
+    //messages
     Route::get('solicitacoes/checkout/{muda}', [SolicitacoesController::class, 'checkout'])->name('solicitacoes.checkout');
     Route::post('solicitacoes', [SolicitacoesController::class, 'store'])->name('solicitacoes.store');
     Route::get('solicitacoes/{solicitacao}', [SolicitacoesController::class, 'show'])->name('solicitacoes.show');
@@ -57,12 +60,16 @@ Route::middleware('auth')->group(function () {
     Route::patch('solicitacoes/{solicitacao}/negotiate', [SolicitacoesController::class, 'negotiate'])->name('solicitacoes.negotiate');
     Route::patch('solicitacoes/{solicitacao}/confirm', [SolicitacoesController::class, 'confirm'])->name('solicitacoes.confirm');
 
-    // Chat de mensagens de solicitação
     Route::get('chat/{solicitacao}', [SolicitacaoMensagemController::class, 'chat'])->name('chat.solicitacao');
     Route::post('chat/send', [SolicitacaoMensagemController::class, 'store'])->name('chat.solicitacao.send');
 
-    // API de chats do usuário (agora autenticada via sessão)
     Route::get('/api/chats', [SolicitacaoMensagemController::class, 'userChats'])->middleware('auth');
+
+    // AJAX: retorna HTML dos favoritos do usuário autenticado
+    Route::get('dashboard/favoritos-html', [DashboardController::class, 'favoritosHtml'])->name('dashboard.favoritosHtml');
 });
 
+Broadcast::routes(['middleware' => ['web']]);
+
 require __DIR__.'/auth.php';
+require __DIR__.'/channels.php';

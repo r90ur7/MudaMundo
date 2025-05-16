@@ -3,14 +3,12 @@
 namespace App\Events;
 
 use App\Models\solicitacao_mensagem;
-use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Broadcasting\ShouldBroadcast;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class NovaMensagemChat implements ShouldBroadcastNow
 {
@@ -25,7 +23,7 @@ class NovaMensagemChat implements ShouldBroadcastNow
 
     public function broadcastOn()
     {
-        // Canal privado por solicitação
+        Log::info('[Chat] broadcastOn chamado para canal: chat.' . $this->mensagem->solicitacao_id . ' | mensagem_id=' . $this->mensagem->id . ' | user_id=' . $this->mensagem->user_id);
         return new PrivateChannel('chat.' . $this->mensagem->solicitacao_id);
     }
 
