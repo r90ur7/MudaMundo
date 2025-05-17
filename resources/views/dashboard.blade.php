@@ -241,15 +241,17 @@
                                         @php
                                             $isFavorited = auth()->check() && $muda->favoritedBy->contains(auth()->id());
                                         @endphp
-                                        <button class="favorite-btn absolute top-4 right-4 p-2 rounded-full bg-white/80 hover:bg-white dark:bg-neutral-800/80 dark:hover:bg-neutral-800 transition-colors"
-                                            data-muda-id="{{ $muda->id }}"
-                                            aria-pressed="{{ $isFavorited ? 'true' : 'false' }}"
-                                            title="{{ $isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}">
-                                            <svg class="w-5 h-5 transition-colors {{ $isFavorited ? 'text-red-500' : 'text-gray-400' }}" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                    d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                            </svg>
-                                        </button>
+                                        <button class="favorite-btn absolute top-4 right-4 p-2 rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-red-400"
+    data-muda-id="{{ $muda->id }}"
+    aria-pressed="{{ $isFavorited ? 'true' : 'false' }}"
+    title="{{ $isFavorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos' }}"
+    style="background: {{ $isFavorited ? '#ef4444' : 'rgba(255,255,255,0.8)' }};">
+    <svg class="w-5 h-5 transition-colors duration-200"
+        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="{{ $isFavorited ? '#fff' : '#9ca3af' }}" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+            d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+</button>
                                     </div>
 
                                     <div class="p-4 md:p-6">
@@ -406,10 +408,12 @@
                     document.querySelectorAll('.favorite-btn[data-muda-id="'+mudaId+'"]').forEach(function(favBtn) {
                         favBtn.setAttribute('aria-pressed', data.favorited ? 'true' : 'false');
                         favBtn.title = data.favorited ? 'Remover dos favoritos' : 'Adicionar aos favoritos';
+                        // Atualiza cor do fundo
+                        favBtn.style.background = data.favorited ? '#ef4444' : 'rgba(255,255,255,0.8)';
+                        // Atualiza cor do stroke do SVG
                         const svg = favBtn.querySelector('svg');
                         if (svg) {
-                            svg.classList.toggle('text-red-500', data.favorited);
-                            svg.classList.toggle('text-gray-400', !data.favorited);
+                            svg.setAttribute('stroke', data.favorited ? '#fff' : '#9ca3af');
                         }
                     });
                     atualizarFavoritos();
