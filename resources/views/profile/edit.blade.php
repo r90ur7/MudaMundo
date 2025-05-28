@@ -366,16 +366,8 @@
     </div>
     @endif
 
-    <div x-show="showChatNotification" class="fixed bottom-6 right-6 z-50">
-        <div class="bg-emerald-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 cursor-pointer animate-bounce"
-             @click="activeTab = 'chats'; showChatNotification = false; $nextTick(() => { if (notificationChatId) { window.openChatFromNotification(notificationChatId, notificationChatData); } })">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8h2a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2v-8a2 2 0 012-2h2M15 3h-6a2 2 0 00-2 2v2a2 2 0 002 2h6a2 2 0 002-2V5a2 2 0 00-2-2z"/></svg>
-            <div>
-                <div class="font-bold">Nova mensagem recebida!</div>
-                <div class="text-sm" x-text="notificationChatData ? notificationChatData.otherUserName + ': ' + notificationChatData.preview : ''"></div>
-            </div>
-        </div>
-    </div>
+    <!-- Notificação global de chat (usando o mesmo comportamento do partial global) -->
+    <x-chat-notification />
 
     @push('scripts')
     <script>
@@ -583,7 +575,8 @@
     if (window.Echo) {
         window.Echo.private('user.' + {{ auth()->id() }})
             .listen('.App\\Events\\NovaMensagemChat', (e) => {
-                if (e.mensagem && e.mensagem.user_id !== {{ auth()->id() }}) {
+                if (e.mensagem) {
+                    // Sempre dispara notificação, mesmo se for o próprio usuário
                     window.dispatchEvent(new CustomEvent('chat-notification', {
                         detail: {
                             chatId: e.mensagem.solicitacao_id,

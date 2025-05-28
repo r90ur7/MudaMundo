@@ -8,13 +8,17 @@ use Illuminate\Database\Seeder;
 
 class MudaSeeder extends Seeder
 {
-    public function run(): void
+    public function run($users = null): void
     {
-        $user = User::first() ?? User::factory()->create();
-
+        // Se não receber usuários, pega o primeiro
+        if (!$users) {
+            $users = [User::first() ?? User::factory()->create()];
+        }
+        // Alterna entre os usuários para as mudas
+        $userCount = count($users);
         $mudas = [
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 1,
                 'muda_status_id' => 1,
                 'especie_id' => 1,
@@ -27,11 +31,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1 % $userCount]->id,
                 'tipos_id' => 2,
                 'muda_status_id' => 1,
                 'especie_id' => 2,
@@ -44,11 +49,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Centro',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 3,
                 'muda_status_id' => 1,
                 'especie_id' => 3,
@@ -61,11 +67,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Vila Flora',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1 % $userCount]->id,
                 'tipos_id' => 1,
                 'muda_status_id' => 1,
                 'especie_id' => 1,
@@ -78,11 +85,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim Paulista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 2,
                 'muda_status_id' => 1,
                 'especie_id' => 2,
@@ -95,11 +103,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1 % $userCount]->id,
                 'tipos_id' => 3,
                 'muda_status_id' => 1,
                 'especie_id' => 3,
@@ -112,11 +121,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardins',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 1,
                 'muda_status_id' => 1,
                 'especie_id' => 1,
@@ -129,11 +139,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Bela Vista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1 % $userCount]->id,
                 'tipos_id' => 2,
                 'muda_status_id' => 1,
                 'especie_id' => 2,
@@ -146,11 +157,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 3,
                 'muda_status_id' => 1,
                 'especie_id' => 3,
@@ -163,11 +175,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim América',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1 % $userCount]->id,
                 'tipos_id' => 1,
                 'muda_status_id' => 1,
                 'especie_id' => 1,
@@ -180,11 +193,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Cerqueira César',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 2,
                 'muda_status_id' => 1,
                 'especie_id' => 2,
@@ -197,11 +211,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim Paulista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1 % $userCount]->id,
                 'tipos_id' => 3,
                 'muda_status_id' => 1,
                 'especie_id' => 3,
@@ -214,11 +229,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim Paulista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 1,
                 'muda_status_id' => 1,
                 'especie_id' => 1,
@@ -231,11 +247,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[1 % $userCount]->id,
                 'tipos_id' => 2,
                 'muda_status_id' => 1,
                 'especie_id' => 2,
@@ -248,11 +265,12 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardins',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
             [
-                'user_id' => $user->id,
+                'user_id' => $users[0]->id,
                 'tipos_id' => 3,
                 'muda_status_id' => 1,
                 'especie_id' => 3,
@@ -265,11 +283,38 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
+                'foto_url' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
         ];
-
+        // Adiciona as demais mudas, alternando entre os usuários e usando imagens reais
+        $imagens = [
+            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+        ];
+        // Preenche as mudas restantes
+        for ($i = 4; $i < 15; $i++) {
+            $muda = [
+                ...$mudas[$i],
+                'user_id' => $users[$i % $userCount]->id,
+                'foto_url' => $imagens[$i % count($imagens)]
+            ];
+            $mudas[$i] = $muda;
+        }
         foreach ($mudas as $muda) {
             Mudas::create($muda);
         }

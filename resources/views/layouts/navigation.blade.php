@@ -44,10 +44,43 @@
                     <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @auth
+                    <!-- Ícone de notificação de chat -->
+                    <div x-data="{
+                            hasNewChat: false,
+                            notificationChatId: null,
+                            notificationChatData: null,
+                            setListeners() {
+                                window.addEventListener('chat-notification', (e) => {
+                                    this.hasNewChat = true;
+                                    this.notificationChatId = e.detail.chatId;
+                                    this.notificationChatData = e.detail.chatData;
+                                });
+                                window.addEventListener('chat-notification-clear', () => {
+                                    this.hasNewChat = false;
+                                });
+                            }
+                        }"
+                        x-init="setListeners()"
+                        class="relative flex items-center mr-4">
+                        <button
+                            @click.prevent="hasNewChat = false; window.hasNewChatNotification = false; window.dispatchEvent(new Event('chat-notification-clear')); window.location.href = '{{ route('profile.edit') }}#chats'; $nextTick(() => { if (notificationChatId) { window.openChatFromNotification && window.openChatFromNotification(notificationChatId, notificationChatData); } })"
+                            class="relative focus:outline-none"
+                            :class="{'animate-bounce': hasNewChat}">
+                            <svg class="w-7 h-7 text-gray-500 dark:text-gray-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                            </svg>
+                            <span x-show="hasNewChat" class="absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white bg-emerald-500"></span>
+                        </button>
+                    </div>
+                    <!-- Fim ícone de notificação de chat -->
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">
-                                <div>{{ Auth::user()->name }}</div>
+                                @if(Auth::user()->foto_url)
+                                    <img src="{{ route('profile.photo', ['filename' => Auth::user()->foto_url]) }}" alt="{{ Auth::user()->name }}" class="w-8 h-8 rounded-full object-cover">
+                                @else
+                                    <span class="w-8 h-8 rounded-full bg-emerald-200 text-emerald-700 flex items-center justify-center font-bold">{{ mb_substr(Auth::user()->name, 0, 1) }}</span>
+                                @endif
                                 <div class="ms-1">
                                     <svg class="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                                         <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />

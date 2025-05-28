@@ -12,22 +12,28 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // Criação dos usuários principais
+        $rall = \App\Models\User::firstOrCreate([
+            'email' => 'rall@example.com',
+        ], [
+            'name' => 'rall',
+            'password' => bcrypt('Senh@123'),
+        ]);
+        $thamires = \App\Models\User::firstOrCreate([
+            'email' => ' ',
+        ], [
+            'name' => 'thamires',
+            'password' => bcrypt('Senh@123'),
+        ]);
 
-        if (! User::where('email', 'test@example.com')->exists()) {
-            User::factory()->create([
-                'name'  => 'Test User',
-                'email' => 'test@example.com',
-            ]);
-        }
-
-        $this->call(class: [
+        $this->call([
             TipoSeeder::class,
             EspecieSeeder::class,
             MudaStatusSeeder::class,
-            MudaSeeder::class,
             SolicitacaoTiposSeeder::class,
             SolicitacaoStatusSeeder::class,
         ]);
+        // Chama o seeder de mudas manualmente, passando os usuários
+        (new \Database\Seeders\MudaSeeder)->run([$rall, $thamires]);
     }
 }

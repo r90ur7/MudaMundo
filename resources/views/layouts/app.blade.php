@@ -20,6 +20,9 @@
         @include('layouts.navigation')
     </header>
 
+    <!-- Notificação global de chat -->
+    @include('components.chat-notification')
+
     <!-- ========== MAIN CONTENT ========== -->
     <main id="content" class="min-h-screen bg-neutral-900 dark:bg-neutral-100">
         <div class="bg-neutral-900 dark:bg-neutral-100">

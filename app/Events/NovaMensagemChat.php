@@ -29,8 +29,13 @@ class NovaMensagemChat implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
+        $mensagem = $this->mensagem->toArray();
+        $mensagem['user'] = $this->mensagem->user ? $this->mensagem->user->toArray() : null;
+        if ($this->mensagem->user) {
+            $mensagem['user']['profile_photo_url'] = $this->mensagem->user->profile_photo_url;
+        }
         return [
-            'mensagem' => $this->mensagem->toArray(),
+            'mensagem' => $mensagem,
         ];
     }
 }

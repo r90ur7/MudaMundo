@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
-        
+
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
@@ -40,6 +40,8 @@
         </script>
     </head>
     <body class="font-sans antialiased h-full bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white">
+        <!-- Notificação global de chat -->
+        @include('components.chat-notification')
         <main class="h-full">
             {{ $slot }}
         </main>
