@@ -123,7 +123,11 @@
                                     </div>
                                     <!-- Card: Solicitações Enviadas -->
                                     <div @click="kanbanView = false; activeSection = 'enviadas'" class="cursor-pointer rounded-xl border border-blue-200 dark:border-blue-700 bg-blue-50/40 dark:bg-blue-900/30 p-6 flex flex-col items-center hover:shadow-lg transition">
-                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 17l4 4 4-4m0-5V3'/></svg></span>
+                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100 mb-2">
+                                            <svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                                                <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5l7 7-7 7M5 12h16'/>
+                                            </svg>
+                                        </span>
                                         <h4 class="font-semibold text-lg text-blue-700 dark:text-blue-200">Solicitações Enviadas</h4>
                                         <span class="text-3xl font-bold text-blue-900 dark:text-blue-100 mt-2">{{$solicitacoesEnviadas->count()}}</span>
                                     </div>
@@ -207,14 +211,22 @@
                                         <!-- Solicitações Enviadas Detalhe -->
                                         <div x-show="activeSection === 'enviadas'" class="rounded-2xl border-4 border-blue-300 dark:border-blue-700 bg-white dark:bg-gray-900 shadow-2xl p-8 pt-14 animate-fade-in">
                                             <div class="flex items-center gap-3 mb-6">
-                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 17l4 4 4-4m0-5V3'/></svg></span>
+                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-blue-200 dark:bg-blue-700 text-blue-900 dark:text-blue-100 text-2xl">
+                                                    <svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                                                        <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5l7 7-7 7M5 12h16'/>
+                                                    </svg>
+                                                </span>
                                                 <h4 class="font-bold text-2xl text-blue-700 dark:text-blue-200">Solicitações Enviadas</h4>
                                                 <span class="ml-auto text-lg font-semibold text-blue-900 dark:text-blue-100 bg-blue-100 dark:bg-blue-800 px-3 py-1 rounded-full">{{$solicitacoesEnviadas->count()}} solicitações</span>
                                             </div>
                                             <div class="divide-y divide-blue-100 dark:divide-blue-800 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
                                             @forelse($solicitacoesEnviadas as $sol)
                                                 <div class="py-3 flex items-center gap-3">
-                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M8 17l4 4 4-4m0-5V3'/></svg></span>
+                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200">
+                                                        <svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'>
+                                                            <path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M14 5l7 7-7 7M5 12h16'/>
+                                                        </svg>
+                                                    </span>
                                                     <div class="flex-1">
                                                         <div class="flex flex-wrap gap-2 items-center mb-1">
                                                             <span class="font-bold">{{ $sol->mudas->nome ?? '-' }}</span>
@@ -543,19 +555,38 @@
                 photoSuccessNotification.remove();
             }, 5000);
         }
+
+        // Ao carregar a página, verifica se há hash para abrir chat específico
+        if (window.location.hash && window.location.hash.startsWith('#chats-')) {
+            const chatId = window.location.hash.replace('#chats-', '');
+            setTimeout(() => {
+                const chatList = document.querySelector('#chats-list');
+                if (chatList && chatList.__x) {
+                    const comp = chatList.__x.$data;
+                    if (comp && typeof comp.openChat === 'function') {
+                        comp.openChat(Number(chatId));
+                    }
+                }
+            }, 500);
+        }
     });
 
     window.openChatFromNotification = function(chatId, chatData) {
-        // Espera Alpine carregar o componente de chat
+        // Ativa a aba de chats
+        const root = document.querySelector('[x-data*="activeTab"]');
+        if (root && root.__x) {
+            root.__x.$data.activeTab = 'chats';
+        }
+        // Espera Alpine renderizar a aba de chats e abre o chat correto
         setTimeout(() => {
             const chatList = document.querySelector('#chats-list');
             if (chatList && chatList.__x) {
                 const comp = chatList.__x.$data;
                 if (comp && typeof comp.openChat === 'function') {
-                    comp.openChat(chatId);
+                    comp.openChat(Number(chatId));
                 }
             }
-        }, 300);
+        }, 400);
     };
 
     // --- INÍCIO: Atualizar lista de chats após nova solicitação ---

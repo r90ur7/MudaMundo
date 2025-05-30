@@ -44,35 +44,118 @@
                     <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
                 @auth
-                    <!-- Ícone de notificação de chat -->
+                    <!-- Ícone de notificação geral (mensagens + histórico) -->
                     <div x-data="{
-                            hasNewChat: false,
-                            notificationChatId: null,
-                            notificationChatData: null,
-                            setListeners() {
-                                window.addEventListener('chat-notification', (e) => {
-                                    this.hasNewChat = true;
-                                    this.notificationChatId = e.detail.chatId;
-                                    this.notificationChatData = e.detail.chatData;
-                                });
-                                window.addEventListener('chat-notification-clear', () => {
-                                    this.hasNewChat = false;
-                                });
-                            }
-                        }"
-                        x-init="setListeners()"
-                        class="relative flex items-center mr-4">
-                        <button
-                            @click.prevent="hasNewChat = false; window.hasNewChatNotification = false; window.dispatchEvent(new Event('chat-notification-clear')); window.location.href = '{{ route('profile.edit') }}#chats'; $nextTick(() => { if (notificationChatId) { window.openChatFromNotification && window.openChatFromNotification(notificationChatId, notificationChatData); } })"
-                            class="relative focus:outline-none"
-                            :class="{'animate-bounce': hasNewChat}">
+    showDropdown: false,
+    notifications: [],
+    hasNew: false,
+    setListeners() {
+        const saved = localStorage.getItem('notificacoes-mudamundo');
+        this.notifications = saved ? JSON.parse(saved).map(n => ({...n, created_at: new Date(n.created_at)})) : [];
+        this.hasNew = this.notifications.some(n => !n.read);
+        window.addEventListener('chat-notification', (e) => {
+            const notification = {
+                type: 'chat',
+                chatId: e.detail.chatId,
+                chatData: e.detail.chatData,
+                read: false,
+                created_at: new Date(),
+            };
+            this.notifications.unshift(notification);
+            this.hasNew = true;
+            this.saveNotifications();
+        });
+        window.addEventListener('history-notification', (e) => {
+            const notification = {
+                type: 'history',
+                data: e.detail,
+                read: false,
+                created_at: new Date(),
+            };
+            this.notifications.unshift(notification);
+            this.hasNew = true;
+            this.saveNotifications();
+        });
+    },
+    saveNotifications() {
+        localStorage.setItem('notificacoes-mudamundo', JSON.stringify(this.notifications));
+    },
+    openDropdown() {
+        this.showDropdown = true;
+        this.hasNew = false;
+        this.notifications.forEach(n => n.read = true);
+        this.saveNotifications();
+    },
+    closeDropdown() {
+        this.showDropdown = false;
+    },
+    handleClick(notification) {
+        // Remove a notificação ao clicar
+        this.notifications = this.notifications.filter(n => n !== notification);
+        this.saveNotifications();
+        if (notification.type === 'chat') {
+            window.openChatFromNotification && window.openChatFromNotification(notification.chatId, notification.chatData);
+        } else if (notification.type === 'history') {
+            const root = document.querySelector('[x-data*=\'activeTab\']');
+            if (root && root.__x) {
+                root.__x.$data.activeTab = 'historico';
+            }
+        }
+        this.closeDropdown();
+    }
+}"
+x-init="setListeners()"
+class="relative flex items-center mr-4 select-none">
+                        <button @click="showDropdown ? closeDropdown() : openDropdown()" class="relative focus:outline-none" :class="{'animate-bounce': hasNew}" tabindex="0">
+                            <!-- Ícone de sino para notificações gerais -->
                             <svg class="w-7 h-7 text-gray-500 dark:text-gray-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
                             </svg>
-                            <span x-show="hasNewChat" class="absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white bg-emerald-500"></span>
+                            <span x-show="hasNew" class="absolute top-0 right-0 block h-3 w-3 rounded-full ring-2 ring-white bg-emerald-500"></span>
                         </button>
+                        <div x-show="showDropdown" x-transition:enter="transition ease-out duration-150" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" x-transition:leave="transition ease-in duration-100" x-transition:leave-start="opacity-100 scale-100" x-transition:leave-end="opacity-0 scale-95" @click.away="closeDropdown()" class="absolute left-1/2 -translate-x-1/2 top-full bg-white dark:bg-gray-800 rounded-lg shadow-lg z-50 border border-gray-200 dark:border-gray-700 w-80">
+                            <div class="p-4 border-b border-gray-100 dark:border-gray-700 font-semibold text-gray-700 dark:text-gray-200">Notificações</div>
+                            <template x-if="notifications.length === 0">
+                                <div class="p-4 text-gray-400 text-center flex flex-col items-center gap-2">
+                                    <svg class="w-10 h-10 mx-auto text-gray-300 dark:text-gray-600" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                                    <span>Nenhuma notificação no momento</span>
+                                </div>
+                            </template>
+                            <template x-for="(notification, idx) in notifications" :key="idx">
+                                <div @click="handleClick(notification)" class="flex items-start gap-3 px-4 py-3 hover:bg-emerald-50 dark:hover:bg-emerald-900/30 cursor-pointer border-b border-gray-100 dark:border-gray-700 last:border-b-0"
+                                    :class="{'bg-emerald-50 dark:bg-emerald-900/30': !notification.read}">
+                                    <template x-if="notification.type === 'chat'">
+                                        <div class="flex-shrink-0 mt-1">
+                                            <svg class="w-6 h-6 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+                                        </div>
+                                    </template>
+                                    <template x-if="notification.type === 'history'">
+                                        <div class="flex-shrink-0 mt-1">
+                                            <svg class="w-6 h-6 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7-7 7M5 12h16"/>
+                                            </svg>
+                                        </div>
+                                    </template>
+                                    <div class="flex-1 min-w-0">
+                                        <template x-if="notification.type === 'chat'">
+                                            <div>
+                                                <div class="font-semibold text-gray-800 dark:text-gray-100">Nova mensagem de <span x-text="notification.chatData.otherUserName"></span></div>
+                                                <div class="text-gray-500 dark:text-gray-300 text-sm truncate" x-text="notification.chatData.preview"></div>
+                                            </div>
+                                        </template>
+                                        <template x-if="notification.type === 'history'">
+                                            <div>
+                                                <div class="font-semibold text-gray-800 dark:text-gray-100">Nova atualização no histórico</div>
+                                                <div class="text-gray-500 dark:text-gray-300 text-sm truncate" x-text="notification.data.preview"></div>
+                                            </div>
+                                        </template>
+                                        <div class="text-xs text-gray-400 mt-1" x-text="notification.created_at.toLocaleString('pt-BR', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: '2-digit' })"></div>
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
                     </div>
-                    <!-- Fim ícone de notificação de chat -->
+                    <!-- Fim ícone de notificação geral -->
                     <x-dropdown align="right" width="48">
                         <x-slot name="trigger">
                             <button class="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-500 bg-white hover:text-gray-700 focus:outline-none transition ease-in-out duration-150">

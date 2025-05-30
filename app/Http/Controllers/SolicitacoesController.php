@@ -13,6 +13,10 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Auth;
 use App\Models\MudaStatus;
+use App\Events\SolicitacaoCriada;
+use App\Events\SolicitacaoRecebida;
+use App\Events\SolicitacaoAceita;
+use App\Events\SolicitacaoRejeitada;
 
 class SolicitacoesController extends Controller
 {
@@ -151,6 +155,15 @@ class SolicitacoesController extends Controller
 
                 Log::info('Solicitação inserida com sucesso via query builder. ID: ' . $solicitacaoId);
 
+                // Disparar eventos de notificação para solicitante e dono da muda
+                $solicitacao = Solicitacao::with(['mudas', 'user'])->find($solicitacaoId);
+                if ($solicitacao) {
+                    // Notifica o solicitante (confirmação)
+                    broadcast(new SolicitacaoCriada($solicitacao));
+                    // Notifica o dono da muda (recebida)
+                    broadcast(new SolicitacaoRecebida($solicitacao));
+                }
+
                 DB::commit();
 
                 if ($isAjax) {
@@ -253,6 +266,10 @@ class SolicitacoesController extends Controller
             'donated_to'       => $solicitacao->user_id,
         ]);
 
+        // Notifica o solicitante e o dono da muda
+        broadcast(new SolicitacaoAceita($solicitacao));
+        broadcast(new SolicitacaoRecebida($solicitacao, 'Você aceitou a solicitação para a muda "' . ($muda->nome ?? '') . '".'));
+
         return back()->with('success', 'Solicitação aceita com sucesso.');
     }
 
@@ -267,6 +284,10 @@ class SolicitacoesController extends Controller
             'solicitacao_status_id' => $statusRejeitada->id,
             'rejected_at' => now(),
         ]);
+
+        // Notifica o solicitante e o dono da muda
+        broadcast(new SolicitacaoRejeitada($solicitacao));
+        broadcast(new SolicitacaoRecebida($solicitacao, 'Você rejeitou a solicitação para a muda "' . ($solicitacao->mudas->nome ?? '') . '".'));
 
         return back()->with('success', 'Solicitação rejeitada.');
     }

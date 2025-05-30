@@ -33,7 +33,7 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
                 @foreach($solicitacoesFeitas as $solicitacao)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border-l-4 {{ $solicitacao->status->nome === 'Pendente' ? 'border-yellow-400' : ($solicitacao->status->nome === 'Em negociação' ? 'border-blue-500' : 'border-emerald-600') }} p-5 flex flex-col gap-2 hover:shadow-lg transition">
                         <div class="flex items-center gap-3">
-                            <svg class="w-8 h-8 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                            <svg class="w-8 h-8 text-emerald-500 transform rotate-[-45deg]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
                             <span class="text-lg font-semibold">{{ $solicitacao->mudas->nome ?? '-' }}</span>
                             <span class="ml-2 px-2 py-1 rounded text-xs font-medium bg-emerald-100 text-emerald-700">{{ $solicitacao->tipo->nome ?? '-' }}</span>
                         </div>
