@@ -4,7 +4,7 @@
             {{ __('Perfil') }}
         </h2>
     </x-slot>
-    <div class="py-12" x-data="{ activeTab: 'account', showChatNotification: false, notificationChatId: null, notificationChatData: null }">
+    <div class="py-12" x-data="{ activeTab: 'account', showChatNotification: false, notificationChatId: null, notificationChatData: null, showChatModal: false }">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-900 shadow-lg rounded-lg overflow-hidden mb-6">
                 <div class="p-6 flex flex-col md:flex-row items-center">
@@ -96,12 +96,71 @@
                     </div>
 
                     <div x-show="activeTab === 'chats'" class="space-y-6">
-                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
-                            <h3 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-4">Minhas Conversas</h3>
-                            @include('profile.partials.chats')
+                        <div class="p-0 bg-transparent rounded-lg shadow-none">
+                            <div class="flex flex-row gap-6" x-data="chatList()" x-init="init()">
+                                <!-- Lista de conversas -->
+                                <div class="w-1/3 min-w-[280px] max-w-[350px] bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-emerald-100 dark:border-emerald-800 overflow-hidden flex flex-col h-[600px]">
+                                    <div class="px-4 py-3 bg-emerald-600 dark:bg-emerald-800 text-white flex items-center gap-2">
+                                        <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12A4 4 0 1 1 8 12a4 4 0 0 1 8 0z"/></svg>
+                                        <span class="font-bold text-lg">Minhas Conversas</span>
+                                    </div>
+                                    <div class="flex-1 overflow-y-auto p-2 custom-scrollbar" id="chats-list">
+                                        @include('profile.partials.chats')
+                                    </div>
+                                </div>
+                                <!-- Área do chat ou mensagem de seleção -->
+                                <div class="flex-1 flex flex-col bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-lg border border-emerald-100 dark:border-emerald-800 overflow-hidden h-[600px] relative animate-fade-in" id="chat-area">
+                                    <template x-if="activeChat">
+                                        <div class="flex flex-col h-full">
+                                            <!-- Header do chat -->
+                                            <div class="flex items-center gap-3 px-4 py-3 bg-emerald-600 dark:bg-emerald-800 text-white shadow">
+                                                <div class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+                                                    <span x-text="activeChat.otherUserInitial"></span>
+                                                </div>
+                                                <div>
+                                                    <div class="font-bold text-lg" x-text="activeChat.otherUserName"></div>
+                                                    <div class="text-xs opacity-80" x-text="activeChat.mudaNome"></div>
+                                                </div>
+                                                <div class="ml-auto flex gap-2">
+                                                    <button @click="closeChat" class="hover:bg-emerald-700 p-2 rounded-full transition"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M6 18L18 6M6 6l12 12'/></svg></button>
+                                                </div>
+                                            </div>
+                                            <!-- Mensagens -->
+                                            <div class="flex-1 overflow-y-auto px-4 py-6 space-y-3 custom-scrollbar bg-[url('/image/whatsapp-bg.png')] bg-cover" id="chat-messages">
+                                                <template x-for="msg in messages" :key="msg.local_id || msg.id">
+                                                    <div :class="msg.user_id === userId ? 'flex items-end gap-2 justify-end' : 'flex items-end gap-2'">
+                                                        <template x-if="msg.user_id !== userId">
+                                                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100"><span x-text="msg.user?.name ? msg.user.name[0] : '?' "></span></span>
+                                                        </template>
+                                                        <div :class="msg.user_id === userId ? 'bg-emerald-500 text-white rounded-2xl rounded-br-sm border border-emerald-400' : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-2xl rounded-bl-sm border border-gray-200 dark:border-gray-700'" class="px-4 py-2 shadow max-w-[70%]">
+                                                            <span x-text="msg.mensagem"></span>
+                                                            <div class="text-xs mt-1 text-right" :class="msg.user_id === userId ? 'text-white/70' : 'text-gray-400'" x-text="formatDate(msg.created_at)"></div>
+                                                        </div>
+                                                        <template x-if="msg.user_id === userId">
+                                                            <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white"><span x-text="msg.user?.name ? msg.user.name[0] : '?' "></span></span>
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </div>
+                                            <!-- Input de mensagem -->
+                                            <form @submit.prevent="sendMessage" class="flex items-center gap-2 px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                                                <input x-model="newMessage" type="text" class="flex-1 rounded-full px-4 py-2 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="Digite uma mensagem..." autocomplete="off" :disabled="sendingMessage" />
+                                                <button type="submit" class="p-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white transition" :disabled="sendingMessage || !newMessage.trim()"><svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/></svg></button>
+                                            </form>
+                                        </div>
+                                    </template>
+                                    <template x-if="!activeChat">
+                                        <div class="flex flex-1 items-center justify-center h-full text-gray-400 dark:text-gray-500">
+                                            <div class="flex flex-col items-center gap-4">
+                                                <svg class="w-16 h-16 text-emerald-400 opacity-60" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                                                <span class="text-lg">Selecione uma conversa para começar</span>
+                                            </div>
+                                        </div>
+                                    </template>
+                                </div>
+                            </div>
                         </div>
                     </div>
-
 
                     <div x-show="activeTab === 'historico'" class="space-y-6">
                         <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
@@ -133,7 +192,8 @@
                                     </div>
                                     <!-- Card: Solicitações Recebidas -->
                                     <div @click="kanbanView = false; activeSection = 'recebidas'" class="cursor-pointer rounded-xl border border-purple-200 dark:border-purple-700 bg-purple-50/40 dark:bg-purple-900/30 p-6 flex flex-col items-center hover:shadow-lg transition">
-                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-200 dark:bg-purple-700 text-purple-900 dark:text-purple-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg></span>
+                                        <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-200 dark:bg-purple-700 text-purple-900 dark:text-purple-100 mb-2"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg>
+                                        </span>
                                         <h4 class="font-semibold text-lg text-purple-700 dark:text-purple-200">Solicitações Recebidas</h4>
                                         <span class="text-3xl font-bold text-purple-900 dark:text-purple-100 mt-2">{{$solicitacoesRecebidas->count()}}</span>
                                     </div>
@@ -246,14 +306,16 @@
                                         <!-- Solicitações Recebidas Detalhe -->
                                         <div x-show="activeSection === 'recebidas'" class="rounded-2xl border-4 border-purple-300 dark:border-purple-700 bg-white dark:bg-gray-900 shadow-2xl p-8 pt-14 animate-fade-in">
                                             <div class="flex items-center gap-3 mb-6">
-                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-200 dark:bg-purple-700 text-purple-900 dark:text-purple-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg></span>
+                                                <span class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-purple-200 dark:bg-purple-700 text-purple-900 dark:text-purple-100 text-2xl"><svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg>
+                                                </span>
                                                 <h4 class="font-bold text-2xl text-purple-700 dark:text-purple-200">Solicitações Recebidas</h4>
                                                 <span class="ml-auto text-lg font-semibold text-purple-900 dark:text-purple-100 bg-purple-100 dark:bg-purple-800 px-3 py-1 rounded-full">{{$solicitacoesRecebidas->count()}} solicitações</span>
                                             </div>
                                             <div class="divide-y divide-purple-100 dark:divide-purple-800 max-h-80 overflow-y-auto pr-2 custom-scrollbar">
                                             @forelse($solicitacoesRecebidas as $sol)
                                                 <div class="py-3 flex items-center gap-3">
-                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg></span>
+                                                    <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-purple-100 dark:bg-purple-800 text-purple-700 dark:text-purple-200"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9'/></svg>
+                                                    </span>
                                                     <div class="flex-1">
                                                         <div class="flex flex-wrap gap-2 items-center mb-1">
                                                             <span class="font-bold">{{ $sol->mudas->nome ?? '-' }}</span>
@@ -308,6 +370,48 @@
                     <div x-show="activeTab === 'solicitacoes'" class="space-y-6">
                         <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
                             @include('profile.partials.minhas-solicitacoes')
+                        </div>
+                    </div>
+
+                    <!-- Exemplo de área de chat estilo WhatsApp -->
+                    <div x-show="activeTab === 'chat'" class="flex flex-col h-[600px] max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-lg border border-emerald-200 dark:border-emerald-700 overflow-hidden relative animate-fade-in">
+                        <!-- Header do chat -->
+                        <div class="flex items-center gap-3 px-4 py-3 bg-emerald-600 dark:bg-emerald-800 text-white shadow">
+                            <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
+                                <svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                            </span>
+                            <div>
+                                <div class="font-bold text-lg">Chat</div>
+                                <div class="text-xs opacity-80">Online</div>
+                            </div>
+                            <div class="ml-auto flex gap-2">
+                                <button class="hover:bg-emerald-700 p-2 rounded-full transition"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M3 10h18M3 6h18M3 14h18M3 18h18'/></svg></button>
+                            </div>
+                        </div>
+                        <!-- Mensagens -->
+                        <div class="flex-1 overflow-y-auto px-4 py-6 space-y-3 custom-scrollbar bg-[url('/image/whatsapp-bg.png')] bg-cover">
+                            <!-- Mensagem recebida -->
+                            <div class="flex items-end gap-2">
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-200 dark:bg-emerald-700 text-emerald-900 dark:text-emerald-100"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4'/></svg></span>
+                                <div class="bg-white dark:bg-gray-800 rounded-2xl rounded-bl-sm px-4 py-2 shadow max-w-[70%] text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700">
+                                    <span>Olá! Como posso ajudar?</span>
+                                    <div class="text-xs text-gray-400 mt-1 text-right">10:00</div>
+                                </div>
+                            </div>
+                            <!-- Mensagem enviada -->
+                            <div class="flex items-end gap-2 justify-end">
+                                <div class="bg-emerald-500 text-white rounded-2xl rounded-br-sm px-4 py-2 shadow max-w-[70%] border border-emerald-400">
+                                    <span>Oi! Gostaria de saber mais sobre as mudas.</span>
+                                    <div class="text-xs text-white/70 mt-1 text-right">10:01</div>
+                                </div>
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-500 text-white"><svg xmlns='http://www.w3.org/2000/svg' class='h-5 w-5' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M12 4v16m8-8H4'/></svg></span>
+                            </div>
+                            <!-- Repita o bloco acima para cada mensagem, alternando a ordem/alinhamento -->
+                        </div>
+                        <!-- Input de mensagem -->
+                        <div class="flex items-center gap-2 px-4 py-3 bg-white dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700">
+                            <input type="text" class="flex-1 rounded-full px-4 py-2 border border-gray-300 dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100" placeholder="Digite uma mensagem...">
+                            <button class="p-2 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white transition"><svg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M5 13l4 4L19 7'/></svg></button>
                         </div>
                     </div>
                 </div>
@@ -626,7 +730,7 @@
                             comp.fetchChats();
                         }
                         // Se o chat modal está aberto para o mesmo chat, adiciona a mensagem em tempo real
-                        if (comp && comp.showChatModal && comp.activeChat && comp.activeChat.solicitacao.id === e.mensagem.solicitacao_id) {
+                        if (comp && comp.activeChat && comp.activeChat.solicitacao.id === e.mensagem.solicitacao_id) {
                             // Evita duplicidade se já existe pelo local_id
                             const exists = comp.messages.some(m => m.id === e.mensagem.id);
                             if (!exists) {
