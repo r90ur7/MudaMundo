@@ -24,7 +24,27 @@ class NovaMensagemChat implements ShouldBroadcastNow
     public function broadcastOn()
     {
         Log::info('[Chat] broadcastOn chamado para canal: chat.' . $this->mensagem->solicitacao_id . ' | mensagem_id=' . $this->mensagem->id . ' | user_id=' . $this->mensagem->user_id);
-        return new PrivateChannel('chat.' . $this->mensagem->solicitacao_id);
+        $channels = [
+            new PrivateChannel('chat.' . $this->mensagem->solicitacao_id),
+        ];
+        // Busca a solicitação relacionada para identificar o destinatário
+        $solicitacao = $this->mensagem->solicitacao()->with('mudas')->first();
+        if ($solicitacao) {
+            $remetenteId = $this->mensagem->user_id;
+            $solicitanteId = $solicitacao->user_id;
+            $donoMudaId = $solicitacao->mudas ? $solicitacao->mudas->user_id : null;
+            // O destinatário é o outro participante
+            if ($remetenteId == $solicitanteId && $donoMudaId) {
+                $destinatarioId = $donoMudaId;
+            } else {
+                $destinatarioId = $solicitanteId;
+            }
+            // Só adiciona canal se não for o próprio remetente
+            if ($destinatarioId && $destinatarioId != $remetenteId) {
+                $channels[] = new PrivateChannel('user.' . $destinatarioId);
+            }
+        }
+        return $channels;
     }
 
     public function broadcastWith()

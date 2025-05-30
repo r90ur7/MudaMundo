@@ -38,6 +38,9 @@
                 document.documentElement.classList.remove('dark');
             }
         </script>
+        <script>
+            window.userId = {{ auth()->id() ?? 'null' }};
+        </script>
     </head>
     <body class="font-sans antialiased h-full bg-gray-50 dark:bg-neutral-900 text-gray-800 dark:text-white">
         <!-- Notificação global de chat -->

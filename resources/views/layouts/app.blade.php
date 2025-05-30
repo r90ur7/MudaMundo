@@ -12,6 +12,9 @@
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="stylesheet" href="https://preline.co/assets/css/main.min.css">
+    <script>
+        window.userId = {{ auth()->id() ?? 'null' }};
+    </script>
 </head>
 
 <body class="bg-neutral-900 dark:bg-neutral-100 text-white dark:text-black">

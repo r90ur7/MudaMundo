@@ -26,3 +26,8 @@ Broadcast::channel('chat.{solicitacaoId}', function ($user = null, $solicitacaoI
     if ($solicitacao->mudas && $solicitacao->mudas->original_user_id === $user->id) return true;
     return false;
 });
+
+// Canal privado global para notificações do usuário (sempre permite)
+Broadcast::channel('user.{userId}', function ($user, $userId) {
+    return (int) $user->id === (int) $userId;
+});
