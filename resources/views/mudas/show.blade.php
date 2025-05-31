@@ -137,30 +137,8 @@
                                 <div class="bg-neutral-600/50 dark:bg-neutral-400/50 rounded-lg p-4">
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                         <div>
-                                            <p class="text-sm text-gray-400 dark:text-gray-600">Endereço</p>
-                                            <p class="text-sm text-emerald-400 dark:text-emerald-600">
-                                                {{ $muda->logradouro }}, {{ $muda->numero }}
-                                                @if($muda->complemento)
-                                                    , {{ $muda->complemento }}
-                                                @endif
-                                            </p>
-                                        </div>
-
-                                        <div>
-                                            <p class="text-sm text-gray-400 dark:text-gray-600">Bairro</p>
-                                            <p class="text-sm text-emerald-400 dark:text-emerald-600">{{ $muda->bairro }}</p>
-                                        </div>
-
-                                        <div>
                                             <p class="text-sm text-gray-400 dark:text-gray-600">Cidade/UF</p>
                                             <p class="text-sm text-emerald-400 dark:text-emerald-600">{{ $muda->cidade }}/{{ $muda->uf }}</p>
-                                        </div>
-
-                                        <div>
-                                            <p class="text-sm text-gray-400 dark:text-gray-600">CEP</p>
-                                            <p class="text-sm text-emerald-400 dark:text-emerald-600">
-                                                {{ substr($muda->cep, 0, 5) }}-{{ substr($muda->cep, 5, 3) }}
-                                            </p>
                                         </div>
                                     </div>
                                 </div>
