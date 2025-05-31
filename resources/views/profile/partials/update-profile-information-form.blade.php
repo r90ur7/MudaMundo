@@ -113,6 +113,14 @@
             </div>
         </div>
 
+        <!-- Consentimento LGPD -->
+        <div class="mb-4">
+            <label class="inline-flex items-center">
+                <input type="checkbox" name="lgpd_consent" value="1" {{ old('lgpd_consent', $user->lgpd_consent ?? false) ? 'checked' : '' }} required>
+                <span class="ml-2">Li e concordo com os <a href="{{ url('/terms') }}" target="_blank" class="underline text-emerald-600">Termos de Serviço e Política de Privacidade</a></span>
+            </label>
+        </div>
+
         <div class="flex items-center gap-4">
             <x-primary-button>{{ __('Save') }}</x-primary-button>
 

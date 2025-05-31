@@ -69,6 +69,10 @@ Route::middleware('auth')->group(function () {
     Route::get('dashboard/favoritos-html', [DashboardController::class, 'favoritosHtml'])->name('dashboard.favoritosHtml');
 });
 
+Route::get('/terms', function () {
+    return view('terms');
+})->name('terms');
+
 Broadcast::routes(['middleware' => ['web', 'auth']]);
 
 require __DIR__.'/auth.php';

@@ -152,6 +152,13 @@
                                 </div>
                             </div>
 
+                            <div class="mb-4">
+                                <label class="inline-flex items-center">
+                                    <input type="checkbox" name="lgpd_consent" value="1" required>
+                                    <span class="ml-2">Li e concordo com os <a href="{{ url('/terms') }}" target="_blank" class="underline text-emerald-600">Termos de Serviço e Política de Privacidade</a></span>
+                                </label>
+                            </div>
+
                             <button type="submit"
                                 class="flex w-full justify-center rounded-lg bg-emerald-600 px-4 py-3 text-sm font-semibold text-white shadow-sm hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 dark:focus:ring-offset-neutral-900">
                                 Cadastrar

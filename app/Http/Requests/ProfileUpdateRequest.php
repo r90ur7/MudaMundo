@@ -34,6 +34,7 @@ class ProfileUpdateRequest extends FormRequest
             'bairro' => ['nullable', 'string', 'max:100'],
             'cidade' => ['nullable', 'string', 'max:100'],
             'uf' => ['nullable', 'string', 'size:2'],
+            'lgpd_consent' => ['required', 'accepted'],
         ];
     }
 }

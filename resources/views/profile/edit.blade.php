@@ -84,6 +84,13 @@
                         <div class="p-6 bg-red-50 dark:bg-gray-800 dark:text-red-100 rounded-lg shadow">
                             @include('profile.partials.delete-user-form')
                         </div>
+
+                        <div class="mb-4">
+                            <label class="inline-flex items-center">
+                                <input type="checkbox" name="lgpd_consent" value="1" {{ old('lgpd_consent', $user->lgpd_consent ?? false) ? 'checked' : '' }} required>
+                                <span class="ml-2">Li e concordo com os <a href="{{ url('/terms') }}" target="_blank" class="underline text-emerald-600">Termos de Serviço e Política de Privacidade</a></span>
+                            </label>
+                        </div>
                     </div>
 
                     <div x-show="activeTab === 'mudas'" class="space-y-6">

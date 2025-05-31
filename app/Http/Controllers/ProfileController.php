@@ -157,6 +157,9 @@ class ProfileController extends Controller
             $user->email_verified_at = null;
         }
 
+        $validated['lgpd_consent'] = $request->has('lgpd_consent');
+        $validated['lgpd_consent_at'] = $request->has('lgpd_consent') ? now() : null;
+
         $user->save();
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');

@@ -29,6 +29,8 @@ class User extends Authenticatable
         'bairro',
         'cidade',
         'uf',
+        'lgpd_consent',
+        'lgpd_consent_at',
     ];
 
     /**
