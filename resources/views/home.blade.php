@@ -132,7 +132,7 @@
                 </div>
                 <!-- Botão centralizado sobre o divisor -->
                 <div class="relative flex justify-center">
-                    <a href="{{ route('mudas.index') }}"
+                    <a href="{{ route('dashboard') }}"
                     class="group inline-flex items-center gap-x-4 rounded-full bg-white dark:bg-slate-900 p-4 shadow-sm shadow-emerald-500/30 hover:shadow-emerald-500/50 transition duration-300 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-500">
                         <span class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 dark:text-gray-700 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
                             <svg xmlns="http://www.w3.org/2000/svg"
