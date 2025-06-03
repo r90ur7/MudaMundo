@@ -167,7 +167,9 @@ window.chatList = function() {
                         <span x-text="chat.otherUserInitial"></span>
                     </div>
                     <div>
-                        <h4 class="font-semibold text-gray-900 dark:text-gray-100" x-text="chat.otherUserName"></h4>
+                        <h4 class="font-semibold text-gray-900 dark:text-gray-100">
+                            <span x-text="chat.otherUserInitial"></span>.<span x-text="chat.otherUserCity ? ' - ' + chat.otherUserCity + '/' + chat.otherUserUf : ''"></span>
+                        </h4>
                         <p class="text-sm text-gray-600 dark:text-gray-300" x-text="chat.mudaNome || '-' "></p>
                     </div>
                 </div>

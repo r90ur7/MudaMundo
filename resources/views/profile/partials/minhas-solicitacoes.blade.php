@@ -80,7 +80,9 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
                         <div class="flex flex-wrap gap-2 items-center text-sm mt-1">
                             <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                Solicitante: <span class="ml-1 font-semibold">{{ $solicitacao->user->name ?? '-' }}</span>
+                                Solicitante: <span class="ml-1 font-semibold">
+                                    {{ strtoupper(substr($solicitacao->user->name ?? '-', 0, 1)) }}.{{ $solicitacao->user->cidade ? ' - ' . $solicitacao->user->cidade . '/' . $solicitacao->user->uf : '' }}
+                                </span>
                             </span>
                             <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>

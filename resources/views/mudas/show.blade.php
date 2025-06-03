@@ -155,7 +155,7 @@
                                     </div>
                                     <div class="ml-3">
                                         <p class=" text-gray-400 dark:text-gray-600 font-medium">
-                                            {{ $muda->user->name ?? 'Usuário Anônimo' }}
+                                            {{ strtoupper(substr($muda->user->name ?? 'Anônimo', 0, 1)) }}.{{ $muda->user->cidade ? ' - ' . $muda->user->cidade . '/' . $muda->user->uf : '' }}
                                         </p>
                                     </div>
                                 </div>
