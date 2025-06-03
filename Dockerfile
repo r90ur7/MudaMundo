@@ -24,6 +24,13 @@ RUN mkdir -p /var/www/storage/framework/views /var/www/storage/framework/cache /
 # Permissões para o storage e cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
+# Instala Node.js (necessário para build do Vite)
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
+    apt-get install -y nodejs
+
+# Instala dependências JS e builda assets
+RUN npm install && npm run build
+
 # Copia o entrypoint customizado
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
