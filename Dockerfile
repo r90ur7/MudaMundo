@@ -15,6 +15,9 @@ WORKDIR /var/www
 # Copia arquivos do projeto
 COPY . .
 
+# Copia o banco SQLite local para o caminho correto no container
+COPY database/database.sqlite /var/www/database/database.sqlite
+
 # Instala dependências do PHP
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
@@ -26,6 +29,9 @@ RUN mkdir -p /var/www/storage/framework/sessions
 
 # Permissões para o storage e cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# Garante que o banco SQLite existe e tem permissão
+RUN mkdir -p /var/www/database && touch /var/www/database/database.sqlite && chmod 777 /var/www/database/database.sqlite
 
 # Instala Node.js (necessário para build do Vite)
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
