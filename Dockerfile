@@ -15,9 +15,6 @@ WORKDIR /var/www
 # Copia arquivos do projeto
 COPY . .
 
-# Copia o banco SQLite local para o caminho correto no container
-COPY database/database.sqlite /var/www/database/database.sqlite
-
 # Instala dependências do PHP
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
