@@ -21,9 +21,6 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 # Permissões para o storage e cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Copia o arquivo .env.example para .env se não existir
-RUN [ -f .env ] || cp .env.example .env
-
 # Gera a chave da aplicação
 RUN php artisan key:generate || true
 
