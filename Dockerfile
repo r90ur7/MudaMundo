@@ -18,6 +18,9 @@ COPY . .
 # Instala dependências do PHP
 RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 
+# Garante que os diretórios de cache e logs existem
+RUN mkdir -p /var/www/storage/framework/views /var/www/storage/framework/cache /var/www/storage/logs
+
 # Permissões para o storage e cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
