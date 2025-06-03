@@ -50,7 +50,7 @@
                             <p class="text-gray-600 dark:text-gray-400">Comece sua jornada de transformação agora</p>
                         </div>
 
-                        <form class="mt-8 space-y-6" method="POST" action="{{ route('register') }}">
+                        <form class="mt-8 space-y-6" method="POST" action="{{ route('register') }}" autocomplete="on">
                             @csrf
 
                             <!-- Informações Pessoais -->
