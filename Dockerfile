@@ -21,9 +21,6 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 # Permissões para o storage e cache
 RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
 
-# Gera a chave da aplicação
-RUN php artisan key:generate || true
-
 # Copia o entrypoint customizado
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
