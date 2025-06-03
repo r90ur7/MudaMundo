@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: mudamundo-laravel
+    env: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    buildCommand: "composer install && php artisan migrate --force"
+    startCommand: "php artisan serve --host=0.0.0.0 --port=8000"
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_DEBUG
+        value: false
+      - key: DB_CONNECTION
+        value: sqlite
+      - key: SESSION_DRIVER
+        value: database
+    autoDeploy: true
