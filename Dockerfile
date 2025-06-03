@@ -44,8 +44,8 @@ RUN chmod +x /entrypoint.sh
 # Define o entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
 
-# Porta padrão do Laravel
-EXPOSE 8000
+# Porta padrão do Render
+EXPOSE 10000
 
-# Comando para iniciar o servidor
-CMD ["php", "-S", "0.0.0.0:8000", "-t", "public"]
+# Comando para iniciar o servidor na porta 10000
+CMD ["php", "-S", "0.0.0.0:10000", "-t", "public"]
