@@ -14,13 +14,9 @@ fi
 # Debug: Mostra permissões após garantir
 ls -l /var/www/database/
 
-# Garante que o storage e cache tenham as permissões corretas
-chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
-chmod -R 775 /var/www/storage /var/www/bootstrap/cache
-
-# Roda as migrations (incluindo sessions)
-echo "Rodando migrations..."
-php artisan migrate --force
+# Roda as migrations (apaga e recria todas as tabelas)
+echo "Rodando migrate:fresh..."
+php artisan migrate:fresh --force
 echo "Migrations finalizadas."
 
 # Inicia o servidor
