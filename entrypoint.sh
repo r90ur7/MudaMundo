@@ -19,5 +19,5 @@ echo "Rodando migrate:fresh..."
 php artisan migrate:fresh --force
 echo "Migrations finalizadas."
 
-# Inicia o servidor
-exec "$@"
+# Inicia o servidor PHP embutido na porta 10000
+php -S 0.0.0.0:10000 -t public
