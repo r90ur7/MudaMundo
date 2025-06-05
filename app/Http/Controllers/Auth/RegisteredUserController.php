@@ -54,6 +54,8 @@ class RegisteredUserController extends Controller
             'lgpd_consent_at' => now(),
         ]);
 
+        dd($user, 'criei');
+
         event(new Registered($user));
 
         Auth::login($user);
