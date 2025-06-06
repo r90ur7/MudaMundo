@@ -5,6 +5,8 @@ namespace Database\Seeders;
 use App\Models\Mudas;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class MudaSeeder extends Seeder
 {
@@ -31,7 +33,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1647550232391-f758832be5c2?q=80&w=2535&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -49,7 +51,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Centro',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -67,7 +69,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Vila Flora',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -85,7 +87,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim Paulista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1718105314487-aabc56d0b2fc?q=80&w=2535&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -103,7 +105,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1685728850980-105104d1b0d4?q=80&w=2726&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -121,7 +123,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardins',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -139,7 +141,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Bela Vista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1653553003046-adaba7cd6acb?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -157,7 +159,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1685728850980-105104d1b0d4?q=80&w=2726&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -175,7 +177,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim América',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1672709904990-3cf402fcc29b?q=80&w=2576&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -193,7 +195,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Cerqueira César',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://plus.unsplash.com/premium_photo-1677756430830-5c9d853518a4?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -211,7 +213,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim Paulista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://plus.unsplash.com/premium_photo-1664527009788-29b465a74d51?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -229,7 +231,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardim Paulista',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1599199450456-bfe11304e2fd?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -247,7 +249,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://plus.unsplash.com/premium_photo-1665669278389-4190e7af7e54?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -265,7 +267,7 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Jardins',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://images.unsplash.com/photo-1718105314487-aabc56d0b2fc?q=80&w=2535&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
@@ -283,28 +285,28 @@ class MudaSeeder extends Seeder
                 'bairro' => 'Consolação',
                 'cidade' => 'São Paulo',
                 'uf' => 'SP',
-                'foto_url' => 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+                'foto_url' => 'https://plus.unsplash.com/premium_photo-1665669278389-4190e7af7e54?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
                 'donated_at' => null,
                 'disabled_at' => null
             ],
         ];
         // Adiciona as demais mudas, alternando entre os usuários e usando imagens reais
         $imagens = [
-            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1465101178521-c1a9136a3b43?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1464983953574-0892a716854b?auto=format&fit=crop&w=400&q=80',
-            'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
+            'https://images.unsplash.com/photo-1647550232391-f758832be5c2?q=80&w=2535&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1718105314487-aabc56d0b2fc?q=80&w=2535&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1663952329807-15901df90001?q=80&w=2252&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1599199450456-bfe11304e2fd?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1685728850980-105104d1b0d4?q=80&w=2726&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://plus.unsplash.com/premium_photo-1664527009788-29b465a74d51?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1653553003046-adaba7cd6acb?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://plus.unsplash.com/premium_photo-1677756430830-5c9d853518a4?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1672709904990-3cf402fcc29b?q=80&w=2576&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://plus.unsplash.com/premium_photo-1665669278389-4190e7af7e54?q=80&w=2670&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+            'https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1501004318641-b39e6451bec6?auto=format&fit=crop&w=800&q=80',
         ];
         // Preenche as mudas restantes
         for ($i = 4; $i < 15; $i++) {
@@ -315,6 +317,31 @@ class MudaSeeder extends Seeder
             ];
             $mudas[$i] = $muda;
         }
+        // Função para baixar e salvar a imagem no storage igual ao upload manual
+        function baixarImagemParaStorage($url) {
+            $nomeArquivo = 'muda_' . Str::random(12) . '.jpg';
+            $caminho = 'mudas/' . $nomeArquivo;
+            try {
+                $conteudo = @file_get_contents($url);
+                if ($conteudo !== false) {
+                    Storage::disk('public')->put($caminho, $conteudo);
+                    return $nomeArquivo;
+                }
+            } catch (\Exception $e) {}
+            return null;
+        }
+        // Para cada muda, baixar a imagem e salvar só o nome do arquivo
+        foreach ($mudas as &$muda) {
+            if (!empty($muda['foto_url']) && Str::startsWith($muda['foto_url'], 'http')) {
+                $nomeArquivo = baixarImagemParaStorage($muda['foto_url']);
+                if ($nomeArquivo) {
+                    $muda['foto_url'] = $nomeArquivo;
+                } else {
+                    $muda['foto_url'] = null;
+                }
+            }
+        }
+        unset($muda);
         foreach ($mudas as $muda) {
             Mudas::create($muda);
         }
