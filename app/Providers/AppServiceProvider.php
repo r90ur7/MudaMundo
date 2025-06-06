@@ -16,8 +16,5 @@ class AppServiceProvider extends ServiceProvider
         ini_set('post_max_size', '50M');
         ini_set('memory_limit', '128M');
 
-        if ($this->app->environment('production')) {
-            URL::forceScheme('https');
-        }
     }
 }
