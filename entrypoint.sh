@@ -21,7 +21,7 @@ chmod 777 /var/www/bootstrap/cache
 
 # Roda as migrations (apaga e recria todas as tabelas)
 echo "Rodando migrate:fresh..."
-php artisan migrate:fresh --force
+php artisan migrate:fresh --force --seed
 echo "Migrations finalizadas."
 php artisan optimize:clear
 
