@@ -43,7 +43,7 @@
 
                     <div>
                         <label for="mensagem" class="block text-sm font-medium text-gray-700 dark:text-gray-300">{{ __('Mensagem de contato') }}</label>
-                        <textarea id="mensagem" name="mensagem" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-800 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Escreva uma mensagem opcional..."></textarea>
+                        <textarea id="mensagem" name="mensagem" rows="4" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-800 text-gray-700 dark:text-gray-300 focus:ring-indigo-500 focus:border-indigo-500" placeholder="Escreva uma mensagem opcional..."></textarea>
                         <div id="erro-mensagem" class="text-red-500 text-sm mt-1 hidden"></div>
                     </div>
 
