@@ -1,6 +1,12 @@
 # Dockerfile para Laravel + SQLite
 FROM php:8.2-fpm
 
+# Define o ARG para passar variáveis do Vite durante o build
+ARG VITE_ABLY_KEY
+
+# Define variável de ambiente para o Vite
+ENV VITE_ABLY_KEY=${VITE_ABLY_KEY}
+
 # Instala dependências do sistema
 RUN apt-get update \
     && apt-get install -y libpng-dev libonig-dev libxml2-dev libsqlite3-dev zip unzip git curl \
