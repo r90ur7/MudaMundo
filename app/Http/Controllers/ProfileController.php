@@ -35,6 +35,11 @@ class ProfileController extends Controller
             ->latest('donated_at')
             ->take(10)
             ->get();
+        // Mudas recebidas pelo usuário (mudas cujo donated_to é o usuário logado)
+        $mudasRecebidas = \App\Models\Mudas::where('donated_to', $user->id)
+            ->latest('donated_at')
+            ->take(10)
+            ->get();
         // Solicitações enviadas
         $solicitacoesEnviadas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo'])
             ->where('user_id', $user->id)
@@ -129,6 +134,7 @@ class ProfileController extends Controller
             // Histórico
             'mudasCadastradas' => $mudasCadastradas,
             'mudasDoadas' => $mudasDoadas,
+            'mudasRecebidas' => $mudasRecebidas,
             'solicitacoesEnviadas' => $solicitacoesEnviadas,
             'solicitacoesRecebidas' => $solicitacoesRecebidas,
             'solicitacoesRejeitadas' => $solicitacoesRejeitadas,

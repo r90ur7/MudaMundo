@@ -27,15 +27,15 @@
                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
                             <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                                 <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Mudas Doadas</h3>
-                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{$mudasDoadas->count()}}</p>
                             </div>
                             <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                                 <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Mudas Recebidas</h3>
-                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{$mudasRecebidas->count()}}</p>
                             </div>
                             <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
                                 <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-100">Mudas Cadastradas</h3>
-                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">0</p>
+                                <p class="text-3xl font-bold text-gray-900 dark:text-gray-100">{{$mudasCadastradas->count()}}</p>
                             </div>
                         </div>
                     </div>
