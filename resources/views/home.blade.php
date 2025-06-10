@@ -16,13 +16,13 @@
                 <h1 class="text-4xl sm:text-6xl font-bold text-gray-400 dark:text-emerald-400">
                     Muda Mundo
                 </h1>
-                <p class="mt-3 text-xl text-gray-600 dark:text-gray-400">
+                <p class="mt-3 text-lg sm:text-xl text-gray-600 dark:text-gray-400">
                     Conectando pessoas através do compartilhamento de mudas
                 </p>
-                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+                <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4 w-full max-w-md mx-auto">
                     <!-- Botão Doar uma muda -->
                     <a href="{{ route('mudas.create') }}"
-                        class="py-3 px-6 inline-flex items-center gap-x-3 text-sm font-semibold rounded-lg border border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white disabled:opacity-50 disabled:pointer-events-none dark:border-emerald-400 dark:text-emerald-400 dark:hover:text-white dark:hover:bg-emerald-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 transition duration-300">
+                        class="py-3 px-6 inline-flex items-center gap-x-3 text-sm font-semibold rounded-lg border border-emerald-500 text-emerald-500 hover:bg-emerald-500 hover:text-white disabled:opacity-50 disabled:pointer-events-none dark:border-emerald-400 dark:text-emerald-400 dark:hover:text-white dark:hover:bg-emerald-500 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 transition duration-300 w-full sm:w-auto justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg"
                                 class="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
                                 fill="none"
@@ -38,7 +38,7 @@
 
                     <!-- Botão Encontrar mudas -->
                     <a href="{{ route('mudas.index') }}"
-                        class="py-3 px-6 inline-flex items-center gap-x-3 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-emerald-500 hover:text-emerald-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:hover:text-emerald-400 dark:hover:border-emerald-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 transition duration-300">
+                        class="py-3 px-6 inline-flex items-center gap-x-3 text-sm font-semibold rounded-lg border border-gray-200 text-gray-500 hover:border-emerald-500 hover:text-emerald-500 disabled:opacity-50 disabled:pointer-events-none dark:border-gray-700 dark:text-gray-400 dark:hover:text-emerald-400 dark:hover:border-emerald-400 dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600 transition duration-300 w-full sm:w-auto justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg"
                                 class="w-4 h-4 transition-transform duration-300 group-hover:scale-110"
                                 fill="none"
@@ -57,17 +57,17 @@
     </section>
 
     <!-- Mudas Recentes -->
-    <section class="container mx-auto py-10 px-4">
-        <div class="text-center mb-10">
-            <h2 class="text-2xl font-bold text-gray-400 dark:text-emerald-400">
+    <section class="container mx-auto py-8 sm:py-10 px-2 sm:px-4">
+        <div class="text-center mb-8 sm:mb-10">
+            <h2 class="text-xl sm:text-2xl font-bold text-gray-400 dark:text-emerald-400">
                 Mudas Disponíveis
             </h2>
         </div>
-        <div class="max-w-6xl mx-auto px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 auto-rows-min">
+        <div class="max-w-6xl mx-auto px-0 sm:px-4 py-6 sm:py-10 lg:px-8 lg:py-14">
+            <div class="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 auto-rows-min">
                 @foreach ($mudas_recentes as $index => $muda)
                 @php
-                    $sizeClass = $index === 0 ? 'sm:col-span-2' : '';
+                    $sizeClass = $index === 0 ? 'md:col-span-2' : '';
                 @endphp
 
                 <div class="{{ $sizeClass }}">
@@ -76,7 +76,7 @@
 
                         <div class="relative h-full w-full flex flex-col">
                             <!-- Container da imagem com altura dinâmica -->
-                            <div class="flex-1 overflow-hidden">
+                            <div class="flex-1 overflow-hidden min-h-[180px] sm:min-h-[220px] md:min-h-[240px] max-h-[320px]">
                                 @if($muda->foto_url)
                                     @php
                                         $filename = pathinfo($muda->foto_url, PATHINFO_BASENAME);
@@ -97,13 +97,13 @@
                             <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
 
                             <!-- Conteúdo do card -->
-                            <div class="absolute bottom-0 left-0 right-0 p-4">
-                                <h3 class="text-lg font-semibold text-white drop-shadow-md">
+                            <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-4">
+                                <h3 class="text-base sm:text-lg font-semibold text-white drop-shadow-md">
                                     {{ $muda->nome }}
                                 </h3>
 
                                 <div class="mt-1 flex flex-wrap items-center gap-2">
-                                    <span class="text-sm text-gray-200">
+                                    <span class="text-xs sm:text-sm text-gray-200">
                                         {{ $muda->cidade }}/{{ $muda->uf }}
                                     </span>
                                     <span class="inline-block bg-blue-600 text-white text-xs font-medium py-1 px-2 rounded">
@@ -112,7 +112,7 @@
                                 </div>
 
                                 @if($index === 0)
-                                    <p class="mt-2 text-xs text-gray-100 leading-snug">
+                                    <p class="mt-2 text-xs text-gray-100 leading-snug hidden sm:block">
                                         {{ Str::limit($muda->descricao, 80) }}
                                     </p>
                                 @endif
@@ -124,8 +124,7 @@
             </div>
         </div>
 
-
-        <div class="mt-16">
+        <div class="mt-10 sm:mt-16">
             <div class="relative">
                 <div class="absolute inset-0 flex items-center" aria-hidden="true">
                     <div class="w-full border-t border-gray-400 dark:border-gray-700"></div>
@@ -133,8 +132,8 @@
                 <!-- Botão centralizado sobre o divisor -->
                 <div class="relative flex justify-center">
                     <a href="{{ route('dashboard') }}"
-                    class="group inline-flex items-center gap-x-4 rounded-full bg-white dark:bg-slate-900 p-4 shadow-sm shadow-emerald-500/30 hover:shadow-emerald-500/50 transition duration-300 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-500">
-                        <span class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 dark:text-gray-700 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
+                    class="group inline-flex items-center gap-x-4 rounded-full bg-white dark:bg-slate-900 p-3 sm:p-4 shadow-sm shadow-emerald-500/30 hover:shadow-emerald-500/50 transition duration-300 border border-gray-200 dark:border-gray-700 hover:border-emerald-500 dark:hover:border-emerald-500">
+                        <span class="inline-flex items-center gap-2 text-xs sm:text-sm font-medium text-gray-400 dark:text-gray-700 group-hover:text-emerald-600 dark:group-hover:text-emerald-400">
                             <svg xmlns="http://www.w3.org/2000/svg"
                                 class="w-5 h-5 transition-transform duration-300 group-hover:-translate-y-0.5"
                                 fill="none"

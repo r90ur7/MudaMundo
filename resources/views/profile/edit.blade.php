@@ -73,19 +73,19 @@
 
                 <div class="p-6">
                     <div x-show="activeTab === 'account'" class="space-y-6">
-                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
+                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow text-black dark:text-inherit">
                             @include('profile.partials.update-profile-information-form')
                         </div>
 
-                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
+                        <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow text-black dark:text-inherit">
                             @include('profile.partials.update-password-form')
                         </div>
 
-                        <div class="p-6 bg-red-50 dark:bg-gray-800 dark:text-red-100 rounded-lg shadow">
+                        <div class="p-6 bg-red-50 dark:bg-gray-800 rounded-lg shadow text-black dark:text-red-100">
                             @include('profile.partials.delete-user-form')
                         </div>
 
-                        <div class="mb-4">
+                        <div class="mb-4 text-black dark:text-inherit">
                             <label class="inline-flex items-center">
                                 <input type="checkbox" name="lgpd_consent" value="1" {{ old('lgpd_consent', $user->lgpd_consent ?? false) ? 'checked' : '' }} required>
                                 <span class="ml-2">Li e concordo com os <a href="{{ url('/terms') }}" target="_blank" class="underline text-emerald-600">Termos de Serviço e Política de Privacidade</a></span>
@@ -373,16 +373,12 @@
                         </div>
                     </div>
 
-                    <!-- Aba Solicitações -->
                     <div x-show="activeTab === 'solicitacoes'" class="space-y-6">
                         <div class="p-6 bg-gray-50 dark:bg-gray-800 rounded-lg shadow">
                             @include('profile.partials.minhas-solicitacoes')
                         </div>
                     </div>
-
-                    <!-- Exemplo de área de chat estilo WhatsApp -->
                     <div x-show="activeTab === 'chat'" class="flex flex-col h-[600px] max-w-2xl mx-auto bg-gray-100 dark:bg-gray-900 rounded-2xl shadow-lg border border-emerald-200 dark:border-emerald-700 overflow-hidden relative animate-fade-in">
-                        <!-- Header do chat -->
                         <div class="flex items-center gap-3 px-4 py-3 bg-emerald-600 dark:bg-emerald-800 text-white shadow">
                             <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-white/20">
                                 <svg xmlns='http://www.w3.org/2000/svg' class='h-7 w-7' fill='none' viewBox='0 0 24 24' stroke='currentColor'><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
@@ -426,7 +422,7 @@
         </div>
     </div>
 
-    <div id="profilePhotoModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div id="profilePhotoModal" class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden">
         <div class="bg-white dark:bg-gray-800 rounded-lg p-6 w-full max-w-md mx-4">
             <div class="flex justify-between items-center mb-4">
                 <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100">Trocar Foto de Perfil</h3>
@@ -489,11 +485,10 @@
     </div>
     @endif
 
-    <!-- Notificação global de chat (usando o mesmo comportamento do partial global) -->
     <x-chat-notification />
 
     @push('scripts')
-    <script>
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const openModalBtn = document.getElementById('openProfilePhotoModal');
         const closeModalBtn = document.getElementById('closeProfilePhotoModal');
@@ -532,7 +527,6 @@
                 if(this.files && this.files[0]) {
                     const file = this.files[0];
 
-                    // Verificar se o arquivo é uma imagem
                     if(!file.type.match('image.*')) {
                         alert('Por favor, selecione uma imagem.');
                         this.value = '';
@@ -574,7 +568,6 @@
         if(form && cardsContainer) {
             form.addEventListener('submit', function(e) {
                 e.preventDefault();
-                // Considerar filtro de tipo selecionado
                 const formData = new FormData(form);
                 const selectedFilter = document.querySelector('input[name="filter_type"]:checked');
                 if (selectedFilter) formData.set('filter_type', selectedFilter.value);
@@ -589,7 +582,6 @@
                 });
             });
 
-            // Auto-aplicar filtros ao mudar selects ou ao pressionar Enter na busca
             const tipoSelect = document.getElementById('tipo');
             const locationSelect = document.getElementById('location');
             const searchInput = document.getElementById('search');
@@ -604,7 +596,6 @@
                 });
             }
 
-            // Aplicar filtros ao mudar rádio dentro do form (desktop)
             const desktopFilterRadios = document.querySelectorAll('input[name="filter_type"]');
             desktopFilterRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
@@ -615,7 +606,6 @@
             });
         }
 
-        // filtros mobile
         const formMobile = document.getElementById('filtros-mudas-form-mobile');
         if(formMobile && cardsContainer) {
             formMobile.addEventListener('submit', function(e) {
@@ -633,7 +623,6 @@
                 });
             });
 
-            // Auto-aplicar filtros mobile ao mudar selects ou ao pressionar Enter na busca
             const tipoMobile = document.getElementById('tipo_mobile');
             const locationMobile = document.getElementById('location_mobile');
             const searchMobile = document.getElementById('search_mobile');
@@ -648,7 +637,6 @@
                 });
             }
 
-            // Aplicar filtros ao mudar rádio dentro do form mobile
             const mobileFilterRadios = document.querySelectorAll('input[name="filter_type_mobile"]');
             mobileFilterRadios.forEach(radio => {
                 radio.addEventListener('change', () => {
@@ -659,7 +647,6 @@
             });
         }
 
-        // Auto-remover notificação de sucesso
         const photoSuccessNotification = document.getElementById('photoSuccessNotification');
         if (photoSuccessNotification) {
             setTimeout(() => {
@@ -667,7 +654,6 @@
             }, 5000);
         }
 
-        // Ao carregar a página, verifica se há hash para abrir chat específico
         if (window.location.hash && window.location.hash.startsWith('#chats-')) {
             const chatId = window.location.hash.replace('#chats-', '');
             setTimeout(() => {
@@ -683,12 +669,10 @@
     });
 
     window.openChatFromNotification = function(chatId, chatData) {
-        // Ativa a aba de chats
         const root = document.querySelector('[x-data*="activeTab"]');
         if (root && root.__x) {
             root.__x.$data.activeTab = 'chats';
         }
-        // Espera Alpine renderizar a aba de chats e abre o chat correto
         setTimeout(() => {
             const chatList = document.querySelector('#chats-list');
             if (chatList && chatList.__x) {
@@ -700,9 +684,7 @@
         }, 400);
     };
 
-    // --- INÍCIO: Atualizar lista de chats após nova solicitação ---
     window.addEventListener('solicitacao-criada', function() {
-        // Aguarda Alpine inicializar
         setTimeout(() => {
             const chatList = document.querySelector('#chats-list');
             if (chatList && chatList.__x) {
@@ -718,7 +700,6 @@
         window.Echo.private('user.' + {{ auth()->id() }})
             .listen('.App\\Events\\NovaMensagemChat', (e) => {
                 if (e.mensagem) {
-                    // Sempre dispara notificação, mesmo se for o próprio usuário
                     window.dispatchEvent(new CustomEvent('chat-notification', {
                         detail: {
                             chatId: e.mensagem.solicitacao_id,
@@ -729,16 +710,13 @@
                         }
                     }));
 
-                    // Atualiza a lista de chats em tempo real
                     const chatList = document.querySelector('#chats-list');
                     if (chatList && chatList.__x) {
                         const comp = chatList.__x.$data;
                         if (comp && typeof comp.fetchChats === 'function') {
                             comp.fetchChats();
                         }
-                        // Se o chat modal está aberto para o mesmo chat, adiciona a mensagem em tempo real
                         if (comp && comp.activeChat && comp.activeChat.solicitacao.id === e.mensagem.solicitacao_id) {
-                            // Evita duplicidade se já existe pelo local_id
                             const exists = comp.messages.some(m => m.id === e.mensagem.id);
                             if (!exists) {
                                 comp.messages.push({ ...e.mensagem, status: 'sent' });
