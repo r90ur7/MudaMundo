@@ -51,7 +51,7 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
                             </span>
                             <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 font-medium">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <span class="text-gray-900 dark:text-gray-100">Criada em:</span> <span class="ml-1 text-gray-900 dark:text-gray-100">{{ $solicitacao->created_at->format('d/m/Y H:i') }}</span>
+                                <span class="text-gray-900 dark:text-gray-100">Solicitada em:</span> <span class="ml-1 text-gray-900 dark:text-gray-100">{{ $solicitacao->created_at->format('d/m/Y H:i') }}</span>
                             </span>
                         </div>
                         <div class="flex justify-end mt-2">
@@ -98,7 +98,7 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
                             </span>
                             <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 font-medium">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                <span class="text-gray-900 dark:text-gray-100">Criada em:</span> <span class="ml-1 text-gray-900 dark:text-gray-100">{{ $solicitacao->created_at->format('d/m/Y H:i') }}</span>
+                                <span class="text-gray-900 dark:text-gray-100">Solicitada em:</span> <span class="ml-1 text-gray-900 dark:text-gray-100">{{ $solicitacao->created_at->format('d/m/Y H:i') }}</span>
                             </span>
                         </div>
                         <div class="bg-gray-50 dark:bg-gray-900 rounded p-3 text-sm mt-2">

@@ -2,13 +2,9 @@ const HSThemeAppearance = {
     // inicialize the theme appearance
     init() {
         const defaultTheme = 'light';
-        let theme = localStorage.getItem('hs_theme') || defaultTheme;
+        const theme = localStorage.getItem('hs_theme') || defaultTheme;
 
-        if (document.querySelector('html').classList.contains('dark')) {
-            this.setAppearance('dark');
-        } else {
-            this.setAppearance(theme);
-        }
+        this.setAppearance(theme); // aplica o que estiver salvo ou o default
 
         document.addEventListener('click', (e) => {
             const element = e.target.closest('[data-hs-theme-click-value]');
@@ -19,15 +15,20 @@ const HSThemeAppearance = {
         });
     },
 
+
     setAppearance(theme, saveInStore = true) {
         if (saveInStore) {
             localStorage.setItem('hs_theme', theme);
         }
 
-        if (theme === 'dark' || (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        console.log('Aplicando tema:', theme); // Log para depuração
+
+        if (theme === 'dark') {
             document.documentElement.classList.add('dark');
+            console.log('Classe dark adicionada ao elemento <html>'); // Log para depuração
         } else {
             document.documentElement.classList.remove('dark');
+            console.log('Classe dark removida do elemento <html>'); // Log para depuração
         }
     },
 };
