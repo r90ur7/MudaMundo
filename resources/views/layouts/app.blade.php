@@ -15,6 +15,17 @@
     <script>
         window.userId = {{ auth()->id() ?? 'null' }};
     </script>
+    <style>
+        @media (min-width: 1700px) {
+            .custom-max-width {
+                max-width: 80vw !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+        }
+    </style>
 </head>
 
 <body class="bg-neutral-900 dark:bg-neutral-100 text-white dark:text-black">
@@ -29,7 +40,7 @@
     <!-- ========== MAIN CONTENT ========== -->
     <main id="content" class="min-h-screen bg-neutral-900 dark:bg-neutral-100">
         <div class="bg-neutral-900 dark:bg-neutral-100">
-            <div class="max-w-7xl mx-auto px-4 xl:px-0 pt-24 lg:pt-32 pb-24">
+            <div class="max-w-7xl mx-auto px-4 xl:px-0 pt-24 lg:pt-32 pb-24 custom-max-width">
                 <div class="mx-auto bg-neutral-800 dark:bg-neutral-200 rounded-xl p-8">
                     {{ $slot }}
                 </div>
