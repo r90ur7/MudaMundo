@@ -50,7 +50,9 @@
         </div>
         <div>
             <label for="location" class="text-sm font-semibold mb-1 text-black flex items-center gap-3">
-                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a8 8 0 1011.314-11.314l-4.243 4.243z"/></svg>
+                <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                </svg>
                 Estado
             </label>
             <select id="location" name="location" class="block w-full rounded-lg border border-purple-200 bg-white text-black focus:border-purple-500 focus:ring-purple-500 px-4 py-2 shadow-sm">
@@ -137,7 +139,9 @@
                 </div>
                 <div>
                     <label for="location_mobile" class="text-sm font-semibold text-gray-700 dark:text-gray-200 mb-1 flex items-center gap-2">
-                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 12.414a4 4 0 10-5.657 5.657l4.243 4.243a8 8 0 1011.314-11.314l-4.243 4.243z"/></svg>
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                        </svg>
                         Estado
                     </label>
                     <select id="location_mobile" name="location" class="block w-full rounded-lg border border-purple-200 dark:border-purple-700 bg-white dark:bg-purple-900 text-gray-900 dark:text-white focus:border-purple-500 focus:ring-purple-500 px-4 py-2 shadow-sm">
