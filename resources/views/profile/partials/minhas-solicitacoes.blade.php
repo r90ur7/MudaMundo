@@ -19,7 +19,7 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
 
 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
     <div>
-        <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-gray-800">
             <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
             Minhas Solicitações
         </h3>
@@ -33,18 +33,25 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
                 @foreach($solicitacoesFeitas as $solicitacao)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border-l-4 {{ $solicitacao->status->nome === 'Pendente' ? 'border-yellow-400' : ($solicitacao->status->nome === 'Em negociação' ? 'border-blue-500' : 'border-emerald-600') }} p-5 flex flex-col gap-2 hover:shadow-lg transition">
                         <div class="flex items-center gap-3">
-                            <svg class="w-8 h-8 text-emerald-500 transform rotate-[-45deg]" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                            <span class="text-lg font-semibold">{{ $solicitacao->mudas->nome ?? '-' }}</span>
+                            @if($solicitacao->user->foto_url)
+                                @php($avatar = route('profile.photo', ['filename' => $solicitacao->user->foto_url]))
+                                <img src="{{ $avatar }}" alt="{{ $solicitacao->user->name }}" class="w-8 h-8 rounded-full object-cover border border-gray-200 dark:border-gray-700">
+                            @else
+                                <span class="inline-flex items-center justify-center w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold border border-gray-200 dark:border-gray-700">
+                                    {{ strtoupper(mb_substr($solicitacao->user->name ?? '?', 0, 1)) }}
+                                </span>
+                            @endif
+                            <span class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $solicitacao->mudas->nome ?? '-' }}</span>
                             <span class="ml-2 px-2 py-1 rounded text-xs font-medium bg-emerald-100 text-emerald-700">{{ $solicitacao->tipo->nome ?? '-' }}</span>
                         </div>
                         <div class="flex flex-wrap gap-2 items-center text-sm mt-1">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 font-medium">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                                Status: <span class="ml-1 font-semibold">{{ $solicitacao->status->nome ?? '-' }}</span>
+                                <span class="text-gray-900 dark:text-gray-100">Status:</span> <span class="ml-1 font-semibold text-gray-900 dark:text-gray-100">{{ $solicitacao->status->nome ?? '-' }}</span>
                             </span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 font-medium">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Criada em: {{ $solicitacao->created_at->format('d/m/Y H:i') }}
+                                <span class="text-gray-900 dark:text-gray-100">Criada em:</span> <span class="ml-1 text-gray-900 dark:text-gray-100">{{ $solicitacao->created_at->format('d/m/Y H:i') }}</span>
                             </span>
                         </div>
                         <div class="flex justify-end mt-2">
@@ -59,7 +66,7 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
         @endif
     </div>
     <div>
-        <h3 class="text-xl font-bold mb-6 flex items-center gap-2">
+        <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-gray-900 dark:text-gray-800">
             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a5 5 0 00-10 0v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2z"/></svg>
             Solicitações Recebidas nas Minhas Mudas
         </h3>
@@ -73,28 +80,29 @@ $solicitacoesRecebidas = \App\Models\Solicitacao::with(['mudas', 'status', 'tipo
                 @foreach($solicitacoesRecebidas as $solicitacao)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md border-l-4 {{ $solicitacao->status->nome === 'Pendente' ? 'border-yellow-400' : ($solicitacao->status->nome === 'Em negociação' ? 'border-blue-500' : 'border-emerald-600') }} p-5 flex flex-col gap-2 hover:shadow-lg transition">
                         <div class="flex items-center gap-3">
-                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a5 5 0 00-10 0v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2z"/></svg>
-                            <span class="text-lg font-semibold">{{ $solicitacao->mudas->nome ?? '-' }}</span>
+                            @if($solicitacao->user->foto_url)
+                                @php($avatar = route('profile.photo', ['filename' => $solicitacao->user->foto_url]))
+                                <img src="{{ $avatar }}" alt="{{ $solicitacao->user->name }}" class="w-10 h-10 rounded-full object-cover border border-gray-200 dark:border-gray-700">
+                            @else
+                                <span class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-emerald-100 text-emerald-700 font-bold border border-gray-200 dark:border-gray-700">
+                                    {{ strtoupper(mb_substr($solicitacao->user->name ?? '?', 0, 1)) }}
+                                </span>
+                            @endif
+                            <span class="text-base font-semibold text-gray-900 dark:text-gray-100">{{ $solicitacao->user->name ?? '-' }}</span>
                             <span class="ml-2 px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-700">{{ $solicitacao->tipo->nome ?? '-' }}</span>
                         </div>
                         <div class="flex flex-wrap gap-2 items-center text-sm mt-1">
-                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium">
-                                <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-                                Solicitante: <span class="ml-1 font-semibold">
-                                    {{ strtoupper(substr($solicitacao->user->name ?? '-', 0, 1)) }}.{{ $solicitacao->user->cidade ? ' - ' . $solicitacao->user->cidade . '/' . $solicitacao->user->uf : '' }}
-                                </span>
-                            </span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium">
-                                <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-                                Criada em: {{ $solicitacao->created_at->format('d/m/Y H:i') }}
-                            </span>
-                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 font-medium">
+                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 font-medium">
                                 <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                                Status: <span class="ml-1 font-semibold">{{ $solicitacao->status->nome ?? '-' }}</span>
+                                <span class="text-gray-900 dark:text-gray-100">Status:</span> <span class="ml-1 font-semibold text-gray-900 dark:text-gray-100">{{ $solicitacao->status->nome ?? '-' }}</span>
+                            </span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded bg-gray-100 dark:bg-gray-700 font-medium">
+                                <svg class="w-4 h-4 mr-1 text-gray-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span class="text-gray-900 dark:text-gray-100">Criada em:</span> <span class="ml-1 text-gray-900 dark:text-gray-100">{{ $solicitacao->created_at->format('d/m/Y H:i') }}</span>
                             </span>
                         </div>
-                        <div class="bg-gray-50 dark:bg-gray-900 rounded p-3 text-sm text-gray-700 dark:text-gray-200 mt-2">
-                            <span class="font-semibold">Mensagem:</span> {{ $solicitacao->mensagem ?? 'Nenhuma mensagem' }}
+                        <div class="bg-gray-50 dark:bg-gray-900 rounded p-3 text-sm mt-2">
+                            <span class="font-semibold text-gray-900 dark:text-gray-800">Mensagem:</span> <span class="text-gray-900 dark:text-gray-800">{{ $solicitacao->mensagem ?? 'Nenhuma mensagem' }}</span>
                         </div>
                         <div class="flex flex-wrap gap-2 justify-end mt-2">
                             @if($solicitacao->tipo->nome === 'Doação' || $solicitacao->tipo->nome === 'Permuta')

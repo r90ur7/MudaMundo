@@ -37,7 +37,12 @@
         </div>
     </main>
 
-    <!-- ========== FOOTER ========== -->
+    <div vw class="enabled">
+        <div vw-access-button class="active"></div>
+        <div vw-plugin-wrapper>
+            <div class="vw-plugin-top-wrapper"></div>
+        </div>
+    </div>
         <footer class="relative bg-neutral-900 dark:bg-neutral-100">
         <div class="mx-auto max-w-5xl px-4 pt-16 pb-8 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 gap-8 lg:grid-cols-3">
@@ -131,7 +136,10 @@
     </footer>
     <script defer src="https://cdn.jsdelivr.net/npm/preline/dist/index.js"></script>
     <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-
+    <script src="https://vlibras.gov.br/app/vlibras-plugin.js"></script>
+    <script>
+        new window.VLibras.Widget('https://vlibras.gov.br/app');
+      </script>
     @stack('scripts')
 </body>
 </html>
