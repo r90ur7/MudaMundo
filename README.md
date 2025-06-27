@@ -54,11 +54,3 @@ routes/        → Definição de endpoints
 storage/       → Arquivos gerados pelo sistema  
 ## Licença
 Distribuído sob licença MIT. Consulte LICENSE.md para detalhes.
-
-### 🔍 Observações importantes:  
-1. **Seções adaptáveis**: Adicione capturas de tela na seção `Funcionalidades` para melhor visualização  
-2. **Badges personalizáveis**: Inclua indicadores de CI/CD (ex: GitHub Actions) conforme implementação  
-3. **Documentação complementar**: Recomendo adicionar um `docs/` com:  
-   - Diagrama de arquitetura  
-   - User flows  
-   - Casos de uso  
