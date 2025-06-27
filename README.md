@@ -32,11 +32,12 @@ Laravel 10.x | PHP 8.1+ | Tailwind CSS | MySQL | Pusher (WebSockets) | Docker
 
 2. Clonar repositório:  
    ```bash  
-   git clone https://github.com/r90ur7/MudaMundo.git  
-docker compose up -d --build  
-composer install && npm install  
-cp .env.example .env  
-php artisan migrate --seed  
+   git clone https://github.com/r90ur7/MudaMundo.git
+   docker compose up -d --build
+   composer install && npm install
+   cp .env.example .env
+   php artisan migrate --seed
+
 ## 🌐 Acesso Online
 A versão em produção está disponível em:
 
