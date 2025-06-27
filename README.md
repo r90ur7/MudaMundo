@@ -52,6 +52,7 @@ resources/     → Views e frontend
 routes/        → Definição de endpoints  
 storage/       → Arquivos gerados pelo sistema  
 ## Licença
+Distribuído sob licença MIT. Consulte LICENSE.md para detalhes.
 
 ### 🔍 Observações importantes:  
 1. **Seções adaptáveis**: Adicione capturas de tela na seção `Funcionalidades` para melhor visualização  
